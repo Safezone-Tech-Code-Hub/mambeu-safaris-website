@@ -8,20 +8,22 @@ From the project directory (`~/production/applications/mambeu-safaris-website` o
 
 **Both site + dashboard (PocketBase):**
 
+On this VPS, builds use `network: host` (DNS). Compose must allow that:
+
 ```bash
-docker compose up -d --build
+docker compose --allow=network.host up -d --build
 ```
 
 **Site only** (`mambeu-web`, port 8080):
 
 ```bash
-docker compose up -d --build web
+docker compose --allow=network.host up -d --build web
 ```
 
 **Dashboard / backend only** (`mambeu-pocketbase`, port 9112):
 
 ```bash
-docker compose up -d --build pocketbase
+docker compose --allow=network.host up -d --build pocketbase
 ```
 
 Verify:

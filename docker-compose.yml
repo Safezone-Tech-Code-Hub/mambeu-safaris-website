@@ -6,6 +6,7 @@
 #
 # Image builds use the host network so npm / apk / GitHub downloads resolve
 # (VPS DNS fails inside Docker's isolated build network).
+# Compose v2 requires: docker compose --allow=network.host up -d --build
 #
 # Host ports are the external side. Container listen ports stay fixed.
 # Chosen against the live VPS: 8080 is free; 8090 is salestrack-mailer;

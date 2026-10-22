@@ -43,7 +43,7 @@ Two containers: the static site (`mambeu-web`) and PocketBase (`mambeu-pocketbas
 8080 is free on the VPS. 8090 is `salestrack-mailer`, and 8906 is the old `mambeu-safaris-backend`, so this stack does not use either. PocketBase still listens on 8090 inside the container; only the host port is 9112.
 
 ```bash
-docker compose up -d --build
+docker compose --allow=network.host up -d --build
 ```
 
 Site: http://localhost:8080 · PocketBase admin: http://localhost:9112/_/
