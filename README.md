@@ -33,22 +33,24 @@ python3 -m http.server 8000 --directory dist
 
 ## Docker (VPS)
 
-Two containers: the static site (`mambeu-web`) and PocketBase (`mambeu-pocketbase`). Each listens on a fixed internal port and publishes a separate host port. Image builds use the host network so downloads resolve on this VPS. Runtime stays on bridge network `proxy-net` so Nginx Proxy Manager can reach the containers.
+Same layout as **elevated-tanzania-safaris**: two separate compose projects, **`network_mode: host`**, fixed ports on the server. Nginx Proxy Manager forwards to the host IP + port (not Docker bridge names).
 
-| Service | Container | Internal port | Host port | NPM upstream |
-|---------|-----------|---------------|-----------|--------------|
-| Site (nginx) | `mambeu-web` | 80 | 8080 | `http://mambeu-web:80` |
-| PocketBase | `mambeu-pocketbase` | 8090 | 9112 | `http://mambeu-pocketbase:8090` |
-
-8080 is free on the VPS. 8090 is `salestrack-mailer`, and 8906 is the old `mambeu-safaris-backend`, so this stack does not use either. PocketBase still listens on 8090 inside the container; only the host port is 9112.
+| Stack | Directory | Container | Port | NPM forward |
+|-------|-----------|-----------|------|-------------|
+| Site | repo root | `mambeu-web` | **8080** | `http://209.74.72.96:8080` |
+| PocketBase | `pocketbase/` | `mambeu-pocketbase` | **9112** | `http://209.74.72.96:9112` |
 
 ```bash
-docker compose --allow=network.host up -d --build
+# Site (builds static files into the image)
+docker compose up -d --build
+
+# Dashboard / backend (pulls ghcr.io/muchobien/pocketbase — no custom build)
+cd pocketbase && docker compose up -d
 ```
 
-Site: http://localhost:8080 · PocketBase admin: http://localhost:9112/_/
+Site: http://127.0.0.1:8080 · PocketBase admin: http://127.0.0.1:9112/_/
 
-`proxy-net` must already exist (`docker network create proxy-net` once, if this host does not have it yet). PocketBase data is the `pocketbase-data` volume. The site is still static nginx — no Node process after the image is built.
+PocketBase data lives in `pocketbase/pb_data/` (or copy `pocketbase/` to `~/sandbox/mambeu-pocketbase` like Elevated). Port **8906** is the old `mambeu-safaris-backend`; this stack does not use it.
 
 ### Production (NPM + subdomains)
 

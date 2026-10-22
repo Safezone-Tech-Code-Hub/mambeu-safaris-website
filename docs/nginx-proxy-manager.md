@@ -1,72 +1,61 @@
 # Nginx Proxy Manager — Mambeu (schoolhub.space)
 
-Production host: **209.74.72.96**. Webuzo subdomains `new-mambeu.schoolhub.space` and `dashboard-mambeu.schoolhub.space` are DNS labels only; traffic should be handled by NPM forwarding to Docker, not the empty `public_html/new-mambeu` folders.
+Production host: **209.74.72.96**. Webuzo subdomains are DNS only; NPM forwards to host ports (Elevated-style **`network_mode: host`** stacks).
 
 ## 1. Start containers on the VPS
 
-From the project directory (`~/production/applications/mambeu-safaris-website` or your clone path):
-
-**Both site + dashboard (PocketBase):**
-
-On this VPS, builds use `network: host` (DNS). Compose must allow that:
+**Site** — from the repo root:
 
 ```bash
-docker compose --allow=network.host up -d --build
+cd ~/production/applications/mambeu-safaris-website
+docker compose up -d --build
 ```
 
-**Site only** (`mambeu-web`, port 8080):
+**Dashboard (PocketBase)** — separate compose (same pattern as `elevated-tanzania-safaris-pb`):
 
 ```bash
-docker compose --allow=network.host up -d --build web
+cd ~/production/applications/mambeu-safaris-website/pocketbase
+docker compose up -d
 ```
 
-**Dashboard / backend only** (`mambeu-pocketbase`, port 9112):
-
-```bash
-docker compose --allow=network.host up -d --build pocketbase
-```
+Optional: copy the `pocketbase/` folder to `~/sandbox/mambeu-pocketbase` and run compose there so data stays outside the git tree.
 
 Verify:
 
 ```bash
 docker ps --filter name=mambeu
-curl -sI http://127.0.0.1:8080 | head -1    # site
-curl -sI http://127.0.0.1:9112/_/ | head -1 # PocketBase admin
+curl -sI http://127.0.0.1:8080 | head -1
+curl -sI http://127.0.0.1:9112/_/ | head -1
 ```
 
-| Compose service | Container name | Host port | Role |
-|-----------------|----------------|-----------|------|
-| `web` | `mambeu-web` | 8080 | Public static site |
-| `pocketbase` | `mambeu-pocketbase` | 9112 | Dashboard + API (`/_/`) |
+| Container | Host port | Role |
+|-----------|-----------|------|
+| `mambeu-web` | 8080 | Public static site |
+| `mambeu-pocketbase` | 9112 | Dashboard + API (`/_/`) |
 
 ## 2. Add proxy hosts in NPM
 
-**Proxy Hosts → Add Proxy Host** for each row below. Match your other hosts: Forward Hostname / IP = server IP, Forward Port = host port, SSL = Let's Encrypt, Access = Public.
+Forward Hostname / IP = **209.74.72.96**, scheme **http**, SSL = Let's Encrypt, Access = Public.
 
-| Domain names | Forward IP | Forward port | Notes |
-|--------------|------------|--------------|--------|
-| `new-mambeu.schoolhub.space` | `209.74.72.96` | `8080` | Static site |
-| `dashboard-mambeu.schoolhub.space` | `209.74.72.96` | `9112` | PocketBase admin + API |
-
-**Details tab (both):** Scheme `http`, Block Common Exploits on, Websockets Support **on** (required for PocketBase admin).
-
-**Alternative** if NPM runs on Docker network `proxy-net` and resolves container names:
-
-| Domain | Forward hostname | Forward port |
-|--------|------------------|--------------|
-| `new-mambeu.schoolhub.space` | `mambeu-web` | `80` |
-| `dashboard-mambeu.schoolhub.space` | `mambeu-pocketbase` | `8090` |
+| Domain | Forward port | Notes |
+|--------|--------------|--------|
+| `new-mambeu.schoolhub.space` | **8080** | Static site |
+| `dashboard-mambeu.schoolhub.space` | **9112** | PocketBase — enable **Websockets** |
 
 ## 3. PocketBase after first deploy
 
-1. Open `https://dashboard-mambeu.schoolhub.space/_/` and create the superuser.
-2. **Settings → Application** → set **Application URL** to `https://dashboard-mambeu.schoolhub.space` (avoids wrong links behind the proxy).
+1. Open `https://dashboard-mambeu.schoolhub.space/_/` and create the superuser (or set `PB_ADMIN_EMAIL` / `PB_ADMIN_PASSWORD` in `pocketbase/.env` before `docker compose up`).
+2. **Settings → Application** → **Application URL** = `https://dashboard-mambeu.schoolhub.space`.
 
 ## 4. Smoke test
 
-- `https://new-mambeu.schoolhub.space/` — home page loads, assets under `/assets/`.
+- `https://new-mambeu.schoolhub.space/` — home page and `/assets/`.
 - `https://dashboard-mambeu.schoolhub.space/_/` — PocketBase installer or login.
 
 ## 5. Old stack
 
-Container `mambeu-safaris-backend` on host port **8906** is the previous project. Stop or remove it when you no longer need it; this stack does not use 8906.
+`mambeu-safaris-backend` on **8906** is the previous project. Stop it when you no longer need it:
+
+```bash
+docker stop mambeu-safaris-backend
+```

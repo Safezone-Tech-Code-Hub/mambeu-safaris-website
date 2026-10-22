@@ -4,3 +4,5 @@ dist/
 *.log
 .DS_Store
 Thumbs.db
+pocketbase/pb_data/*
+!pocketbase/pb_data/.gitkeep

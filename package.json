@@ -8,7 +8,7 @@
     "build:client": "vite build",
     "preview": "vite preview",
     "check": "node --check scripts/prerender.mjs",
-    "docker:up": "docker compose --allow=network.host up -d --build"
+    "docker:up": "docker compose up -d --build"
   },
   "dependencies": {
     "react": "^19.0.0",

@@ -1,7 +1,7 @@
 node_modules
 dist
 .git
-pocketbase
+pocketbase/pb_data
 .openai
 *.log
 .DS_Store
