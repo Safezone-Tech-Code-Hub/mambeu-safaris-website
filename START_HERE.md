@@ -22,7 +22,9 @@ For day-to-day editing use `npm run dev` instead.
 
 ## Docker
 
-Site and PocketBase are separate containers. Host ports are 8080 (site) and 9112 (PocketBase). See `README.md` for Nginx Proxy Manager upstreams.
+Site and PocketBase are separate containers. Host ports are 8080 (site) and 9112 (PocketBase).
+
+Production URLs (via Nginx Proxy Manager): **new-mambeu.schoolhub.space** → `:8080`, **dashboard-mambeu.schoolhub.space** → `:9112`. Full NPM steps: `docs/nginx-proxy-manager.md`.
 
 ```bash
 docker compose up -d --build

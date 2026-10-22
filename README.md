@@ -48,7 +48,16 @@ docker compose up -d --build
 
 Site: http://localhost:8080 · PocketBase admin: http://localhost:9112/_/
 
-`proxy-net` must already exist (`docker network create proxy-net` once, if this host does not have it yet). PocketBase data is the `pocketbase-data` volume. Create the first superuser in the admin UI. The site is still static nginx — no Node process after the image is built.
+`proxy-net` must already exist (`docker network create proxy-net` once, if this host does not have it yet). PocketBase data is the `pocketbase-data` volume. The site is still static nginx — no Node process after the image is built.
+
+### Production (NPM + subdomains)
+
+| Public URL | NPM forward (same pattern as your other hosts) |
+|------------|-----------------------------------------------|
+| https://new-mambeu.schoolhub.space | `http://209.74.72.96:8080` |
+| https://dashboard-mambeu.schoolhub.space | `http://209.74.72.96:9112` (enable **Websockets** in NPM) |
+
+Step-by-step: [docs/nginx-proxy-manager.md](docs/nginx-proxy-manager.md).
 
 ## Edit content
 
