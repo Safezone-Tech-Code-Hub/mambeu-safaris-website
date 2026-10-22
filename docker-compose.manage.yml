@@ -1,4 +1,5 @@
-# Vue staff dashboard — host port 8081 → manage-mambeu.schoolhub.space in NPM
+# Vue staff dashboard — published port 8081 → manage-mambeu.schoolhub.space in NPM.
+# Bridge + ports (not host network): host-mode nginx was binding only 127.0.0.1:8081 → NPM 502.
 services:
   manage:
     build:
@@ -10,4 +11,5 @@ services:
     image: mambeu-manage:latest
     container_name: mambeu-manage
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - "8081:80"
