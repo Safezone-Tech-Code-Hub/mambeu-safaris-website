@@ -1,6 +1,49 @@
+# Bridge networking + published ports so Nginx Proxy Manager (on external `proxy-net`)
+# can reach containers by name:
+#   site       http://mambeu-web:80
+#   PocketBase http://mambeu-pocketbase:8090
+# Runtime host networking would hide these from NPM.
+#
+# Image builds use the host network so npm / apk / GitHub downloads resolve
+# (VPS DNS fails inside Docker's isolated build network).
+#
+# Host ports are the external side. Container listen ports stay fixed.
+# Chosen against the live VPS: 8080 is free; 8090 is salestrack-mailer;
+# 8906 is the old mambeu-safaris-backend. PocketBase is published on 9112.
+
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: mambeu-web
     ports:
-      - "8080:80"
+      - "${WEB_EXTERNAL_PORT:-8080}:80"
+    networks:
+      - proxy-net
+      - internal
     restart: unless-stopped
+
+  pocketbase:
+    build:
+      context: ./pocketbase
+      dockerfile: Dockerfile
+      network: host
+    container_name: mambeu-pocketbase
+    ports:
+      - "${PB_EXTERNAL_PORT:-9112}:8090"
+    volumes:
+      - pocketbase-data:/pb/pb_data
+    networks:
+      - proxy-net
+      - internal
+    restart: unless-stopped
+
+volumes:
+  pocketbase-data:
+
+networks:
+  internal:
+  proxy-net:
+    external: true

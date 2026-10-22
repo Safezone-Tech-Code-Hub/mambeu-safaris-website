@@ -22,11 +22,11 @@ For day-to-day editing use `npm run dev` instead.
 
 ## Docker
 
-```bash
-docker compose up --build
-```
+Site and PocketBase are separate containers. Host ports are 8080 (site) and 9112 (PocketBase). See `README.md` for Nginx Proxy Manager upstreams.
 
-Then open http://localhost:8080. Upload/deploy the image to your VPS the same way.
+```bash
+docker compose up -d --build
+```
 
 ## Hosting without Docker
 
