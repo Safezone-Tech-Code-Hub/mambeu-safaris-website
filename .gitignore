@@ -1,1 +1,6 @@
 .openai/
+node_modules/
+dist/
+*.log
+.DS_Store
+Thumbs.db

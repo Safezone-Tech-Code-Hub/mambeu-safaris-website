@@ -1,0 +1,18 @@
+import { createRoot, hydrateRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App.jsx';
+import './fonts.css';
+import './style.css';
+
+const el = document.getElementById('root');
+const app = (
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);
+
+if (el.hasChildNodes()) {
+  hydrateRoot(el, app);
+} else {
+  createRoot(el).render(app);
+}

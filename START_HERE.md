@@ -1,34 +1,39 @@
 # Mambeu Safaris — Complete Website Project
 
-This archive contains the latest redesigned website, including 38 pages, all 22 safari journeys, source code, local images and fonts, and the build script.
+React + Vite static site with the original CSS look, 38 pre-rendered pages, 22 safari journeys, local images and fonts, and Docker deploy support.
 
-## View the website locally
+## View locally (after build)
 
-1. Extract the ZIP.
-2. Open a terminal in the `Mambeu_Safaris` folder.
+1. Open a terminal in the `Mambeu_Safaris` folder.
+2. Run: `npm install` then `npm run build`
 3. Run: `python3 -m http.server 8000 --directory dist`
-4. Open http://localhost:8000 in your browser.
+4. Open http://localhost:8000
 
-Use a local web server rather than opening the HTML files directly: navigation and assets use paths starting at the website root.
+For day-to-day editing use `npm run dev` instead.
 
 ## Edit and rebuild
 
-- Install Node.js 22 or later.
-- Edit `src/app.js` for page content and interactions.
-- Edit `src/style.css` for layout and styling.
-- Edit `src/tours.json` for safari itineraries and published group-size prices.
-- Images and fonts are in `dist/assets`.
-- Run `node scripts/build.mjs` from the project folder to rebuild the website.
-- No npm packages are needed to run the build.
+- Node.js 22 or later.
+- Page content: `src/pages/` and `src/components/`
+- Styles: `src/style.css` (and `src/fonts.css`)
+- Tours: `src/data/tours.json`
+- Images and fonts: `public/assets/`
+- Rebuild: `npm run build`
 
-## Hosting
+## Docker
 
-Upload the contents of `dist` to a static website host, preserving all folders. Each route already includes an `index.html` file. `dist/404.html` is the custom not-found page.
+```bash
+docker compose up --build
+```
 
-The `.openai/hosting.json` file preserves the identity of this project's existing ChatGPT Site. It is not needed for ordinary static hosting.
+Then open http://localhost:8080. Upload/deploy the image to your VPS the same way.
+
+## Hosting without Docker
+
+Upload the contents of `dist/` to any static host, preserving folders. Each route includes an `index.html`. `dist/404.html` is the custom not-found page.
 
 ## Enquiries
 
-The planner prepares a message for the visitor to review and send through WhatsApp or their email application. It is not a direct email-delivery service or booking backend.
+The planner prepares a message for WhatsApp or the visitor’s email app. It is not a direct booking backend.
 
-See `README.md` for content and validation notes.
+See `README.md` for more detail.
