@@ -196,7 +196,16 @@ async function seedStaff() {
   }
 }
 
-await pb.admins.authWithPassword(adminEmail, adminPassword);
+try {
+  await pb.admins.authWithPassword(adminEmail, adminPassword);
+} catch (e) {
+  console.error(
+    `PocketBase admin login failed at ${url}.\n` +
+      'Check POCKETBASE_ADMIN_EMAIL and POCKETBASE_ADMIN_PASSWORD in pocketbase/.env — they must match the superuser from https://dashboard-mambeu.schoolhub.space/_/\n' +
+      'Reset on the VPS: docker exec mambeu-pocketbase pocketbase superuser upsert YOUR_EMAIL YOUR_PASSWORD',
+  );
+  throw e;
+}
 await ensureCollections();
 await seedSettings();
 await seedPages();
