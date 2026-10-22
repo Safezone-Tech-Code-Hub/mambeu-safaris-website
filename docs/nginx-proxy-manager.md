@@ -4,14 +4,38 @@ Production host: **209.74.72.96**. Webuzo subdomains `new-mambeu.schoolhub.space
 
 ## 1. Start containers on the VPS
 
-From the project directory:
+From the project directory (`~/production/applications/mambeu-safaris-website` or your clone path):
+
+**Both site + dashboard (PocketBase):**
 
 ```bash
 docker compose up -d --build
-docker ps --filter name=mambeu
 ```
 
-Expect `mambeu-web` (8080→80) and `mambeu-pocketbase` (9112→8090).
+**Site only** (`mambeu-web`, port 8080):
+
+```bash
+docker compose up -d --build web
+```
+
+**Dashboard / backend only** (`mambeu-pocketbase`, port 9112):
+
+```bash
+docker compose up -d --build pocketbase
+```
+
+Verify:
+
+```bash
+docker ps --filter name=mambeu
+curl -sI http://127.0.0.1:8080 | head -1    # site
+curl -sI http://127.0.0.1:9112/_/ | head -1 # PocketBase admin
+```
+
+| Compose service | Container name | Host port | Role |
+|-----------------|----------------|-----------|------|
+| `web` | `mambeu-web` | 8080 | Public static site |
+| `pocketbase` | `mambeu-pocketbase` | 9112 | Dashboard + API (`/_/`) |
 
 ## 2. Add proxy hosts in NPM
 
