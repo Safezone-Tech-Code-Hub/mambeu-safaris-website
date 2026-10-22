@@ -31,7 +31,22 @@ curl -sI http://127.0.0.1:9112/_/ | head -1
 | Container | Host port | Role |
 |-----------|-----------|------|
 | `mambeu-web` | 8080 | Public static site |
-| `mambeu-pocketbase` | 9112 | Dashboard + API (`/_/`) |
+| `mambeu-pocketbase` | 9112 | PocketBase API + superuser UI (`/_/`) |
+| `mambeu-manage` | 8081 | Vue staff dashboard (Mambeu Manage) |
+
+**Staff dashboard:**
+
+```bash
+cd ~/production/applications/mambeu-safaris-website
+docker compose -f docker-compose.manage.yml up -d --build
+```
+
+**Seed PocketBase (once, from repo root after superuser exists):**
+
+```bash
+cp pocketbase/.env.example pocketbase/.env   # fill admin credentials
+npm run seed:pb
+```
 
 ## 2. Add proxy hosts in NPM
 
@@ -41,6 +56,9 @@ Forward Hostname / IP = **209.74.72.96**, scheme **http**, SSL = Let's Encrypt, 
 |--------|--------------|--------|
 | `new-mambeu.schoolhub.space` | **8080** | Static site |
 | `dashboard-mambeu.schoolhub.space` | **9112** | PocketBase — enable **Websockets** |
+| `manage-mambeu.schoolhub.space` | **8081** | Vue staff dashboard |
+
+In PocketBase **Settings → Application**, add CORS origin `https://new-mambeu.schoolhub.space` so the plan form can save enquiries.
 
 ## 3. PocketBase after first deploy
 

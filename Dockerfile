@@ -1,6 +1,8 @@
 # Build static site
 FROM node:22-alpine AS build
 WORKDIR /app
+ARG POCKETBASE_URL=http://127.0.0.1:9112
+ENV POCKETBASE_URL=$POCKETBASE_URL
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .

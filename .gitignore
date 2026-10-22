@@ -6,3 +6,6 @@ dist/
 Thumbs.db
 pocketbase/pb_data/*
 !pocketbase/pb_data/.gitkeep
+dashboard/node_modules/
+dashboard/dist/
+src/data/cms-meta.json

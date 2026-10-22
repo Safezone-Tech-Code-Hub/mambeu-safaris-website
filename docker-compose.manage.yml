@@ -1,0 +1,13 @@
+# Vue staff dashboard — host port 8081 → manage-mambeu.schoolhub.space in NPM
+services:
+  manage:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+      args:
+        VITE_POCKETBASE_URL: ${VITE_POCKETBASE_URL:-https://dashboard-mambeu.schoolhub.space}
+        VITE_PUBLIC_SITE_URL: ${VITE_PUBLIC_SITE_URL:-https://new-mambeu.schoolhub.space}
+    image: mambeu-manage:latest
+    container_name: mambeu-manage
+    restart: unless-stopped
+    network_mode: host

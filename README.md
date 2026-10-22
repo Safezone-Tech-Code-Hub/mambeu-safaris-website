@@ -50,7 +50,14 @@ cd pocketbase && docker compose up -d
 
 Site: http://127.0.0.1:8080 · PocketBase admin: http://127.0.0.1:9112/_/
 
-PocketBase data lives in `pocketbase/pb_data/` (or copy `pocketbase/` to `~/sandbox/mambeu-pocketbase` like Elevated). Port **8906** is the old `mambeu-safaris-backend`; this stack does not use it.
+PocketBase data lives in `pocketbase/pb_data/`. Staff use the **Vue dashboard** (`dashboard/`, port **8081**, NPM `manage-mambeu.schoolhub.space`). After `npm run seed:pb`, sign in with the bootstrap staff account.
+
+```bash
+docker compose -f docker-compose.manage.yml up -d --build
+npm run seed:pb   # once
+```
+
+Builds pull published content from PocketBase via `scripts/sync-content-from-pb.mjs`. Port **8906** is the old `mambeu-safaris-backend`.
 
 ### Production (NPM + subdomains)
 

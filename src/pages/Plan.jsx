@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PageHead from '../components/PageHead.jsx';
+import { submitEnquiry } from '../lib/enquiry.js';
 
 export default function Plan() {
   const [searchParams] = useSearchParams();
@@ -67,6 +68,9 @@ export default function Plan() {
     );
     setPreviewHidden(false);
     setCopyStatus('');
+    submitEnquiry(values).catch(() => {
+      /* inbox is optional; WhatsApp/email remain primary */
+    });
     const channel = e.nativeEvent.submitter?.value || 'whatsapp';
     requestAnimationFrame(() => {
       document.getElementById('send-' + channel)?.focus();
