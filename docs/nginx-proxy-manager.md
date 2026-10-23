@@ -32,9 +32,9 @@ curl -sI http://127.0.0.1:9112/_/ | head -1
 |-----------|-----------|------|
 | `mambeu-web` | 8080 | Public static site |
 | `mambeu-pocketbase` | 9112 | PocketBase API + superuser UI (`/_/`) |
-| `mambeu-manage` | 8081 | Vue staff dashboard (Mambeu Manage) |
+| `mambeu-manage` | **8082** | Vue staff dashboard (host network, same pattern as Elevated) |
 
-**Staff dashboard:**
+**Staff dashboard** (no Docker network — host mode, like Elevated on port 3233):
 
 ```bash
 cd ~/production/applications/mambeu-safaris-website
@@ -56,7 +56,7 @@ Forward Hostname / IP = **209.74.72.96**, scheme **http**, SSL = Let's Encrypt, 
 |--------|--------------|--------|
 | `new-mambeu.schoolhub.space` | **8080** | Static site |
 | `dashboard-mambeu.schoolhub.space` | **9112** | PocketBase — enable **Websockets** |
-| `manage-mambeu.schoolhub.space` | **8081** | Vue staff dashboard |
+| `manage-mambeu.schoolhub.space` | **8082** | Vue staff dashboard |
 
 In PocketBase **Settings → Application**, add CORS origin `https://new-mambeu.schoolhub.space` so the plan form can save enquiries.
 
