@@ -3,6 +3,7 @@
     <Card class="login-card">
       <template #title>Sign in to Mambeu Manage</template>
       <template #subtitle>Use the email and password your administrator created for you.</template>
+      <template #content>
       <form @submit.prevent="onSubmit" class="field-grid">
         <div>
           <label for="email">Email</label>
@@ -15,6 +16,7 @@
         <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
         <Button type="submit" label="Sign in" icon="pi pi-sign-in" :loading="loading" class="w-full" />
       </form>
+      </template>
     </Card>
   </div>
 </template>
@@ -60,7 +62,10 @@ label {
   font-weight: 600;
   margin-bottom: 0.35rem;
 }
-.w-full {
+.w-full,
+:deep(.p-password),
+:deep(.p-password-input),
+:deep(.p-inputtext) {
   width: 100%;
 }
 </style>
