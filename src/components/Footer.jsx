@@ -1,22 +1,30 @@
 import { Link } from 'react-router-dom';
+import { useCms } from '../CmsProvider.jsx';
+import { siteChrome } from '../lib/cms.js';
 import { href } from '../lib/utils.js';
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const { pages } = useCms();
+  const c = siteChrome(pages);
+  const inviteTitle = String(c.finalInviteTitle || '').split('\n');
   return (
     <>
       <section className="final-invite">
         <div className="wrap">
           <div>
-            <span className="eyebrow">TELL US WHAT YOU’RE DREAMING OF</span>
+            <span className="eyebrow">{c.finalInviteEyebrow}</span>
             <h2>
-              Your next chapter
-              <br />
-              starts in Tanzania.
+              {inviteTitle.map((line, i) => (
+                <span key={i}>
+                  {i > 0 ? <br /> : null}
+                  {line}
+                </span>
+              ))}
             </h2>
           </div>
           <div>
-            <p>A few ideas are all we need. Let’s shape a journey that feels like you.</p>
+            <p>{c.finalInviteText}</p>
             <Link to={href('plan')} className="button light">
               Let’s plan your safari
             </Link>
@@ -35,7 +43,7 @@ export default function Footer() {
               Wildlife, mountains and coast, thoughtfully brought together.
             </p>
             <a
-              href="https://wa.me/255796086799"
+              href={`https://wa.me/${c.whatsapp}`}
               target="_blank"
               rel="noopener"
               className="text-link"
@@ -63,18 +71,18 @@ export default function Footer() {
           </div>
           <div>
             <h3>Your local team</h3>
-            <a href="mailto:info@mambeusafaris.com">info@mambeusafaris.com</a>
-            <a href="tel:+255796086799">+255 796 086 799</a>
+            <a href={`mailto:${c.email}`}>{c.email}</a>
+            <a href={`tel:+${c.phoneE164 || c.whatsapp}`}>{c.phone}</a>
             <p>
-              Arusha, Tanzania
+              {c.officeLocation}
               <br />
-              Office hours 08:00–19:30
+              Office hours {c.officeHours}
             </p>
           </div>
         </div>
         <div className="wrap foot-base">
           <span>© {year} Mambeu Safaris</span>
-          <span>Dream · Discover · Explore</span>
+          <span>{c.footerTagline}</span>
         </div>
       </footer>
     </>

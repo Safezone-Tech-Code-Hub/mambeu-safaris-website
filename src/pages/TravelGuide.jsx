@@ -1,16 +1,18 @@
 import { Link } from 'react-router-dom';
 import FaqItem from '../components/FaqItem.jsx';
 import PageHead from '../components/PageHead.jsx';
-import { faqItems } from '../data/faq.js';
+import { useCms } from '../CmsProvider.jsx';
 import { href } from '../lib/utils.js';
 
 export default function TravelGuide() {
+  const { faq, pages } = useCms();
+  const head = pages.travel_guide?.head || {};
   return (
     <main id="main">
       <PageHead
-        label="A LITTLE PLANNING GOES A LONG WAY"
-        title={'Good questions.<br><span class="accent">Clear answers.</span>'}
-        text="Practical starting points for your safari, mountain journey or Zanzibar escape."
+        label={head.label || 'A LITTLE PLANNING GOES A LONG WAY'}
+        title={head.title || 'Good questions.<br><span class="accent">Clear answers.</span>'}
+        text={head.text || 'Practical starting points for your safari, mountain journey or Zanzibar escape.'}
       />
       <section className="wrap faq-page">
         <aside>
@@ -22,7 +24,7 @@ export default function TravelGuide() {
           </Link>
         </aside>
         <div className="faq-list">
-          {faqItems().map(([q, a]) => (
+          {faq.map(([q, a]) => (
             <FaqItem key={q} question={q} answer={a} />
           ))}
         </div>

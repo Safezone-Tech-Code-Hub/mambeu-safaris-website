@@ -4,10 +4,13 @@
       <h1>Safari tours</h1>
       <p class="hint">All journeys shown on the public safari collection and detail pages.</p>
     </div>
-    <span class="p-input-icon-left search">
-      <i class="pi pi-search" />
-      <InputText v-model="search" placeholder="Search title or path" />
-    </span>
+    <div class="flex gap-2">
+      <span class="p-input-icon-left search">
+        <i class="pi pi-search" />
+        <InputText v-model="search" placeholder="Search title or path" />
+      </span>
+      <Button label="Add safari" icon="pi pi-plus" :loading="creating" @click="createTour" />
+    </div>
   </div>
   <DataTable :value="filtered" :loading="loading" paginator :rows="15" rowHover @row-click="onRow">
     <Column field="title" header="Title" sortable />
@@ -29,10 +32,14 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Tag from 'primevue/tag';
-import { COLLECTIONS, pb } from '@/lib/pb';
+import Button from 'primevue/button';
+import { useToast } from 'primevue/usetoast';
+import { COLLECTIONS, describePbError, pb } from '@/lib/pb';
 
 const router = useRouter();
+const toast = useToast();
 const loading = ref(true);
+const creating = ref(false);
 const rows = ref([]);
 const search = ref('');
 
@@ -56,6 +63,53 @@ onMounted(async () => {
 
 function onRow({ data }) {
   router.push({ name: 'tour-edit', params: { id: data.id } });
+}
+
+async function createTour() {
+  creating.value = true;
+  const stamp = Date.now().toString(36);
+  const path = `new-safari-${stamp}`;
+  try {
+    const row = await pb.collection(COLLECTIONS.tours).create({
+      path,
+      slug: path,
+      title: 'New safari',
+      style: 'Comfort',
+      duration: '5 days',
+      days: 5,
+      image: 'hero.webp',
+      description: '',
+      status: 'draft',
+      featured: false,
+      sortOrder: rows.value.length,
+      payload: {
+        title: 'New safari',
+        style: 'Comfort',
+        duration: '5 days',
+        days: 5,
+        image: 'hero.webp',
+        description: '',
+        fullDescription: '',
+        pricingTiers: [],
+        itinerary: [],
+        highlights: [],
+        included: [],
+        excluded: [],
+        gallery: [],
+      },
+    });
+    toast.add({
+      severity: 'success',
+      summary: 'Draft safari created',
+      detail: 'Set the status to Published and save when it is ready to appear on the site.',
+      life: 4000,
+    });
+    router.push({ name: 'tour-edit', params: { id: row.id } });
+  } catch (e) {
+    toast.add({ severity: 'error', summary: 'Could not create safari', detail: describePbError(e), life: 5000 });
+  } finally {
+    creating.value = false;
+  }
 }
 </script>
 

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useCms } from '../CmsProvider.jsx';
 import JourneyCard from '../components/JourneyCard.jsx';
 import PageHead from '../components/PageHead.jsx';
-import tours from '../data/tours.json';
 import { href } from '../lib/utils.js';
 
-function filterTours({ q, style, duration, sort }) {
+function filterTours(tours, { q, style, duration, sort }) {
   const query = q.trim().toLowerCase();
   let result = tours.filter(
     (t) =>
@@ -25,6 +25,7 @@ function filterTours({ q, style, duration, sort }) {
 }
 
 export default function Safaris() {
+  const { tours } = useCms();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get('q') || '');
   const [style, setStyle] = useState(searchParams.get('style') || '');
@@ -32,17 +33,17 @@ export default function Safaris() {
   const [sort, setSort] = useState('recommended');
 
   const applyFilter = useCallback(() => {
-    const result = filterTours({ q: search, style, duration, sort });
+    const result = filterTours(tours, { q: search, style, duration, sort });
     const query = new URLSearchParams();
     if (search.trim()) query.set('q', search);
     if (style) query.set('style', style);
     if (duration) query.set('duration', duration);
     setSearchParams(query, { replace: true });
     return result;
-  }, [search, style, duration, sort, setSearchParams]);
+  }, [tours, search, style, duration, sort, setSearchParams]);
 
   const [results, setResults] = useState(() =>
-    filterTours({
+    filterTours(tours, {
       q: searchParams.get('q') || '',
       style: searchParams.get('style') || '',
       duration: searchParams.get('duration') || '',

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PageHead from '../components/PageHead.jsx';
+import { useCms } from '../CmsProvider.jsx';
 import { href, Img } from '../lib/utils.js';
 
 const values = [
@@ -21,16 +22,23 @@ const values = [
 ];
 
 export default function About() {
+  const { pages } = useCms();
+  const head = pages.about?.head || {};
+  const photo = pages.about?.storyPhoto || 'team.webp';
+  const valueItems = pages.about?.values?.length ? pages.about.values : values;
   return (
     <main id="main">
       <PageHead
-        label="THE PEOPLE BEHIND YOUR JOURNEY"
-        title={'Rooted in Tanzania.<br><span class="accent">Made around you.</span>'}
-        text="Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys."
+        label={head.label || 'THE PEOPLE BEHIND YOUR JOURNEY'}
+        title={head.title || 'Rooted in Tanzania.<br><span class="accent">Made around you.</span>'}
+        text={
+          head.text ||
+          'Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys.'
+        }
       />
       <section className="wrap story-grid about-story">
         <div className="story-photo">
-          <Img src="team.webp" alt="Mambeu guests and safari vehicle in Tanzania" />
+          <Img src={photo} alt="Mambeu guests and safari vehicle in Tanzania" />
           <span>LOCAL ROOTS. PERSONAL JOURNEYS.</span>
         </div>
         <div>
@@ -64,7 +72,7 @@ export default function About() {
             at its heart.
           </h2>
           <div className="values-grid">
-            {values.map((v) => (
+            {valueItems.map((v) => (
               <article key={v[0]}>
                 <span>{v[0]}</span>
                 <h3>{v[1]}</h3>

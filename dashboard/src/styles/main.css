@@ -39,19 +39,27 @@ body {
 }
 
 .app-sidebar .brand {
-  padding: 1.25rem 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  padding: 1rem 1.25rem 0.85rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.app-sidebar .brand img {
+  display: block;
+  width: 100%;
+  max-width: 210px;
+  height: auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
 }
 
 .app-sidebar .brand span {
   display: block;
   font-size: 0.7rem;
-  font-weight: 500;
-  opacity: 0.75;
-  letter-spacing: 0.12em;
-  margin-top: 0.25rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  margin-top: 0.55rem;
+  opacity: 0.8;
 }
 
 .app-main {

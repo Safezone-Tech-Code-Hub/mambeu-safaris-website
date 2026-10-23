@@ -1,40 +1,48 @@
 import { Link } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
 import PageHead from '../components/PageHead.jsx';
-import tours from '../data/tours.json';
+import { useCms } from '../CmsProvider.jsx';
 import { href } from '../lib/utils.js';
 
-export default function Thematic({ type }) {
-  const mountain = type === 'kilimanjaro';
-  const blocks = mountain
-    ? [
-        ['Prepare well', 'Share your hiking experience, fitness and questions with our team.'],
-        ['Choose your route', 'Discuss route options, duration, equipment and preparation before confirming your climb.'],
-        ['Keep exploring', 'Add a wildlife safari or a Zanzibar stay to round off your adventure.'],
-      ]
-    : [
-        ['Time by the sea', 'Unhurried days, warm waters and accommodation matched to your comfort level.'],
-        ['Culture & history', 'Explore Stone Town, local flavours and the island’s spice heritage.'],
-        ['Ocean experiences', 'Ask about snorkelling, diving and excursions for your travel dates.'],
-      ];
+const fallback = {
+  kilimanjaro: {
+    label: 'MOUNTAIN ADVENTURES',
+    title: 'Take the<br>higher road.',
+    text: 'A Kilimanjaro adventure with personal preparation, local guiding and support along the way.',
+    photo: 'mountain.webp',
+    blocks: [
+      ['Prepare well', 'Share your hiking experience, fitness and questions with our team.'],
+      ['Choose your route', 'Discuss route options, duration, equipment and preparation before confirming your climb.'],
+      ['Keep exploring', 'Add a wildlife safari or a Zanzibar stay to round off your adventure.'],
+    ],
+  },
+  zanzibar: {
+    label: 'SAFARI & ISLAND ESCAPES',
+    title: 'From wild plains<br>to white sands.',
+    text: 'Pair your wildlife adventure with Zanzibar’s beaches, historic Stone Town and the Indian Ocean.',
+    photo: 'zanzibar.webp',
+    blocks: [
+      ['Time by the sea', 'Unhurried days, warm waters and accommodation matched to your comfort level.'],
+      ['Culture & history', 'Explore Stone Town, local flavours and the island’s spice heritage.'],
+      ['Ocean experiences', 'Ask about snorkelling, diving and excursions for your travel dates.'],
+    ],
+  },
+};
 
-  const zanzibarTours = tours.filter((t) => t.title.includes('Zanzibar'));
+export default function Thematic({ type }) {
+  const { tours, pages } = useCms();
+  const mountain = type === 'kilimanjaro';
+  const copy = { ...fallback[type], ...(pages[type] || {}) };
+  const blocks = copy.blocks?.length ? copy.blocks : fallback[type].blocks;
+  const zanzibarTours = tours.filter((t) => String(t.title || '').includes('Zanzibar'));
 
   return (
     <main id="main">
       <PageHead
-        label={mountain ? 'MOUNTAIN ADVENTURES' : 'SAFARI & ISLAND ESCAPES'}
-        title={
-          mountain
-            ? 'Take the<br>higher road.'
-            : 'From wild plains<br>to white sands.'
-        }
-        text={
-          mountain
-            ? 'A Kilimanjaro adventure with personal preparation, local guiding and support along the way.'
-            : 'Pair your wildlife adventure with Zanzibar’s beaches, historic Stone Town and the Indian Ocean.'
-        }
-        photo={mountain ? 'mountain.webp' : 'zanzibar.webp'}
+        label={copy.label}
+        title={copy.title}
+        text={copy.text}
+        photo={copy.photo}
       />
       <section className="wrap split-story">
         <div>

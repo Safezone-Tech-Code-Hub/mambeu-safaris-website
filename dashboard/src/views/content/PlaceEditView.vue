@@ -7,6 +7,11 @@
     </div>
     <div class="page-card field-grid two">
       <div><label>Name</label><InputText v-model="place.name" class="w-full" /></div>
+      <div><label>URL slug</label><InputText v-model="place.slug" class="w-full" /></div>
+      <div>
+        <label>Status</label>
+        <Select v-model="place.status" :options="['draft', 'published']" class="w-full" />
+      </div>
       <div><label>Tagline</label><InputText v-model="payload.tag" class="w-full" /></div>
       <div><label>Photo</label><InputText v-model="payload.photo" class="w-full" /></div>
       <div class="col-span-2"><label>Description</label><Textarea v-model="payload.text" rows="4" class="w-full" autoResize /></div>
@@ -21,6 +26,7 @@ import { useRoute } from 'vue-router';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
+import Select from 'primevue/select';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
 import { COLLECTIONS, pb } from '@/lib/pb';
@@ -44,9 +50,12 @@ onMounted(async () => {
 async function save() {
   saving.value = true;
   payload.facts = factsText.value.split('\n').map((s) => s.trim()).filter(Boolean);
+  const slug = String(place.value.slug || '').trim().toLowerCase().replace(/\s+/g, '-');
   await pb.collection(COLLECTIONS.places).update(place.value.id, {
     name: place.value.name,
-    payload: { ...payload, name: place.value.name },
+    slug,
+    status: place.value.status || 'draft',
+    payload: { ...payload, name: place.value.name, slug, q: payload.q || place.value.name },
   });
   saving.value = false;
   toast.add({ severity: 'success', summary: 'Saved', life: 2000 });

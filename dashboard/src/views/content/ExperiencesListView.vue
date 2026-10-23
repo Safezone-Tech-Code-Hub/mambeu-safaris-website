@@ -1,5 +1,8 @@
 <template>
-  <div class="page-header"><h1>Experiences</h1></div>
+  <div class="page-header">
+    <h1>Experiences</h1>
+    <Button label="Add experience" icon="pi pi-plus" @click="add" />
+  </div>
   <DataTable :value="rows" :loading="loading" @row-click="open" rowHover>
     <Column field="title" header="Title" />
     <Column field="slug" header="Slug" />
@@ -42,21 +45,42 @@ onMounted(async () => {
 
 function open({ data }) {
   current.value = { ...data };
+  Object.keys(payload).forEach((key) => delete payload[key]);
   Object.assign(payload, data.payload || {});
+  editOpen.value = true;
+}
+
+function add() {
+  current.value = { id: '', title: '', slug: '', status: 'published' };
+  Object.keys(payload).forEach((key) => delete payload[key]);
+  Object.assign(payload, { headline: '', photo: 'hero.webp', body: '', planInterest: '' });
   editOpen.value = true;
 }
 
 async function saveCurrent() {
   saving.value = true;
-  await pb.collection(COLLECTIONS.experiences).update(current.value.id, {
-    title: current.value.title,
-    payload: { ...payload, title: current.value.title },
-  });
-  saving.value = false;
-  editOpen.value = false;
-  toast.add({ severity: 'success', summary: 'Saved', life: 2000 });
-  const res = await pb.collection(COLLECTIONS.experiences).getList(1, 50);
-  rows.value = res.items;
+  try {
+    const slug = (current.value.slug || current.value.title || 'experience')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    const data = {
+      title: current.value.title,
+      slug,
+      status: 'published',
+      payload: { ...payload, title: current.value.title },
+    };
+    if (current.value.id) await pb.collection(COLLECTIONS.experiences).update(current.value.id, data);
+    else await pb.collection(COLLECTIONS.experiences).create({ ...data, sortOrder: rows.value.length });
+    editOpen.value = false;
+    toast.add({ severity: 'success', summary: 'Saved', life: 2000 });
+    const res = await pb.collection(COLLECTIONS.experiences).getList(1, 50);
+    rows.value = res.items;
+  } catch (e) {
+    toast.add({ severity: 'error', summary: 'Could not save experience', detail: e?.message || 'Save failed', life: 5000 });
+  } finally {
+    saving.value = false;
+  }
 }
 </script>
 

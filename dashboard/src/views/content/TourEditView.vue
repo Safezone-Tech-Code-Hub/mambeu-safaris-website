@@ -16,6 +16,7 @@
       <TabPanel header="Summary">
         <div class="field-grid two page-card">
           <div><label>Title</label><InputText v-model="tour.title" class="w-full" /></div>
+          <div><label>URL path</label><InputText v-model="tour.path" class="w-full" /></div>
           <div><label>Comfort style</label><InputText v-model="tour.style" class="w-full" /></div>
           <div><label>Duration label</label><InputText v-model="tour.duration" class="w-full" /></div>
           <div><label>Days</label><InputNumber v-model="tour.days" class="w-full" /></div>
@@ -107,6 +108,8 @@ async function save() {
     const merged = { ...tour.value.payload, ...payload, title: tour.value.title, style: tour.value.style, duration: tour.value.duration, days: tour.value.days, description: tour.value.description, image: tour.value.image, featured: tour.value.featured };
     await pb.collection(COLLECTIONS.tours).update(tour.value.id, {
       title: tour.value.title,
+      path: String(tour.value.path || '').replace(/^\/|\/$/g, ''),
+      slug: String(tour.value.path || '').replace(/^\/|\/$/g, ''),
       style: tour.value.style,
       duration: tour.value.duration,
       days: tour.value.days,

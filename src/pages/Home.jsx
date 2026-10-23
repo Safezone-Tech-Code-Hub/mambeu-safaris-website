@@ -3,17 +3,30 @@ import { Link, useNavigate } from 'react-router-dom';
 import ComfortSection from '../components/ComfortSection.jsx';
 import FaqItem from '../components/FaqItem.jsx';
 import JourneyCard from '../components/JourneyCard.jsx';
-import { faqItems } from '../data/faq.js';
-import { places } from '../data/places.js';
-import tours from '../data/tours.json';
+import { useCms } from '../CmsProvider.jsx';
 import { href, Img } from '../lib/utils.js';
 
 const FEATURED_COMFORT_IDS = [302, 298, 291];
 
+const DEFAULT_HERO = {
+  eyebrow: 'TANZANIA, YOUR WAY',
+  titleLine1: 'Your Tanzania.',
+  titleLine2: 'Wildly personal.',
+  text: 'Extraordinary wildlife. Welcoming stays.\nThoughtfully planned around you.',
+  image: 'hero.webp',
+};
+
+function heroImageName(src) {
+  const name = String(src || 'hero.webp').split('/').pop();
+  return name || 'hero.webp';
+}
+
 export default function Home() {
   const navigate = useNavigate();
   const trackRef = useRef(null);
+  const { tours, places, faq, pages } = useCms();
   const [feature, setFeature] = useState('Comfort');
+  const hero = { ...DEFAULT_HERO, ...(pages.home?.hero || {}) };
 
   const featuredTours =
     feature === 'Comfort'
@@ -64,19 +77,24 @@ export default function Home() {
     <main id="main">
       <section className="home-hero">
         <div className="hero-image">
-          <Img src="hero.webp" alt="Wildebeest and zebras on Tanzania’s plains" priority />
+          <Img src={heroImageName(hero.image)} alt="Wildebeest and zebras on Tanzania’s plains" priority />
         </div>
         <div className="hero-content wrap">
-          <span className="eyebrow">TANZANIA, YOUR WAY</span>
+          <span className="eyebrow">{hero.eyebrow}</span>
           <h1>
-            Your Tanzania.
+            {hero.titleLine1}
             <br />
-            <span>Wildly personal.</span>
+            <span>{hero.titleLine2}</span>
           </h1>
           <p>
-            Extraordinary wildlife. Welcoming stays.
-            <br />
-            Thoughtfully planned around you.
+            {String(hero.text || '')
+              .split('\n')
+              .map((line, i) => (
+                <span key={i}>
+                  {i > 0 ? <br /> : null}
+                  {line}
+                </span>
+              ))}
           </p>
           <div className="hero-actions">
             <Link to={href('safaris')} className="button orange">
@@ -353,7 +371,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="faq-list">
-          {faqItems()
+          {faq
             .slice(0, 3)
             .map(([q, a]) => (
               <FaqItem key={q} question={q} answer={a} />

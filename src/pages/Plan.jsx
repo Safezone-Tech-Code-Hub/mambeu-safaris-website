@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PageHead from '../components/PageHead.jsx';
+import { useCms } from '../CmsProvider.jsx';
+import { siteChrome } from '../lib/cms.js';
 import { submitEnquiry } from '../lib/enquiry.js';
 
 export default function Plan() {
+  const { pages } = useCms();
+  const contact = siteChrome(pages);
+  const head = pages.plan?.head || {};
   const [searchParams] = useSearchParams();
   const formRef = useRef(null);
   const messageRef = useRef(null);
@@ -59,9 +64,9 @@ export default function Plan() {
     const msg = buildMessage(form);
     const values = Object.fromEntries(new FormData(form));
     setEnquiryText(msg);
-    setWhatsappHref('https://wa.me/255796086799?text=' + encodeURIComponent(msg));
+    setWhatsappHref('https://wa.me/' + contact.whatsapp + '?text=' + encodeURIComponent(msg));
     setEmailHref(
-      'mailto:info@mambeusafaris.com?subject=' +
+      'mailto:' + contact.email + '?subject=' +
         encodeURIComponent('Safari enquiry from ' + values.name) +
         '&body=' +
         encodeURIComponent(msg),
@@ -99,9 +104,12 @@ export default function Plan() {
   return (
     <main id="main">
       <PageHead
-        label="LET’S MAKE IT YOURS"
-        title={'Your ideas.<br><span class="accent">Our Tanzania.</span>'}
-        text="Tell us what you have in mind. We’ll help shape a journey around your interests, dates and comfort level."
+        label={head.label || 'LET’S MAKE IT YOURS'}
+        title={head.title || 'Your ideas.<br><span class="accent">Our Tanzania.</span>'}
+        text={
+          head.text ||
+          'Tell us what you have in mind. We’ll help shape a journey around your interests, dates and comfort level.'
+        }
       />
       <section className="wrap planner-layout">
         <aside>
@@ -127,16 +135,16 @@ export default function Plan() {
             </li>
           </ol>
           <div className="planner-contact">
-            <a href="mailto:info@mambeusafaris.com">info@mambeusafaris.com</a>
-            <a href="tel:+255796086799">+255 796 086 799</a>
-            <span>Arusha, Tanzania</span>
+            <a href={`mailto:${contact.email}`}>{contact.email}</a>
+            <a href={`tel:+${contact.phoneE164 || contact.whatsapp}`}>{contact.phone}</a>
+            <span>{contact.officeLocation}</span>
           </div>
         </aside>
         <form
           id="plan-form"
           ref={formRef}
           className="planner-form"
-          action="mailto:info@mambeusafaris.com"
+          action={`mailto:${contact.email}`}
           method="post"
           encType="text/plain"
           onSubmit={onSubmit}

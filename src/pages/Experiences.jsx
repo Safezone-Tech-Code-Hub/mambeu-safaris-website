@@ -1,15 +1,20 @@
 import { Link } from 'react-router-dom';
 import PageHead from '../components/PageHead.jsx';
-import { experiences } from '../data/experiences.js';
+import { useCms } from '../CmsProvider.jsx';
 import { Img } from '../lib/utils.js';
 
 export default function Experiences() {
+  const { experiences, pages } = useCms();
+  const head = pages.experiences?.head || {};
   return (
     <main id="main">
       <PageHead
-        label="FOLLOW YOUR CURIOSITY"
-        title={'A safari is only<br><span class="accent">the beginning.</span>'}
-        text="Add experiences that mean something to you, from cultural connections to a different view of the plains."
+        label={head.label || 'FOLLOW YOUR CURIOSITY'}
+        title={head.title || 'A safari is only<br><span class="accent">the beginning.</span>'}
+        text={
+          head.text ||
+          'Add experiences that mean something to you, from cultural connections to a different view of the plains.'
+        }
       />
       <section className="wrap experience-list">
         {experiences.map((x, i) => (

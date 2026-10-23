@@ -2,7 +2,7 @@
   <div class="app-shell">
     <aside class="app-sidebar">
       <div class="brand">
-        MAMBEU
+        <img src="/mambeu-logo.webp" alt="Mambeu Tanzania Safaris" />
         <span>MANAGE</span>
       </div>
       <PanelMenu :model="menuItems" class="sidebar-menu" />

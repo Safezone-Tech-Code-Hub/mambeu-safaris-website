@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
-import tours from '../data/tours.json';
+import { useCms } from '../CmsProvider.jsx';
+import { siteChrome } from '../lib/cms.js';
 import { esc, href, itineraryRoute, money, Img } from '../lib/utils.js';
 
 export default function JourneyDetail({ tourPath }) {
-  const t = tours.find((x) => x.path === tourPath);
+  const params = useParams();
+  const path = tourPath || params.tourPath;
+  const { tours, pages } = useCms();
+  const contact = siteChrome(pages);
+  const t = tours.find((x) => x.path === path);
   const [tierIndex, setTierIndex] = useState(0);
   const [daysExpanded, setDaysExpanded] = useState(false);
 
   useEffect(() => {
     if (!t) return;
-    const idx = t.pricingTiers.findIndex((p) => p.people === '2 people');
+    const idx = (t.pricingTiers || []).findIndex((p) => p.people === '2 people');
     setTierIndex(Math.max(idx, 0));
     setDaysExpanded(false);
   }, [t]);
@@ -29,11 +34,17 @@ export default function JourneyDetail({ tourPath }) {
     );
   }
 
-  const tiers = t.pricingTiers;
+  t.highlights = t.highlights || [];
+  t.itinerary = t.itinerary || [];
+  t.included = t.included || [];
+  t.excluded = t.excluded || [];
+  t.gallery = t.gallery || [];
+
+  const tiers = t.pricingTiers || [];
   const activeTier = tiers.length ? tiers[tierIndex] : null;
-  const imageFile = t.image.split('/').pop();
+  const imageFile = String(t.image || 'hero.webp').split('/').pop();
   const related = tours.filter((x) => x.id !== t.id && x.style === t.style).slice(0, 3);
-  const stays = t.itinerary.filter(
+  const stays = (t.itinerary || []).filter(
     (d) => d.accommodation && !/no accom|end of tour/i.test(d.accommodation),
   );
 
@@ -278,7 +289,7 @@ export default function JourneyDetail({ tourPath }) {
           </Link>
           <a
             className="whatsapp-link"
-            href={`https://wa.me/255796086799?text=${encodeURIComponent(
+            href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
               'Hello Mambeu, I would like to discuss ' + t.title,
             )}`}
             target="_blank"

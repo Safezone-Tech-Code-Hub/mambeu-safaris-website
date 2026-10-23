@@ -93,6 +93,13 @@ async function main() {
       console.log('synced levels.js', levels.length);
     }
 
+    const pages = await pb.collection('page_content').getFullList({ filter: 'status = "published"' });
+    if (pages.length) {
+      const byKey = Object.fromEntries(pages.map((row) => [row.pageKey, row.content || {}]));
+      writeFileSync(join(root, 'src/data/pages.json'), JSON.stringify(byKey, null, 2));
+      console.log('synced pages.json', pages.length);
+    }
+
     writeFileSync(
       join(root, 'src/data/cms-meta.json'),
       JSON.stringify({ syncedAt: new Date().toISOString(), pocketbaseUrl: url }, null, 2),

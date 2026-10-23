@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import Footer from './components/Footer.jsx';
 import Nav from './components/Nav.jsx';
-import tours from './data/tours.json';
 import { getPageMeta } from './meta.js';
 import About from './pages/About.jsx';
 import Comfort from './pages/Comfort.jsx';
@@ -45,13 +44,6 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/safaris/" element={<Safaris />} />
-        {tours.map((t) => (
-          <Route
-            key={t.path}
-            path={`/${t.path}/`}
-            element={<JourneyDetail tourPath={t.path} />}
-          />
-        ))}
         <Route path="/about/" element={<About />} />
         <Route path="/comfort/" element={<Comfort />} />
         <Route path="/destinations/" element={<Destinations />} />
@@ -61,6 +53,7 @@ export default function App() {
         <Route path="/experiences/" element={<Experiences />} />
         <Route path="/travel-guide/" element={<TravelGuide />} />
         <Route path="/plan/" element={<Plan />} />
+        <Route path="/:tourPath" element={<JourneyDetail />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

@@ -1,9 +1,8 @@
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { levels } from '../data/levels.js';
+import { useCms } from '../CmsProvider.jsx';
+import { levels as staticLevels } from '../data/levels.js';
 import { Img } from '../lib/utils.js';
-
-const styleKeys = Object.keys(levels);
 
 function imageNote(style) {
   if (style === 'Comfort') return 'A little space to take it all in';
@@ -17,8 +16,9 @@ function tabSubtitle(style) {
   return 'Elevated experiences';
 }
 
-function StylePanel({ style = 'Comfort' }) {
+function StylePanel({ style = 'Comfort', levels }) {
   const s = levels[style];
+  if (!s) return null;
   return (
     <>
       <div className="stay-photo">
@@ -33,7 +33,7 @@ function StylePanel({ style = 'Comfort' }) {
         <p className="stay-sub">{s.sub}</p>
         <p>{s.body}</p>
         <ul className="check-list">
-          {s.bullets.map((b) => (
+          {(s.bullets || []).map((b) => (
             <li key={b}>{b}</li>
           ))}
         </ul>
@@ -47,6 +47,9 @@ function StylePanel({ style = 'Comfort' }) {
 }
 
 export default function ComfortSection() {
+  const { levels: liveLevels } = useCms();
+  const levels = Object.keys(liveLevels || {}).length ? liveLevels : staticLevels;
+  const styleKeys = Object.keys(levels);
   const [activeStyle, setActiveStyle] = useState('Comfort');
   const [tabId, setTabId] = useState('tab-Comfort');
 
@@ -112,7 +115,7 @@ export default function ComfortSection() {
           role="tabpanel"
           aria-labelledby={tabId}
         >
-          <StylePanel style={activeStyle} />
+          <StylePanel style={activeStyle} levels={levels} />
         </div>
       </div>
     </section>

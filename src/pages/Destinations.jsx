@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import PageHead from '../components/PageHead.jsx';
-import { places } from '../data/places.js';
+import { useCms } from '../CmsProvider.jsx';
 import { Img } from '../lib/utils.js';
 
 const extraTiles = [
@@ -9,12 +9,17 @@ const extraTiles = [
 ];
 
 export default function Destinations() {
+  const { places, pages } = useCms();
+  const head = pages.destinations?.head || {};
   return (
     <main id="main">
       <PageHead
-        label="PLACES THAT STAY WITH YOU"
-        title={'One Tanzania.<br><span class="accent">So many worlds.</span>'}
-        text="Legendary wildlife parks, mountain landscapes and an Indian Ocean coast. Connect your favourite places into one personal journey."
+        label={head.label || 'PLACES THAT STAY WITH YOU'}
+        title={head.title || 'One Tanzania.<br><span class="accent">So many worlds.</span>'}
+        text={
+          head.text ||
+          'Legendary wildlife parks, mountain landscapes and an Indian Ocean coast. Connect your favourite places into one personal journey.'
+        }
       />
       <section className="wrap destination-grid">
         {places.map((p, i) => (

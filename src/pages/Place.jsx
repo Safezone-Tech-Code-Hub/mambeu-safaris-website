@@ -1,11 +1,11 @@
 import { Link, useParams } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
 import PageHead from '../components/PageHead.jsx';
-import { places } from '../data/places.js';
-import tours from '../data/tours.json';
+import { useCms } from '../CmsProvider.jsx';
 import Destinations from './Destinations.jsx';
 
 export default function Place() {
+  const { places, tours } = useCms();
   const { slug } = useParams();
   const p = places.find((x) => x.slug === slug);
 
@@ -13,9 +13,10 @@ export default function Place() {
     return <Destinations />;
   }
 
-  const related = tours
-    .filter((t) => JSON.stringify(t).toLowerCase().includes(p.q.toLowerCase()))
-    .slice(0, 3);
+  const needle = String(p.q || p.name || '').toLowerCase();
+  const related = needle
+    ? tours.filter((t) => JSON.stringify(t).toLowerCase().includes(needle)).slice(0, 3)
+    : [];
 
   return (
     <main id="main">
@@ -32,7 +33,7 @@ export default function Place() {
         <div>
           <p className="lead">{p.text}</p>
           <div className="highlights">
-            {p.facts.map((f) => (
+            {(p.facts || []).map((f) => (
               <span key={f}>{f}</span>
             ))}
           </div>

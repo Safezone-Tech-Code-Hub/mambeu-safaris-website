@@ -1,15 +1,21 @@
 import { Link } from 'react-router-dom';
 import ComfortSection from '../components/ComfortSection.jsx';
 import PageHead from '../components/PageHead.jsx';
+import { useCms } from '../CmsProvider.jsx';
 import { href } from '../lib/utils.js';
 
 export default function Comfort() {
+  const { pages } = useCms();
+  const head = pages.comfort?.head || {};
   return (
     <main id="main">
       <PageHead
-        label="YOUR KIND OF STAY"
-        title={'Adventure outside.<br><span class="accent">Comfort within.</span>'}
-        text="Midrange and comfort are at the heart of our approach. Luxury and camping remain part of the possibilities. Choose how you want your journey to feel."
+        label={head.label || 'YOUR KIND OF STAY'}
+        title={head.title || 'Adventure outside.<br><span class="accent">Comfort within.</span>'}
+        text={
+          head.text ||
+          'Midrange and comfort are at the heart of our approach. Luxury and camping remain part of the possibilities. Choose how you want your journey to feel.'
+        }
       />
       <ComfortSection />
       <section className="wrap split-story">
