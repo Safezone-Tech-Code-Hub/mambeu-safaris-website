@@ -5,7 +5,7 @@
     <template #content>
       <div class="field-grid">
         <div><label>Subtitle</label><InputText v-model="payloads[row.id].sub" class="w-full" /></div>
-        <div><label>Image</label><InputText v-model="payloads[row.id].image" class="w-full" /></div>
+        <div><label>Image</label><MediaFilePicker v-model="payloads[row.id].image" /></div>
         <div><label>Body</label><Textarea v-model="payloads[row.id].body" rows="4" class="w-full" autoResize /></div>
         <Button label="Save" @click="save(row)" />
       </div>
@@ -20,6 +20,7 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
+import MediaFilePicker from '@/components/MediaFilePicker.vue';
 import { COLLECTIONS, pb } from '@/lib/pb';
 
 const toast = useToast();

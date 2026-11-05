@@ -28,10 +28,19 @@ export function itineraryRoute(t) {
   );
 }
 
+/** Static /assets/ name, or full http(s) URL (e.g. PocketBase file URL from CMS). */
+export function resolveImageSrc(src) {
+  const raw = String(src ?? '').trim();
+  if (!raw) return '/assets/hero.webp';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  const name = raw.split('/').pop() || 'hero.webp';
+  return `/assets/${name}`;
+}
+
 export function Img({ src, alt, className = '', priority = false }) {
   return createElement('img', {
     className: className || undefined,
-    src: `/assets/${src}`,
+    src: resolveImageSrc(src),
     alt,
     ...(priority ? { fetchPriority: 'high' } : { loading: 'lazy' }),
     decoding: 'async',

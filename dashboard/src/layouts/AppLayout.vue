@@ -80,6 +80,11 @@ const menuItems = [
     ],
   },
   {
+    label: 'Media',
+    icon: 'pi pi-images',
+    command: () => router.push({ name: 'media' }),
+  },
+  {
     label: 'Leads',
     icon: 'pi pi-inbox',
     command: () => router.push({ name: 'leads' }),

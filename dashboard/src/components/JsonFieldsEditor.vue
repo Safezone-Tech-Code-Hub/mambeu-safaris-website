@@ -3,8 +3,15 @@
     <div v-for="field in fields" :key="field.key">
       <label :for="field.key">{{ field.label }}</label>
       <p v-if="field.hint" class="hint">{{ field.hint }}</p>
+      <MediaFilePicker
+        v-if="field.type === 'image' || field.type === 'images'"
+        :id="field.key"
+        v-model="model[field.key]"
+        :multiple="field.type === 'images'"
+        :hint="field.hint"
+      />
       <InputText
-        v-if="field.type === 'text'"
+        v-else-if="field.type === 'text' || !field.type"
         :id="field.key"
         v-model="model[field.key]"
         class="w-full"
@@ -24,6 +31,7 @@
 <script setup>
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
+import MediaFilePicker from '@/components/MediaFilePicker.vue';
 
 defineProps({
   fields: { type: Array, required: true },

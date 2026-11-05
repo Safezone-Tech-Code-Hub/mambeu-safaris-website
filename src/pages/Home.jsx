@@ -16,10 +16,15 @@ const DEFAULT_HERO = {
   image: 'hero.webp',
 };
 
-function heroImageName(src) {
-  const name = String(src || 'hero.webp').split('/').pop();
-  return name || 'hero.webp';
-}
+const DEFAULT_PLACES_SECTION = {
+  eyebrow: 'MEET THE PLACES THAT MAKE TANZANIA',
+  title: 'Six landscapes.\nCountless possibilities.',
+};
+
+const DEFAULT_FAQ_SECTION = {
+  eyebrow: 'A LITTLE HELP BEFORE YOU GO',
+  title: 'Good questions.\nPersonal answers.',
+};
 
 export default function Home() {
   const navigate = useNavigate();
@@ -27,6 +32,8 @@ export default function Home() {
   const { tours, places, faq, pages } = useCms();
   const [feature, setFeature] = useState('Comfort');
   const hero = { ...DEFAULT_HERO, ...(pages.home?.hero || {}) };
+  const placesSection = { ...DEFAULT_PLACES_SECTION, ...(pages.home?.placesSection || {}) };
+  const faqSection = { ...DEFAULT_FAQ_SECTION, ...(pages.home?.faqSection || {}) };
 
   const featuredTours =
     feature === 'Comfort'
@@ -77,7 +84,7 @@ export default function Home() {
     <main id="main">
       <section className="home-hero">
         <div className="hero-image">
-          <Img src={heroImageName(hero.image)} alt="Wildebeest and zebras on Tanzania’s plains" priority />
+          <Img src={hero.image} alt="Wildebeest and zebras on Tanzania’s plains" priority />
         </div>
         <div className="hero-content wrap">
           <span className="eyebrow">{hero.eyebrow}</span>
@@ -234,11 +241,16 @@ export default function Home() {
       <section className="places-section wrap">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">MEET THE PLACES THAT MAKE TANZANIA</span>
+            <span className="eyebrow">{placesSection.eyebrow}</span>
             <h2>
-              Six landscapes.
-              <br />
-              Countless possibilities.
+              {String(placesSection.title || '')
+                .split('\n')
+                .map((line, i) => (
+                  <span key={i}>
+                    {i > 0 ? <br /> : null}
+                    {line}
+                  </span>
+                ))}
             </h2>
           </div>
           <div className="slider-actions">
@@ -360,11 +372,16 @@ export default function Home() {
 
       <section className="wrap home-faq">
         <div>
-          <span className="eyebrow">A LITTLE HELP BEFORE YOU GO</span>
+          <span className="eyebrow">{faqSection.eyebrow}</span>
           <h2>
-            Good questions.
-            <br />
-            Personal answers.
+            {String(faqSection.title || '')
+              .split('\n')
+              .map((line, i) => (
+                <span key={i}>
+                  {i > 0 ? <br /> : null}
+                  {line}
+                </span>
+              ))}
           </h2>
           <Link to={href('travel-guide')} className="text-link">
             All planning questions

@@ -31,6 +31,7 @@ const routes = [
       { path: 'content/experiences', name: 'experiences', component: () => import('@/views/content/ExperiencesListView.vue') },
       { path: 'content/comfort-levels', name: 'comfort-levels', component: () => import('@/views/content/ComfortLevelsView.vue') },
       { path: 'content/faq', name: 'faq', component: () => import('@/views/content/FaqListView.vue') },
+      { path: 'media', name: 'media', component: () => import('@/views/content/MediaLibraryView.vue') },
       { path: 'leads', name: 'leads', component: () => import('@/views/leads/EnquiriesListView.vue') },
       { path: 'leads/:id', name: 'lead-detail', component: () => import('@/views/leads/EnquiryDetailView.vue') },
       { path: 'settings', name: 'settings', component: () => import('@/views/SettingsView.vue') },

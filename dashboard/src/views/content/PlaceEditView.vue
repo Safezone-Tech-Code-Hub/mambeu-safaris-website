@@ -13,7 +13,10 @@
         <Select v-model="place.status" :options="['draft', 'published']" class="w-full" />
       </div>
       <div><label>Tagline</label><InputText v-model="payload.tag" class="w-full" /></div>
-      <div><label>Photo</label><InputText v-model="payload.photo" class="w-full" /></div>
+      <div class="col-span-2">
+        <label>Photo</label>
+        <MediaFilePicker v-model="payload.photo" />
+      </div>
       <div class="col-span-2"><label>Description</label><Textarea v-model="payload.text" rows="4" class="w-full" autoResize /></div>
       <div class="col-span-2"><label>Facts (one per line)</label><Textarea v-model="factsText" rows="4" class="w-full" autoResize /></div>
     </div>
@@ -29,6 +32,7 @@ import Button from 'primevue/button';
 import Select from 'primevue/select';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
+import MediaFilePicker from '@/components/MediaFilePicker.vue';
 import { COLLECTIONS, pb } from '@/lib/pb';
 
 const route = useRoute();

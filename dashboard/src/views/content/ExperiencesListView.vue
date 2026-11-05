@@ -11,7 +11,7 @@
     <div class="field-grid" v-if="current">
       <div><label>Title</label><InputText v-model="current.title" class="w-full" /></div>
       <div><label>Headline</label><InputText v-model="payload.headline" class="w-full" /></div>
-      <div><label>Photo</label><InputText v-model="payload.photo" class="w-full" /></div>
+      <div><label>Photo</label><MediaFilePicker v-model="payload.photo" /></div>
       <div><label>Body</label><Textarea v-model="payload.body" rows="4" class="w-full" autoResize /></div>
       <Button label="Save" @click="saveCurrent" :loading="saving" />
     </div>
@@ -27,6 +27,7 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
+import MediaFilePicker from '@/components/MediaFilePicker.vue';
 import { COLLECTIONS, pb } from '@/lib/pb';
 
 const toast = useToast();

@@ -42,7 +42,7 @@ export default function JourneyDetail({ tourPath }) {
 
   const tiers = t.pricingTiers || [];
   const activeTier = tiers.length ? tiers[tierIndex] : null;
-  const imageFile = String(t.image || 'hero.webp').split('/').pop();
+  const imageFile = t.image || 'hero.webp';
   const related = tours.filter((x) => x.id !== t.id && x.style === t.style).slice(0, 3);
   const stays = (t.itinerary || []).filter(
     (d) => d.accommodation && !/no accom|end of tour/i.test(d.accommodation),

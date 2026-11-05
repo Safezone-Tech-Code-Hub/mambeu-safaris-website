@@ -18,9 +18,16 @@
           <div class="field-grid">
             <div v-for="field in tab.fields" :key="field.key">
               <label>{{ field.label }}</label>
-              <p v-if="field.hint" class="hint">{{ field.hint }}</p>
+              <p v-if="field.hint && field.type !== 'image' && field.type !== 'images'" class="hint">{{ field.hint }}</p>
+              <MediaFilePicker
+                v-if="field.type === 'image' || field.type === 'images'"
+                :multiple="field.type === 'images'"
+                :hint="field.hint"
+                :modelValue="getNested(content, field.path)"
+                @update:modelValue="(v) => setNested(content, field.path, v)"
+              />
               <Textarea
-                v-if="field.long"
+                v-else-if="field.long"
                 :modelValue="getNested(content, field.path)"
                 @update:modelValue="(v) => setNested(content, field.path, v)"
                 rows="4"
@@ -60,6 +67,7 @@ import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
 import { usePageContent } from '@/composables/usePageContent';
+import MediaFilePicker from '@/components/MediaFilePicker.vue';
 import { getNested, pageEditorTabs, setNested } from '@/lib/pageEditorConfig';
 
 const props = defineProps({

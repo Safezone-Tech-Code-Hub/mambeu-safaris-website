@@ -22,7 +22,10 @@
           <div><label>Days</label><InputNumber v-model="tour.days" class="w-full" /></div>
           <div class="col-span-2"><label>Short description</label><Textarea v-model="tour.description" rows="3" class="w-full" autoResize /></div>
           <div class="col-span-2"><label>Full description</label><Textarea v-model="payload.fullDescription" rows="5" class="w-full" autoResize /></div>
-          <div><label>Hero image path</label><InputText v-model="tour.image" class="w-full" /></div>
+          <div class="col-span-2">
+            <label>Hero image</label>
+            <MediaFilePicker v-model="tour.image" />
+          </div>
           <div><label>Featured on home</label><ToggleSwitch v-model="tour.featured" /></div>
         </div>
       </TabPanel>
@@ -35,12 +38,23 @@
         </div>
         <Button label="Add price row" icon="pi pi-plus" text @click="payload.pricingTiers.push({ people: '', price: 0 })" />
       </TabPanel>
+      <TabPanel header="Gallery">
+        <div class="page-card">
+          <label>Gallery images</label>
+          <p class="hint">Optional extra photos for this journey.</p>
+          <MediaFilePicker v-model="payload.gallery" multiple />
+        </div>
+      </TabPanel>
       <TabPanel header="Itinerary">
         <div v-for="(day, i) in payload.itinerary" :key="i" class="day-card page-card">
           <div class="field-grid two">
             <div><label>Day</label><InputText v-model="day.day" class="w-full" /></div>
             <div><label>Title</label><InputText v-model="day.title" class="w-full" /></div>
             <div class="col-span-2"><label>Description</label><Textarea v-model="day.description" rows="3" class="w-full" autoResize /></div>
+            <div class="col-span-2">
+              <label>Day photo</label>
+              <MediaFilePicker v-model="day.image" />
+            </div>
           </div>
           <Button label="Remove day" icon="pi pi-trash" severity="danger" text @click="payload.itinerary.splice(i, 1)" />
         </div>
@@ -64,6 +78,7 @@ import Select from 'primevue/select';
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
+import MediaFilePicker from '@/components/MediaFilePicker.vue';
 import { COLLECTIONS, describePbError, pb } from '@/lib/pb';
 
 const route = useRoute();
@@ -94,6 +109,7 @@ onMounted(async () => {
     Object.assign(payload, row.payload || {});
     if (!Array.isArray(payload.pricingTiers)) payload.pricingTiers = [];
     if (!Array.isArray(payload.itinerary)) payload.itinerary = [];
+    if (!Array.isArray(payload.gallery)) payload.gallery = [];
   } catch (e) {
     error.value = describePbError(e);
   } finally {
