@@ -48,6 +48,7 @@
           </div>
           <HomePlacesPanel v-if="tab.panel === 'home-places'" class="tab-panel-extra" />
           <HomeFaqPanel v-else-if="tab.panel === 'home-faq'" class="tab-panel-extra" />
+          <ComfortLevelsPanel v-else-if="tab.panel === 'comfort-levels'" class="tab-panel-extra" />
         </TabPanel>
       </TabView>
       <div v-else class="field-grid">
@@ -76,6 +77,7 @@ import { usePageContent } from '@/composables/usePageContent';
 import MediaFilePicker from '@/components/MediaFilePicker.vue';
 import HomePlacesPanel from '@/components/HomePlacesPanel.vue';
 import HomeFaqPanel from '@/components/HomeFaqPanel.vue';
+import ComfortLevelsPanel from '@/components/ComfortLevelsPanel.vue';
 import { getNested, pageEditorTabs, setNested } from '@/lib/pageEditorConfig';
 
 const props = defineProps({

@@ -2,19 +2,8 @@ import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCms } from '../CmsProvider.jsx';
 import { levels as staticLevels } from '../data/levels.js';
+import { normalizeLevelsMap } from '../content/levelDefaults.js';
 import { Img } from '../lib/utils.js';
-
-function imageNote(style) {
-  if (style === 'Comfort') return 'A little space to take it all in';
-  if (style === 'Luxury') return 'Special experiences, by arrangement';
-  return 'Time to unwind between game drives';
-}
-
-function tabSubtitle(style) {
-  if (style === 'Comfort') return 'The perfect balance';
-  if (style === 'Midrange') return 'Thoughtful value';
-  return 'Elevated experiences';
-}
 
 function StylePanel({ style = 'Comfort', levels }) {
   const s = levels[style];
@@ -23,13 +12,21 @@ function StylePanel({ style = 'Comfort', levels }) {
     <>
       <div className="stay-photo">
         <Img src={s.image} alt={s.alt} />
-        <span className="image-note">{imageNote(style)}</span>
+        <span className="image-note">{s.imageNote}</span>
       </div>
       <div className="stay-copy">
         <span className="eyebrow">
           {s.number} / {style.toUpperCase()} SAFARIS
         </span>
-        <h3 dangerouslySetInnerHTML={{ __html: s.title }} />
+        <h3>
+          {s.titleLine1}
+          {s.titleLine2 ? (
+            <>
+              <br />
+              {s.titleLine2}
+            </>
+          ) : null}
+        </h3>
         <p className="stay-sub">{s.sub}</p>
         <p>{s.body}</p>
         <ul className="check-list">
@@ -46,14 +43,30 @@ function StylePanel({ style = 'Comfort', levels }) {
   );
 }
 
+function splitTwoLines(text, fallback1, fallback2) {
+  if (!text || typeof text !== 'string') return [fallback1, fallback2];
+  if (!text.includes('\n')) return [text.trim(), ''];
+  const [a, b] = text.split('\n');
+  return [a.trim() || fallback1, (b || '').trim() || fallback2];
+}
+
+function sectionLines(section) {
+  const eyebrow = section?.eyebrow || 'YOUR SAFARI. YOUR KIND OF STAY.';
+  let titleLine1 = section?.titleLine1;
+  let titleLine2 = section?.titleLine2;
+  if (!titleLine1) [titleLine1, titleLine2] = splitTwoLines(section?.title, 'Comfort is personal.', 'Let’s find yours.');
+  let introLine1 = section?.introLine1;
+  let introLine2 = section?.introLine2;
+  if (!introLine1) [introLine1, introLine2] = splitTwoLines(section?.intro, 'Midrange and comfort at our heart.', 'Luxury when you want a little more.');
+  return { eyebrow, titleLine1, titleLine2, introLine1, introLine2 };
+}
+
 export default function ComfortSection({ section }) {
   const { levels: liveLevels, pages } = useCms();
-  const intro = section || pages.home?.comfortSection || {};
-  const eyebrow = intro.eyebrow || 'YOUR SAFARI. YOUR KIND OF STAY.';
-  const title = intro.title || 'Comfort is personal.\nLet’s find yours.';
-  const introText =
-    intro.intro || 'Midrange and comfort at our heart.\nLuxury when you want a little more.';
-  const levels = Object.keys(liveLevels || {}).length ? liveLevels : staticLevels;
+  const intro = section || pages.comfort?.comfortSection || pages.home?.comfortSection || {};
+  const { eyebrow, titleLine1, titleLine2, introLine1, introLine2 } = sectionLines(intro);
+  const rawLevels = Object.keys(liveLevels || {}).length ? liveLevels : staticLevels;
+  const levels = normalizeLevelsMap(rawLevels);
   const styleKeys = Object.keys(levels);
   const [activeStyle, setActiveStyle] = useState('Comfort');
   const [tabId, setTabId] = useState('tab-Comfort');
@@ -66,7 +79,7 @@ export default function ComfortSection({ section }) {
   const onKeyDown = (e, index) => {
     let n;
     if (e.key === 'ArrowRight') n = (index + 1) % styleKeys.length;
-    else if (e.key === 'ArrowLeft') n = (index + styleKeys.length - 1) % styleKeys.length;
+    else if (e.key === 'ArrowLeft') n = (index - styleKeys.length + 1) % styleKeys.length;
     else if (e.key === 'Home') n = 0;
     else if (e.key === 'End') n = styleKeys.length - 1;
     if (n !== undefined) {
@@ -84,25 +97,23 @@ export default function ComfortSection({ section }) {
           <div>
             <span className="eyebrow">{eyebrow}</span>
             <h2>
-              {String(title)
-                .split('\n')
-                .map((line, i) => (
-                  <span key={i}>
-                    {i > 0 ? <br /> : null}
-                    {line}
-                  </span>
-                ))}
+              {titleLine1}
+              {titleLine2 ? (
+                <>
+                  <br />
+                  {titleLine2}
+                </>
+              ) : null}
             </h2>
           </div>
           <p>
-            {String(introText)
-              .split('\n')
-              .map((line, i) => (
-                <span key={i}>
-                  {i > 0 ? <br /> : null}
-                  {line}
-                </span>
-              ))}
+            {introLine1}
+            {introLine2 ? (
+              <>
+                <br />
+                {introLine2}
+              </>
+            ) : null}
           </p>
         </div>
         <div className="style-tabs" role="tablist" aria-label="Safari comfort levels">
@@ -120,16 +131,11 @@ export default function ComfortSection({ section }) {
               onKeyDown={(e) => onKeyDown(e, i)}
             >
               {s}
-              <span>{tabSubtitle(s)}</span>
+              <span>{levels[s]?.tabSubtitle || ''}</span>
             </button>
           ))}
         </div>
-        <div
-          className="stay-panel"
-          id="stay-panel"
-          role="tabpanel"
-          aria-labelledby={tabId}
-        >
+        <div className="stay-panel" id="stay-panel" role="tabpanel" aria-labelledby={tabId}>
           <StylePanel style={activeStyle} levels={levels} />
         </div>
       </div>

@@ -14,6 +14,7 @@
     "backup:pb": "node scripts/backup-pocketbase.mjs",
     "merge:home-page": "node scripts/merge-home-page-content.mjs",
     "merge:about-page": "node scripts/merge-about-page-content.mjs",
+    "merge:comfort-page": "node scripts/merge-comfort-page-content.mjs",
     "docker:up": "docker compose up -d --build"
   },
   "dependencies": {

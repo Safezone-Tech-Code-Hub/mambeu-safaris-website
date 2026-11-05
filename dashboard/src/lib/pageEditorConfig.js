@@ -210,8 +210,37 @@ export const pageEditorTabs = {
       label: 'Page head',
       fields: [
         { key: 'head.label', label: 'Eyebrow', path: ['head', 'label'] },
-        { key: 'head.title', label: 'Title', path: ['head', 'title'], long: true },
+        { key: 'head.titleLine1', label: 'Title line 1', path: ['head', 'titleLine1'] },
+        { key: 'head.titleLine2', label: 'Title line 2 (accent colour, optional)', path: ['head', 'titleLine2'] },
         { key: 'head.text', label: 'Intro', path: ['head', 'text'], long: true },
+      ],
+    },
+    {
+      label: 'Comfort tabs',
+      panel: 'comfort-levels',
+      fields: [
+        { key: 'comfortSection.eyebrow', label: 'Eyebrow', path: ['comfortSection', 'eyebrow'] },
+        { key: 'comfortSection.titleLine1', label: 'Heading line 1', path: ['comfortSection', 'titleLine1'] },
+        { key: 'comfortSection.titleLine2', label: 'Heading line 2', path: ['comfortSection', 'titleLine2'] },
+        { key: 'comfortSection.introLine1', label: 'Intro line 1 (right column)', path: ['comfortSection', 'introLine1'] },
+        { key: 'comfortSection.introLine2', label: 'Intro line 2', path: ['comfortSection', 'introLine2'] },
+      ],
+    },
+    {
+      label: 'Thoughtful balance',
+      fields: [
+        { key: 'balanceSection.eyebrow', label: 'Eyebrow', path: ['balanceSection', 'eyebrow'] },
+        { key: 'balanceSection.titleLine1', label: 'Heading line 1', path: ['balanceSection', 'titleLine1'] },
+        { key: 'balanceSection.titleLine2', label: 'Heading line 2', path: ['balanceSection', 'titleLine2'] },
+        { key: 'balanceSection.lead', label: 'Lead paragraph', path: ['balanceSection', 'lead'], long: true },
+        { key: 'balanceSection.body', label: 'Second paragraph', path: ['balanceSection', 'body'], long: true },
+        { key: 'balanceSection.linkText', label: 'Link text', path: ['balanceSection', 'linkText'] },
+        {
+          key: 'balanceSection.linkPath',
+          label: 'Link path',
+          path: ['balanceSection', 'linkPath'],
+          hint: 'e.g. safaris?style=Camping',
+        },
       ],
     },
   ],

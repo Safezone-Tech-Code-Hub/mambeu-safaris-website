@@ -3,6 +3,7 @@ import { experiences as experiencesStatic } from '../data/experiences.js';
 import { faqItems } from '../data/faq.js';
 import { levels as levelsStatic } from '../data/levels.js';
 import { places as placesStatic } from '../data/places.js';
+import { normalizeLevelPayload, normalizeLevelsMap } from '../content/levelDefaults.js';
 
 const pbUrl = () =>
   (import.meta.env.VITE_POCKETBASE_URL || 'https://dashboard-mambeu.schoolhub.space').replace(/\/$/, '');
@@ -11,7 +12,7 @@ export const staticCatalog = {
   tours: toursStatic,
   places: placesStatic,
   experiences: experiencesStatic,
-  levels: levelsStatic,
+  levels: normalizeLevelsMap(levelsStatic),
   faq: faqItems(),
   pages: {},
 };
@@ -78,7 +79,12 @@ export async function fetchCatalog() {
         })
       : staticCatalog.experiences,
     levels: levels
-      ? Object.fromEntries(levels.map((row) => [row.levelKey || row.title, row.payload || {}]))
+      ? Object.fromEntries(
+          levels.map((row) => [
+            row.levelKey || row.title,
+            normalizeLevelPayload(row.payload || {}, row.levelKey || row.title),
+          ]),
+        )
       : staticCatalog.levels,
     faq: faq ? faq.map((row) => [row.question, row.answer]) : staticCatalog.faq,
     pages: pages
