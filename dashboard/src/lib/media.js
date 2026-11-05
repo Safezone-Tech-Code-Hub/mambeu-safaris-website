@@ -1,4 +1,4 @@
-import { COLLECTIONS, getPbUrl, pb } from '@/lib/pb';
+import { COLLECTIONS, getListWithSort, pb } from '@/lib/pb';
 
 /** Public URL for a file stored in PocketBase `media`. */
 export function mediaFileUrl(record, filename) {
@@ -14,12 +14,11 @@ export function previewUrlForValue(value) {
   const base = (import.meta.env.VITE_PUBLIC_SITE_URL || '').replace(/\/$/, '');
   const name = v.split('/').pop();
   if (base && name) return `${base}/assets/${name}`;
-  if (name) return `${getPbUrl()}/api/files/media/placeholder/${name}`;
   return '';
 }
 
 export async function listMediaRecords(page = 1, perPage = 48) {
-  return pb.collection(COLLECTIONS.media).getList(page, perPage, { sort: '-created' });
+  return getListWithSort(COLLECTIONS.media, page, perPage, { sort: '-@created' });
 }
 
 export async function uploadMediaFile(file, alt = '') {

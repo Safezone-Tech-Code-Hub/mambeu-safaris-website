@@ -22,6 +22,25 @@ export const getPublicSiteUrl = () =>
 export const pb = new PocketBase(getPbUrl());
 pb.autoCancellation(false);
 
+/** PocketBase 0.20.x rejects `sort=-created`; newer versions accept it. */
+/** v0.20.x often only allows `-id`; try system date fields first on newer PB. */
+const RECORD_SORT_FALLBACKS = ['-@created', '-created', '-updated', '-id', ''];
+
+export async function getListWithSort(collection, page = 1, perPage = 30, options = {}) {
+  const { sort, ...rest } = options;
+  const candidates = [...new Set([sort, ...RECORD_SORT_FALLBACKS].filter(Boolean))];
+  for (const candidate of candidates) {
+    try {
+      const query = candidate ? { ...rest, sort: candidate } : { ...rest };
+      return await pb.collection(collection).getList(page, perPage, query);
+    } catch (e) {
+      const msg = `${e?.message || ''} ${e?.response?.message || ''} ${e?.response?.data?.details || ''}`;
+      if (!/invalid sort field/i.test(msg)) throw e;
+    }
+  }
+  return pb.collection(collection).getList(page, perPage, rest);
+}
+
 const COLLECTION_HINT =
   'The PocketBase "media" collection may be missing. On the VPS (repo root): npm run ensure:pb-collections';
 
@@ -29,8 +48,11 @@ export function describePbError(error, fallback = 'Something went wrong.') {
   if (!error) return fallback;
 
   const status = error?.status ?? error?.response?.code;
+  const details = error?.response?.data?.details || error?.data?.details || '';
   const responseMsg = error?.response?.message || error?.data?.message || '';
   const message = String(error?.message || responseMsg || '');
+  if (details && message) return `${message} (${details})`;
+  if (details) return String(details);
 
   if (
     status === 404 ||
