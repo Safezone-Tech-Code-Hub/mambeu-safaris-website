@@ -19,7 +19,7 @@
     <div class="page-card">
       <TabView v-if="tabs.length">
         <TabPanel v-for="tab in tabs" :key="tab.label" :header="tab.label">
-          <div class="field-grid">
+          <div v-if="tab.fields?.length" class="field-grid">
             <div v-for="field in tab.fields" :key="field.key">
               <label>{{ field.label }}</label>
               <p v-if="field.hint && field.type !== 'image' && field.type !== 'images'" class="hint">{{ field.hint }}</p>
@@ -46,6 +46,8 @@
               />
             </div>
           </div>
+          <HomePlacesPanel v-if="tab.panel === 'home-places'" class="tab-panel-extra" />
+          <HomeFaqPanel v-else-if="tab.panel === 'home-faq'" class="tab-panel-extra" />
         </TabPanel>
       </TabView>
       <div v-else class="field-grid">
@@ -72,6 +74,8 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
 import { usePageContent } from '@/composables/usePageContent';
 import MediaFilePicker from '@/components/MediaFilePicker.vue';
+import HomePlacesPanel from '@/components/HomePlacesPanel.vue';
+import HomeFaqPanel from '@/components/HomeFaqPanel.vue';
 import { getNested, pageEditorTabs, setNested } from '@/lib/pageEditorConfig';
 
 const props = defineProps({
@@ -121,5 +125,10 @@ label {
   font-weight: 600;
   display: block;
   margin-bottom: 0.25rem;
+}
+.tab-panel-extra {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--p-content-border-color, #e5e7eb);
 }
 </style>

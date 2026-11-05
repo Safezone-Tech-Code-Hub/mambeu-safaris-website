@@ -101,11 +101,33 @@ export const homePageDefaults = {
   },
 };
 
+/** PocketBase may still store older homepage shapes from before the 10-tab editor. */
+export function normalizeLegacyHome(src) {
+  const next = src && typeof src === 'object' ? { ...src } : {};
+  if (Array.isArray(next.featuredComfortIds)) {
+    const ids = next.featuredComfortIds.join(',');
+    next.curated = { ...(next.curated || {}), featuredComfortTourIds: next.curated?.featuredComfortTourIds || ids };
+  }
+  return next;
+}
+
+function mergeSection(defaults, override) {
+  const out = { ...defaults };
+  if (!override || typeof override !== 'object') return out;
+  for (const [k, v] of Object.entries(override)) {
+    if (v === undefined || v === null) continue;
+    if (typeof v === 'string' && v.trim() === '' && String(defaults[k] ?? '').trim() !== '') continue;
+    out[k] = v;
+  }
+  return out;
+}
+
+/** Full homepage payload for the public site and the dashboard editor. */
 export function mergeHomeContent(cmsHome) {
-  const src = cmsHome && typeof cmsHome === 'object' ? cmsHome : {};
+  const src = normalizeLegacyHome(cmsHome);
   const out = {};
   for (const [key, defaults] of Object.entries(homePageDefaults)) {
-    out[key] = { ...defaults, ...(src[key] || {}) };
+    out[key] = mergeSection(defaults, src[key]);
   }
   return out;
 }

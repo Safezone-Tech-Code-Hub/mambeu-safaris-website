@@ -69,6 +69,7 @@ export const pageEditorTabs = {
     },
     {
       label: 'Destinations slider',
+      panel: 'home-places',
       fields: [
         { key: 'placesSection.eyebrow', label: 'Eyebrow', path: ['placesSection', 'eyebrow'] },
         { key: 'placesSection.title', label: 'Title', path: ['placesSection', 'title'], long: true },
@@ -120,6 +121,7 @@ export const pageEditorTabs = {
     },
     {
       label: 'FAQ',
+      panel: 'home-faq',
       fields: [
         { key: 'faqSection.eyebrow', label: 'Eyebrow', path: ['faqSection', 'eyebrow'] },
         { key: 'faqSection.title', label: 'Title', path: ['faqSection', 'title'], long: true },
