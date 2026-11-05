@@ -10,7 +10,13 @@
     </div>
   </div>
 
-  <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
+  <Message v-if="error" severity="error" :closable="false">
+    <span>{{ error }}</span>
+    <p v-if="showCollectionHint" class="hint mt-2">
+      From the project root on the server, with <code>pocketbase/.env</code> set:
+      <code>npm run ensure:pb-collections</code>
+    </p>
+  </Message>
 
   <ProgressSpinner v-if="loading && !rows.length" />
 
@@ -50,7 +56,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
@@ -81,6 +87,10 @@ const perPage = 24;
 const totalRecords = ref(0);
 const fileInput = ref(null);
 const altDraft = reactive({});
+
+const showCollectionHint = computed(() =>
+  /collection|ensure:pb-collections|404/i.test(error.value || ''),
+);
 
 function fullUrl(row) {
   return row?.file ? mediaFileUrl(row, row.file) : '#';

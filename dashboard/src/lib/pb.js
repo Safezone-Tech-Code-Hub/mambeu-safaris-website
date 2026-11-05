@@ -22,8 +22,28 @@ export const getPublicSiteUrl = () =>
 export const pb = new PocketBase(getPbUrl());
 pb.autoCancellation(false);
 
+const COLLECTION_HINT =
+  'The PocketBase "media" collection may be missing. On the VPS (repo root): npm run ensure:pb-collections';
+
 export function describePbError(error, fallback = 'Something went wrong.') {
   if (!error) return fallback;
+
+  const status = error?.status ?? error?.response?.code;
+  const responseMsg = error?.response?.message || error?.data?.message || '';
+  const message = String(error?.message || responseMsg || '');
+
+  if (
+    status === 404 ||
+    /collection context|collection.*not found|wasn't found/i.test(message) ||
+    /collection context|collection.*not found/i.test(String(responseMsg))
+  ) {
+    return responseMsg || COLLECTION_HINT;
+  }
+
+  if (status === 0 && /failed to fetch|network|load failed/i.test(message)) {
+    return 'Could not reach PocketBase. Check VITE_POCKETBASE_URL and CORS on the PocketBase admin (Settings → Application).';
+  }
+
   const data = error?.data?.data;
   if (data && typeof data === 'object') {
     const parts = Object.entries(data).flatMap(([field, msg]) => {
@@ -33,5 +53,5 @@ export function describePbError(error, fallback = 'Something went wrong.') {
     });
     if (parts.length) return parts.join(' ');
   }
-  return error?.message || fallback;
+  return message || fallback;
 }
