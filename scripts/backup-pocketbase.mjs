@@ -23,7 +23,26 @@ const copyDir = process.env.BACKUP_COPY_DIR?.trim();
 function stamp() {
   const d = new Date();
   const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+}
+
+function isNameExistsError(error) {
+  const code = error?.response?.data?.name?.code || error?.data?.data?.name?.code;
+  return code === 'validation_backup_name_exists' || /already exists/i.test(error?.message || '');
+}
+
+async function createBackupWithUniqueName(pb) {
+  let name = `mambeu-${stamp()}.zip`;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      await pb.backups.create(name);
+      return name;
+    } catch (e) {
+      if (!isNameExistsError(e) || attempt === 4) throw e;
+      name = `mambeu-${stamp()}-${attempt + 1}.zip`;
+    }
+  }
+  return name;
 }
 
 function localBackupFiles() {
@@ -66,9 +85,7 @@ async function pruneApiBackups(pb) {
 }
 
 const pb = await createAdminClient();
-const name = `mambeu-${stamp()}.zip`;
-
-await pb.backups.create(name);
+const name = await createBackupWithUniqueName(pb);
 console.log('created backup', name);
 
 if (copyDir) {

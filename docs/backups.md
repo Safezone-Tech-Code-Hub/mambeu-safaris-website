@@ -53,10 +53,19 @@ crontab -e
 ```
 
 ```cron
-0 3 * * * cd /home/humphrey/production/applications/mambeu-safaris-website && /usr/bin/npm run backup:pb >> /home/humphrey/logs/mambeu-backup.log 2>&1
+0 3 * * * cd /home/humphrey/production/applications/mambeu-safaris-website && npm run backup:pb >> /home/humphrey/logs/mambeu-backup.log 2>&1
 ```
 
-Use `which npm` on the VPS if the path differs.
+(Elevated’s backup at `15 2 * * *` can stay on the same crontab — different project, different schedule.)
+
+Use `which npm` on the VPS if cron cannot find `npm`.
+
+### Verify after the first night
+
+```bash
+ls -lh ~/production/applications/mambeu-safaris-website/pocketbase/pb_data/backups/
+tail -20 ~/logs/mambeu-backup.log
+```
 
 ---
 
