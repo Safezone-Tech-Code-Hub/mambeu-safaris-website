@@ -1,4 +1,5 @@
 /** Default CMS page payloads (editable in dashboard). */
+import { aboutPageDefaults } from '../src/content/aboutDefaults.js';
 import { homePageDefaults } from '../src/content/homeDefaults.js';
 
 export const siteChromeDefault = {
@@ -18,19 +19,7 @@ export const siteChromeDefault = {
 
 export const homePageDefault = homePageDefaults;
 
-export const aboutPageDefault = {
-  head: {
-    label: 'THE PEOPLE BEHIND YOUR JOURNEY',
-    title: 'Rooted in Tanzania.<br><span class="accent">Made around you.</span>',
-    text: 'Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys.',
-  },
-  storyPhoto: 'team.webp',
-  values: [
-    ['01', 'Personal by design', 'Your dates, interests and comfort level shape the journey. We listen first, then help you connect the details.'],
-    ['02', 'Rooted in Tanzania', 'Local knowledge helps us choose routes, stays and experiences that work together.'],
-    ['03', 'Travel responsibly', 'Respect for nature and communities guides how we share Tanzania with our visitors.'],
-  ],
-};
+export const aboutPageDefault = aboutPageDefaults;
 
 export const planPageDefault = {
   head: {

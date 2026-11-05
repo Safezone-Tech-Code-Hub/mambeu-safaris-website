@@ -135,9 +135,52 @@ export const pageEditorTabs = {
       label: 'Page head',
       fields: [
         { key: 'head.label', label: 'Eyebrow', path: ['head', 'label'] },
-        { key: 'head.title', label: 'Title (HTML allowed)', path: ['head', 'title'], long: true },
+        { key: 'head.titleLine1', label: 'Title line 1', path: ['head', 'titleLine1'] },
+        { key: 'head.titleLine2', label: 'Title line 2 (accent colour)', path: ['head', 'titleLine2'] },
         { key: 'head.text', label: 'Intro', path: ['head', 'text'], long: true },
-        { key: 'storyPhoto', label: 'Story photo', path: ['storyPhoto'], type: 'image' },
+      ],
+    },
+    {
+      label: 'Who we are',
+      fields: [
+        { key: 'storyPhoto', label: 'Photo', path: ['storyPhoto'], type: 'image' },
+        { key: 'storyPhotoAlt', label: 'Photo description (for accessibility)', path: ['storyPhotoAlt'] },
+        { key: 'storyPhotoCaption', label: 'Caption on photo', path: ['storyPhotoCaption'] },
+        { key: 'story.eyebrow', label: 'Eyebrow', path: ['story', 'eyebrow'] },
+        { key: 'story.titleLine1', label: 'Heading line 1', path: ['story', 'titleLine1'] },
+        { key: 'story.titleLine2', label: 'Heading line 2', path: ['story', 'titleLine2'] },
+        { key: 'story.paragraph1', label: 'Paragraph 1', path: ['story', 'paragraph1'], long: true },
+        { key: 'story.paragraph2', label: 'Paragraph 2', path: ['story', 'paragraph2'], long: true },
+        { key: 'story.paragraph3', label: 'Paragraph 3', path: ['story', 'paragraph3'], long: true },
+      ],
+    },
+    {
+      label: 'What guides us',
+      fields: [
+        { key: 'valuesSection.eyebrow', label: 'Eyebrow', path: ['valuesSection', 'eyebrow'] },
+        { key: 'valuesSection.titleLine1', label: 'Heading line 1', path: ['valuesSection', 'titleLine1'] },
+        { key: 'valuesSection.titleLine2', label: 'Heading line 2', path: ['valuesSection', 'titleLine2'] },
+        { key: 'values.0.number', label: 'Value 1 number', path: ['values', 0, 'number'] },
+        { key: 'values.0.title', label: 'Value 1 title', path: ['values', 0, 'title'] },
+        { key: 'values.0.text', label: 'Value 1 text', path: ['values', 0, 'text'], long: true },
+        { key: 'values.1.number', label: 'Value 2 number', path: ['values', 1, 'number'] },
+        { key: 'values.1.title', label: 'Value 2 title', path: ['values', 1, 'title'] },
+        { key: 'values.1.text', label: 'Value 2 text', path: ['values', 1, 'text'], long: true },
+        { key: 'values.2.number', label: 'Value 3 number', path: ['values', 2, 'number'] },
+        { key: 'values.2.title', label: 'Value 3 title', path: ['values', 2, 'title'] },
+        { key: 'values.2.text', label: 'Value 3 text', path: ['values', 2, 'text'], long: true },
+      ],
+    },
+    {
+      label: 'Our mission',
+      fields: [
+        { key: 'mission.eyebrow', label: 'Eyebrow', path: ['mission', 'eyebrow'] },
+        { key: 'mission.titleLine1', label: 'Heading line 1', path: ['mission', 'titleLine1'] },
+        { key: 'mission.titleLine2', label: 'Heading line 2', path: ['mission', 'titleLine2'] },
+        { key: 'mission.lead', label: 'Lead paragraph', path: ['mission', 'lead'], long: true },
+        { key: 'mission.body', label: 'Second paragraph', path: ['mission', 'body'], long: true },
+        { key: 'mission.buttonText', label: 'Button text', path: ['mission', 'buttonText'] },
+        { key: 'mission.buttonLink', label: 'Button path', path: ['mission', 'buttonLink'], hint: 'e.g. plan (no slashes)' },
       ],
     },
   ],
@@ -223,7 +266,11 @@ export function setNested(obj, path, value) {
   let cur = obj;
   for (let i = 0; i < path.length - 1; i++) {
     const key = path[i];
-    if (!cur[key] || typeof cur[key] !== 'object') cur[key] = {};
+    const nextKey = path[i + 1];
+    const needsArray = typeof nextKey === 'number';
+    if (cur[key] == null || typeof cur[key] !== 'object') {
+      cur[key] = needsArray ? [] : {};
+    }
     cur = cur[key];
   }
   cur[path[path.length - 1]] = value;
