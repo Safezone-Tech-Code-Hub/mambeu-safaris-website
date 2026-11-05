@@ -2,7 +2,7 @@
   <div class="places-panel">
     <div class="places-panel-header">
       <p class="hint">
-        These cards appear in the homepage destinations slider. Order follows <strong>sort order</strong> (Content → Places).
+        Park cards (photo, name, subtitle) for the destinations hub and homepage slider. Order follows <strong>sort order</strong>.
       </p>
       <Button label="Add destination" icon="pi pi-plus" :loading="creating" @click="createPlace" />
     </div>

@@ -1,6 +1,7 @@
 /** Default CMS page payloads (editable in dashboard). */
 import { aboutPageDefaults } from '../src/content/aboutDefaults.js';
 import { comfortPageDefaults } from '../src/content/comfortDefaults.js';
+import { destinationsPageDefaults } from '../src/content/destinationsDefaults.js';
 import { homePageDefaults } from '../src/content/homeDefaults.js';
 
 export const siteChromeDefault = {
@@ -59,7 +60,7 @@ export const pageRegistry = [
   { pageKey: 'home', label: 'Homepage', content: homePageDefault },
   { pageKey: 'about', label: 'About page', content: aboutPageDefault },
   { pageKey: 'comfort', label: 'Comfort page', content: comfortPageDefaults },
-  { pageKey: 'destinations', label: 'Destinations hub', content: { head: { label: 'WHERE WE TAKE YOU', title: 'Discover Tanzania’s wild places.', text: '' } } },
+  { pageKey: 'destinations', label: 'Destinations hub', content: destinationsPageDefaults },
   { pageKey: 'experiences', label: 'Experiences page', content: { head: { label: 'BEYOND THE GAME DRIVE', title: 'Experiences to make it yours.', text: '' } } },
   { pageKey: 'travel_guide', label: 'Travel guide & FAQs', content: { head: { label: 'PLAN WITH CONFIDENCE', title: 'Travel guide & FAQs', text: '' } } },
   { pageKey: 'plan', label: 'Plan your trip', content: planPageDefault },

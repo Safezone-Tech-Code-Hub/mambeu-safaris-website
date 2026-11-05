@@ -249,8 +249,36 @@ export const pageEditorTabs = {
       label: 'Page head',
       fields: [
         { key: 'head.label', label: 'Eyebrow', path: ['head', 'label'] },
-        { key: 'head.title', label: 'Title', path: ['head', 'title'], long: true },
+        { key: 'head.titleLine1', label: 'Title line 1', path: ['head', 'titleLine1'] },
+        { key: 'head.titleLine2', label: 'Title line 2 (accent colour, optional)', path: ['head', 'titleLine2'] },
         { key: 'head.text', label: 'Intro', path: ['head', 'text'], long: true },
+      ],
+    },
+    {
+      label: 'Destination cards',
+      panel: 'home-places',
+      fields: [
+        {
+          key: 'grid.placeEyebrowLabel',
+          label: 'Label on park cards',
+          path: ['grid', 'placeEyebrowLabel'],
+          hint: 'Shown as 01 / EXPLORE, 02 / EXPLORE, … Order and copy: table below.',
+        },
+      ],
+    },
+    {
+      label: 'Kilimanjaro & Zanzibar tiles',
+      fields: [
+        { key: 'extraTiles.0.eyebrow', label: 'Tile 1 eyebrow', path: ['extraTiles', 0, 'eyebrow'] },
+        { key: 'extraTiles.0.title', label: 'Tile 1 title', path: ['extraTiles', 0, 'title'] },
+        { key: 'extraTiles.0.tag', label: 'Tile 1 subtitle', path: ['extraTiles', 0, 'tag'] },
+        { key: 'extraTiles.0.photo', label: 'Tile 1 photo', path: ['extraTiles', 0, 'photo'], type: 'image' },
+        { key: 'extraTiles.0.path', label: 'Tile 1 path', path: ['extraTiles', 0, 'path'], hint: 'e.g. kilimanjaro' },
+        { key: 'extraTiles.1.eyebrow', label: 'Tile 2 eyebrow', path: ['extraTiles', 1, 'eyebrow'] },
+        { key: 'extraTiles.1.title', label: 'Tile 2 title', path: ['extraTiles', 1, 'title'] },
+        { key: 'extraTiles.1.tag', label: 'Tile 2 subtitle', path: ['extraTiles', 1, 'tag'] },
+        { key: 'extraTiles.1.photo', label: 'Tile 2 photo', path: ['extraTiles', 1, 'photo'], type: 'image' },
+        { key: 'extraTiles.1.path', label: 'Tile 2 path', path: ['extraTiles', 1, 'path'], hint: 'e.g. zanzibar' },
       ],
     },
   ],
