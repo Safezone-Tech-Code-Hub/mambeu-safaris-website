@@ -4,41 +4,53 @@ import ComfortSection from '../components/ComfortSection.jsx';
 import FaqItem from '../components/FaqItem.jsx';
 import JourneyCard from '../components/JourneyCard.jsx';
 import { useCms } from '../CmsProvider.jsx';
+import { mergeHomeContent, splitLines } from '../content/homeDefaults.js';
 import { href, Img } from '../lib/utils.js';
 
-const FEATURED_COMFORT_IDS = [302, 298, 291];
+function MultilineHeading({ text, as: Tag = 'h2' }) {
+  const lines = splitLines(text);
+  return (
+    <Tag>
+      {lines.map((line, i) => (
+        <span key={i}>
+          {i > 0 ? <br /> : null}
+          {line}
+        </span>
+      ))}
+    </Tag>
+  );
+}
 
-const DEFAULT_HERO = {
-  eyebrow: 'TANZANIA, YOUR WAY',
-  titleLine1: 'Your Tanzania.',
-  titleLine2: 'Wildly personal.',
-  text: 'Extraordinary wildlife. Welcoming stays.\nThoughtfully planned around you.',
-  image: 'hero.webp',
-};
-
-const DEFAULT_PLACES_SECTION = {
-  eyebrow: 'MEET THE PLACES THAT MAKE TANZANIA',
-  title: 'Six landscapes.\nCountless possibilities.',
-};
-
-const DEFAULT_FAQ_SECTION = {
-  eyebrow: 'A LITTLE HELP BEFORE YOU GO',
-  title: 'Good questions.\nPersonal answers.',
-};
+function parseTourIds(raw) {
+  return String(raw || '')
+    .split(/[,;\s]+/)
+    .map((s) => Number(s.trim()))
+    .filter((n) => Number.isFinite(n) && n > 0);
+}
 
 export default function Home() {
   const navigate = useNavigate();
   const trackRef = useRef(null);
   const { tours, places, faq, pages } = useCms();
-  const [feature, setFeature] = useState('Comfort');
-  const hero = { ...DEFAULT_HERO, ...(pages.home?.hero || {}) };
-  const placesSection = { ...DEFAULT_PLACES_SECTION, ...(pages.home?.placesSection || {}) };
-  const faqSection = { ...DEFAULT_FAQ_SECTION, ...(pages.home?.faqSection || {}) };
+  const home = mergeHomeContent(pages.home);
+  const styleTabs = String(home.curated.tabs || 'Comfort,Luxury,Camping')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const [feature, setFeature] = useState(styleTabs[0] || 'Comfort');
 
+  const comfortIds = parseTourIds(home.curated.featuredComfortTourIds);
   const featuredTours =
-    feature === 'Comfort'
-      ? FEATURED_COMFORT_IDS.map((id) => tours.find((t) => t.id === id)).filter(Boolean)
+    feature === 'Comfort' && comfortIds.length
+      ? comfortIds.map((id) => tours.find((t) => t.id === id)).filter(Boolean)
       : tours.filter((t) => t.style === feature).slice(0, 3);
+
+  const faqCount = Math.max(1, Math.min(20, Number(home.faqSection.faqCount) || 3));
+
+  const tabsKey = styleTabs.join('|');
+  useEffect(() => {
+    if (!styleTabs.includes(feature)) setFeature(styleTabs[0] || 'Comfort');
+  }, [feature, tabsKey, styleTabs]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -80,59 +92,83 @@ export default function Home() {
     navigate(`/safaris/${qs}`);
   };
 
+  const beyondCards = [
+    {
+      className: 'beyond-card sea',
+      link: home.beyond.card1Link,
+      image: home.beyond.card1Image,
+      alt: home.beyond.card1ImageAlt,
+      eyebrow: home.beyond.card1Eyebrow,
+      title: home.beyond.card1Title,
+      text: home.beyond.card1Text,
+    },
+    {
+      className: 'beyond-card mountain',
+      link: home.beyond.card2Link,
+      image: home.beyond.card2Image,
+      alt: home.beyond.card2ImageAlt,
+      eyebrow: home.beyond.card2Eyebrow,
+      title: home.beyond.card2Title,
+      text: home.beyond.card2Text,
+    },
+    {
+      className: 'beyond-card culture',
+      link: home.beyond.card3Link,
+      image: home.beyond.card3Image,
+      alt: home.beyond.card3ImageAlt,
+      eyebrow: home.beyond.card3Eyebrow,
+      title: home.beyond.card3Title,
+      text: home.beyond.card3Text,
+    },
+  ];
+
   return (
     <main id="main">
       <section className="home-hero">
         <div className="hero-image">
-          <Img src={hero.image} alt="Wildebeest and zebras on Tanzania’s plains" priority />
+          <Img src={home.hero.image} alt={home.hero.imageAlt} priority />
         </div>
         <div className="hero-content wrap">
-          <span className="eyebrow">{hero.eyebrow}</span>
+          <span className="eyebrow">{home.hero.eyebrow}</span>
           <h1>
-            {hero.titleLine1}
+            {home.hero.titleLine1}
             <br />
-            <span>{hero.titleLine2}</span>
+            <span>{home.hero.titleLine2}</span>
           </h1>
           <p>
-            {String(hero.text || '')
-              .split('\n')
-              .map((line, i) => (
-                <span key={i}>
-                  {i > 0 ? <br /> : null}
-                  {line}
-                </span>
-              ))}
+            {splitLines(home.hero.text).map((line, i) => (
+              <span key={i}>
+                {i > 0 ? <br /> : null}
+                {line}
+              </span>
+            ))}
           </p>
           <div className="hero-actions">
-            <Link to={href('safaris')} className="button orange">
-              Explore our safaris
+            <Link to={href(home.hero.ctaPrimaryLink || 'safaris')} className="button orange">
+              {home.hero.ctaPrimary}
             </Link>
-            <Link to={href('plan')} className="button ghost">
-              Create your journey
+            <Link to={href(home.hero.ctaSecondaryLink || 'plan')} className="button ghost">
+              {home.hero.ctaSecondary}
             </Link>
           </div>
           <div className="hero-bottom">
-            <span>Locally owned · Arusha, Tanzania</span>
-            <span>Dream. Discover. Explore.</span>
+            <span>{home.hero.bottomLeft}</span>
+            <span>{home.hero.bottomRight}</span>
           </div>
         </div>
         <a href="#discover" className="hero-scroll">
-          Discover Mambeu
+          {home.hero.scrollLabel}
         </a>
       </section>
 
       <section className="discovery wrap" id="discover">
         <div className="discovery-title">
-          <span className="eyebrow">FIND YOUR STARTING POINT</span>
-          <h2>
-            Where will
-            <br />
-            your story go?
-          </h2>
+          <span className="eyebrow">{home.finder.eyebrow}</span>
+          <MultilineHeading text={home.finder.title} />
         </div>
         <form id="finder" className="finder" onSubmit={onFinderSubmit}>
           <div>
-            <label htmlFor="find-style">Your comfort level</label>
+            <label htmlFor="find-style">{home.finder.styleLabel}</label>
             <select id="find-style" defaultValue="Comfort">
               <option value="Comfort">Comfort</option>
               <option value="Midrange">Midrange</option>
@@ -142,7 +178,7 @@ export default function Home() {
             </select>
           </div>
           <div>
-            <label htmlFor="find-duration">Time to explore</label>
+            <label htmlFor="find-duration">{home.finder.durationLabel}</label>
             <select id="find-duration" defaultValue="">
               <option value="">Any duration</option>
               <option value="short">2–4 days</option>
@@ -151,7 +187,7 @@ export default function Home() {
             </select>
           </div>
           <div>
-            <label htmlFor="find-interest">What draws you here?</label>
+            <label htmlFor="find-interest">{home.finder.interestLabel}</label>
             <select id="find-interest" defaultValue="">
               <option value="">Wildlife & landscapes</option>
               <option>Serengeti</option>
@@ -162,39 +198,30 @@ export default function Home() {
             </select>
           </div>
           <button className="button" type="submit">
-            Find my safari
+            {home.finder.submitLabel}
           </button>
         </form>
       </section>
 
       <section className="welcome wrap">
         <div>
-          <span className="eyebrow">WELCOME TO MAMBEU</span>
-          <h2>
-            Big on adventure.
-            <br />
-            Thoughtful about
-            <br />
-            <span className="accent">everything else.</span>
-          </h2>
+          <span className="eyebrow">{home.welcome.eyebrow}</span>
+          <h2 dangerouslySetInnerHTML={{ __html: home.welcome.titleHtml }} />
         </div>
         <div className="welcome-copy">
-          <p className="lead">You don’t need the most expensive safari to have an extraordinary one.</p>
-          <p>
-            You need the right route, a knowledgeable guide and a welcoming place to end the day. From
-            our home in Arusha, we bring these details together in journeys made around you.
-          </p>
-          <Link to={href('about')} className="text-link">
-            Meet the people behind your journey
+          <p className="lead">{home.welcome.lead}</p>
+          <p>{home.welcome.body}</p>
+          <Link to={href(home.welcome.linkPath || 'about')} className="text-link">
+            {home.welcome.linkText}
           </Link>
           <div className="welcome-points">
             <div>
-              <b>Local roots</b>
-              <span>Locally owned in Tanzania</span>
+              <b>{home.welcome.point1Title}</b>
+              <span>{home.welcome.point1Text}</span>
             </div>
             <div>
-              <b>Your pace</b>
-              <span>Personalised routes & stays</span>
+              <b>{home.welcome.point2Title}</b>
+              <span>{home.welcome.point2Text}</span>
             </div>
           </div>
         </div>
@@ -203,16 +230,12 @@ export default function Home() {
       <section className="curated wrap">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">A FEW GOOD PLACES TO BEGIN</span>
-            <h2>
-              Journeys with
-              <br />
-              something more.
-            </h2>
+            <span className="eyebrow">{home.curated.eyebrow}</span>
+            <MultilineHeading text={home.curated.title} />
           </div>
           <div className="collection-controls">
             <div className="pill-tabs" aria-label="Featured journeys">
-              {['Comfort', 'Luxury', 'Camping'].map((s) => (
+              {styleTabs.map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -225,7 +248,7 @@ export default function Home() {
               ))}
             </div>
             <Link to={href('safaris')} className="text-link">
-              View the full collection
+              {home.curated.collectionLinkText}
             </Link>
           </div>
         </div>
@@ -236,29 +259,20 @@ export default function Home() {
         </div>
       </section>
 
-      <ComfortSection />
+      <ComfortSection section={home.comfortSection} />
 
       <section className="places-section wrap">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">{placesSection.eyebrow}</span>
-            <h2>
-              {String(placesSection.title || '')
-                .split('\n')
-                .map((line, i) => (
-                  <span key={i}>
-                    {i > 0 ? <br /> : null}
-                    {line}
-                  </span>
-                ))}
-            </h2>
+            <span className="eyebrow">{home.placesSection.eyebrow}</span>
+            <MultilineHeading text={home.placesSection.title} />
           </div>
           <div className="slider-actions">
             <button className="round-button" id="places-prev" type="button" aria-label="Previous destinations">
-              Back
+              {home.placesSection.prevLabel}
             </button>
             <button className="round-button" id="places-next" type="button" aria-label="Next destinations">
-              Next
+              {home.placesSection.nextLabel}
             </button>
           </div>
         </div>
@@ -283,9 +297,9 @@ export default function Home() {
           ))}
         </div>
         <div className="section-tail">
-          <span>Connect your favourites into one personal journey.</span>
+          <span>{home.placesSection.tailText}</span>
           <Link to={href('destinations')} className="text-link">
-            Explore all destinations
+            {home.placesSection.tailLinkText}
           </Link>
         </div>
       </section>
@@ -293,78 +307,45 @@ export default function Home() {
       <section className="beyond wrap">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">MAKE ROOM FOR A DIFFERENT KIND OF WILD</span>
-            <h2>Beyond the safari.</h2>
+            <span className="eyebrow">{home.beyond.eyebrow}</span>
+            <h2>{home.beyond.title}</h2>
           </div>
           <p>
-            Your adventure doesn’t have to end
-            <br />
-            when the game drive does.
+            {splitLines(home.beyond.intro).map((line, i) => (
+              <span key={i}>
+                {i > 0 ? <br /> : null}
+                {line}
+              </span>
+            ))}
           </p>
         </div>
         <div className="beyond-grid">
-          <Link className="beyond-card sea" to={href('zanzibar')}>
-            <Img src="zanzibar.webp" alt="Zanzibar coastline and Indian Ocean" />
-            <div>
-              <span className="eyebrow">ISLAND TIME</span>
-              <h3>
-                Wildlife to
-                <br />
-                white sands.
-              </h3>
-              <p>Unwind in Zanzibar.</p>
-            </div>
-          </Link>
-          <Link className="beyond-card mountain" to={href('kilimanjaro')}>
-            <Img src="mountain.webp" alt="Kilimanjaro mountain camp" />
-            <div>
-              <span className="eyebrow">A HIGHER PERSPECTIVE</span>
-              <h3>
-                Take the
-                <br />
-                higher road.
-              </h3>
-              <p>Your Kilimanjaro adventure.</p>
-            </div>
-          </Link>
-          <Link className="beyond-card culture" to={href('experiences')}>
-            <Img src="tour-296.webp" alt="A cultural visit with local people in Tanzania" />
-            <div>
-              <span className="eyebrow">HUMAN CONNECTIONS</span>
-              <h3>
-                Meet another
-                <br />
-                side of Tanzania.
-              </h3>
-              <p>Culture, stories and shared moments.</p>
-            </div>
-          </Link>
+          {beyondCards.map((card) => (
+            <Link key={card.link} className={card.className} to={href(card.link || '')}>
+              <Img src={card.image} alt={card.alt} />
+              <div>
+                <span className="eyebrow">{card.eyebrow}</span>
+                <MultilineHeading text={card.title} as="h3" />
+                <p>{card.text}</p>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
       <section className="local-story">
         <div className="wrap story-grid">
           <div className="story-photo">
-            <Img src="team.webp" alt="Mambeu guests beside the branded safari vehicle" />
-            <span>OUR HOME. YOUR ADVENTURE.</span>
+            <Img src={home.localStory.photo} alt={home.localStory.photoAlt} />
+            <span>{home.localStory.photoCaption}</span>
           </div>
           <div>
-            <span className="eyebrow">THE PEOPLE MAKE THE DIFFERENCE</span>
-            <h2>
-              Good safaris begin
-              <br />
-              with good people.
-            </h2>
-            <p>
-              Mambeu is locally owned and operated. We share Tanzania through expertly guided journeys,
-              personal attention and a commitment to responsible travel.
-            </p>
-            <p>
-              From your first ideas to the route, stays and special moments, we bring local knowledge to
-              the details that matter.
-            </p>
-            <Link to={href('about')} className="button outline">
-              Get to know Mambeu
+            <span className="eyebrow">{home.localStory.eyebrow}</span>
+            <MultilineHeading text={home.localStory.title} />
+            <p>{home.localStory.body1}</p>
+            <p>{home.localStory.body2}</p>
+            <Link to={href(home.localStory.buttonLink || 'about')} className="button outline">
+              {home.localStory.buttonText}
             </Link>
           </div>
         </div>
@@ -372,27 +353,16 @@ export default function Home() {
 
       <section className="wrap home-faq">
         <div>
-          <span className="eyebrow">{faqSection.eyebrow}</span>
-          <h2>
-            {String(faqSection.title || '')
-              .split('\n')
-              .map((line, i) => (
-                <span key={i}>
-                  {i > 0 ? <br /> : null}
-                  {line}
-                </span>
-              ))}
-          </h2>
+          <span className="eyebrow">{home.faqSection.eyebrow}</span>
+          <MultilineHeading text={home.faqSection.title} />
           <Link to={href('travel-guide')} className="text-link">
-            All planning questions
+            {home.faqSection.linkText}
           </Link>
         </div>
         <div className="faq-list">
-          {faq
-            .slice(0, 3)
-            .map(([q, a]) => (
-              <FaqItem key={q} question={q} answer={a} />
-            ))}
+          {faq.slice(0, faqCount).map(([q, a]) => (
+            <FaqItem key={q} question={q} answer={a} />
+          ))}
         </div>
       </section>
     </main>

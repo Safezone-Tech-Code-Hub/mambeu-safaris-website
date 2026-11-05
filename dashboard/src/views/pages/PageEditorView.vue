@@ -5,6 +5,10 @@
       <div>
         <h1>{{ title }}</h1>
         <p class="hint">Changes here update the public page after you publish the website.</p>
+        <p v-if="pageKey === 'home'" class="hint">
+          Tour cards, place cards, comfort panels, and FAQ rows come from <strong>Content</strong> in the sidebar.
+          Site header, footer, and green invite band: <strong>Header &amp; footer</strong>.
+        </p>
       </div>
       <div class="flex gap-2">
         <Select v-model="status" :options="statusOptions" optionLabel="label" optionValue="value" />

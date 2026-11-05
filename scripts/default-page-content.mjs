@@ -1,4 +1,5 @@
 /** Default CMS page payloads (editable in dashboard). */
+import { homePageDefaults } from '../src/content/homeDefaults.js';
 
 export const siteChromeDefault = {
   siteName: 'Mambeu Tanzania Safaris',
@@ -15,32 +16,7 @@ export const siteChromeDefault = {
   finalInviteText: 'A few ideas are all we need. Let’s shape a journey that feels like you.',
 };
 
-export const homePageDefault = {
-  hero: {
-    eyebrow: 'TANZANIA, YOUR WAY',
-    titleLine1: 'Your Tanzania.',
-    titleLine2: 'Wildly personal.',
-    text: 'Extraordinary wildlife. Welcoming stays.\nThoughtfully planned around you.',
-    image: 'hero.webp',
-    ctaPrimary: 'Explore safaris',
-    ctaSecondary: 'Plan your trip',
-  },
-  finder: {
-    title: 'Find your safari',
-    styleLabel: 'Comfort level',
-    durationLabel: 'Duration',
-    interestLabel: 'What interests you?',
-  },
-  featuredComfortIds: [302, 298, 291],
-  placesSection: {
-    eyebrow: 'DESTINATIONS',
-    title: 'Places that stay with you.',
-  },
-  faqSection: {
-    eyebrow: 'GOOD TO KNOW',
-    title: 'Questions travellers ask us',
-  },
-};
+export const homePageDefault = homePageDefaults;
 
 export const aboutPageDefault = {
   head: {

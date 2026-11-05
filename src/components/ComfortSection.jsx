@@ -46,8 +46,13 @@ function StylePanel({ style = 'Comfort', levels }) {
   );
 }
 
-export default function ComfortSection() {
-  const { levels: liveLevels } = useCms();
+export default function ComfortSection({ section }) {
+  const { levels: liveLevels, pages } = useCms();
+  const intro = section || pages.home?.comfortSection || {};
+  const eyebrow = intro.eyebrow || 'YOUR SAFARI. YOUR KIND OF STAY.';
+  const title = intro.title || 'Comfort is personal.\nLet’s find yours.';
+  const introText =
+    intro.intro || 'Midrange and comfort at our heart.\nLuxury when you want a little more.';
   const levels = Object.keys(liveLevels || {}).length ? liveLevels : staticLevels;
   const styleKeys = Object.keys(levels);
   const [activeStyle, setActiveStyle] = useState('Comfort');
@@ -77,17 +82,27 @@ export default function ComfortSection() {
       <div className="wrap">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">YOUR SAFARI. YOUR KIND OF STAY.</span>
+            <span className="eyebrow">{eyebrow}</span>
             <h2>
-              Comfort is personal.
-              <br />
-              Let’s find yours.
+              {String(title)
+                .split('\n')
+                .map((line, i) => (
+                  <span key={i}>
+                    {i > 0 ? <br /> : null}
+                    {line}
+                  </span>
+                ))}
             </h2>
           </div>
           <p>
-            Midrange and comfort at our heart.
-            <br />
-            Luxury when you want a little more.
+            {String(introText)
+              .split('\n')
+              .map((line, i) => (
+                <span key={i}>
+                  {i > 0 ? <br /> : null}
+                  {line}
+                </span>
+              ))}
           </p>
         </div>
         <div className="style-tabs" role="tablist" aria-label="Safari comfort levels">

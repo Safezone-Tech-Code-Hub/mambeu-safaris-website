@@ -1,0 +1,146 @@
+{
+  "home": {
+    "faqSection": {
+      "eyebrow": "GOOD TO KNOW",
+      "title": "Questions travellers ask us"
+    },
+    "featuredComfortIds": [
+      302,
+      298,
+      291
+    ],
+    "finder": {
+      "durationLabel": "Duration",
+      "interestLabel": "What interests you?",
+      "styleLabel": "Comfort level",
+      "title": "Find your safari"
+    },
+    "hero": {
+      "ctaPrimary": "Explore safaris",
+      "ctaSecondary": "Plan your trip",
+      "eyebrow": "TANZANIA, YOUR WAY",
+      "image": "hero.webp",
+      "text": "Extraordinary wildlife. Welcoming stays.\nThoughtfully planned around you.",
+      "titleLine1": "Your Tanzania.",
+      "titleLine2": "Wildly personal."
+    },
+    "placesSection": {
+      "eyebrow": "DESTINATIONS",
+      "title": "Places that stay with you."
+    }
+  },
+  "about": {
+    "head": {
+      "label": "THE PEOPLE BEHIND YOUR JOURNEY",
+      "text": "Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys.",
+      "title": "Rooted in Tanzania.<br><span class=\"accent\">Made around you.</span>"
+    },
+    "storyPhoto": "team.webp",
+    "values": [
+      [
+        "01",
+        "Personal by design",
+        "Your dates, interests and comfort level shape the journey. We listen first, then help you connect the details."
+      ],
+      [
+        "02",
+        "Rooted in Tanzania",
+        "Local knowledge helps us choose routes, stays and experiences that work together."
+      ],
+      [
+        "03",
+        "Travel responsibly",
+        "Respect for nature and communities guides how we share Tanzania with our visitors."
+      ]
+    ]
+  },
+  "comfort": {
+    "head": {
+      "label": "HOW YOU STAY",
+      "text": "",
+      "title": "Comfort that fits your journey."
+    }
+  },
+  "destinations": {
+    "head": {
+      "label": "WHERE WE TAKE YOU",
+      "text": "",
+      "title": "Discover Tanzania’s wild places."
+    }
+  },
+  "experiences": {
+    "head": {
+      "label": "BEYOND THE GAME DRIVE",
+      "text": "",
+      "title": "Experiences to make it yours."
+    }
+  },
+  "travel_guide": {
+    "head": {
+      "label": "PLAN WITH CONFIDENCE",
+      "text": "",
+      "title": "Travel guide & FAQs"
+    }
+  },
+  "plan": {
+    "head": {
+      "label": "START THE CONVERSATION",
+      "text": "Share a few details and we’ll help shape a personal quotation. You can send your message by WhatsApp or email when you’re ready.",
+      "title": "Let’s plan your safari."
+    }
+  },
+  "kilimanjaro": {
+    "blocks": [
+      [
+        "Prepare well",
+        "Share your hiking experience, fitness and questions with our team."
+      ],
+      [
+        "Choose your route",
+        "Discuss route options, duration, equipment and preparation before confirming your climb."
+      ],
+      [
+        "Keep exploring",
+        "Add a wildlife safari or a Zanzibar stay to round off your adventure."
+      ]
+    ],
+    "label": "MOUNTAIN ADVENTURES",
+    "photo": "mountain.webp",
+    "text": "A Kilimanjaro adventure with personal preparation, local guiding and support along the way.",
+    "title": "Take the<br>higher road."
+  },
+  "zanzibar": {
+    "blocks": [
+      [
+        "Time by the sea",
+        "Unhurried days, warm waters and accommodation matched to your comfort level."
+      ],
+      [
+        "Culture & history",
+        "Explore Stone Town, local flavours and the island’s spice heritage."
+      ],
+      [
+        "Ocean experiences",
+        "Ask about snorkelling, diving and excursions for your travel dates."
+      ]
+    ],
+    "label": "SAFARI & ISLAND ESCAPES",
+    "photo": "zanzibar.webp",
+    "text": "Pair your wildlife adventure with Zanzibar’s beaches, historic Stone Town and the Indian Ocean.",
+    "title": "From wild plains<br>to white sands."
+  },
+  "site_chrome": {
+    "email": "info@mambeusafaris.com",
+    "finalInviteEyebrow": "TELL US WHAT YOU’RE DREAMING OF",
+    "finalInviteText": "A few ideas are all we need. Let’s shape a journey that feels like you.",
+    "finalInviteTitle": "Your next chapter\nstarts in Tanzania.",
+    "footerTagline": "Dream · Discover · Explore",
+    "officeHours": "08:00–19:30",
+    "officeLocation": "Arusha, Tanzania",
+    "phone": "+255 796 086 799",
+    "phoneE164": "255796086799",
+    "publicSiteUrl": "https://new-mambeu.schoolhub.space",
+    "siteName": "Mambeu Tanzania Safaris",
+    "whatsapp": "255796086799"
+  }
+}
