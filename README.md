@@ -68,6 +68,8 @@ Builds pull published content from PocketBase via `scripts/sync-content-from-pb.
 
 Step-by-step: [docs/nginx-proxy-manager.md](docs/nginx-proxy-manager.md).
 
+Backups (PocketBase CMS data): [docs/backups.md](docs/backups.md).
+
 ## Edit content
 
 | Change | Where |

@@ -11,6 +11,7 @@
     "check": "node --check scripts/prerender.mjs",
     "seed:pb": "node scripts/seed-pocketbase.mjs",
     "ensure:pb-collections": "node scripts/ensure-pb-collections.mjs",
+    "backup:pb": "node scripts/backup-pocketbase.mjs",
     "docker:up": "docker compose up -d --build"
   },
   "dependencies": {
