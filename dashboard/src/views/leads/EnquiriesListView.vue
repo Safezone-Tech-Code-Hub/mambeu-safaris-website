@@ -62,7 +62,7 @@ const filtered = computed(() => {
 });
 
 onMounted(async () => {
-  const res = await getListWithSort(COLLECTIONS.enquiries, 1, 200, { sort: '-@created' });
+  const res = await getListWithSort(COLLECTIONS.enquiries, 1, 200);
   rows.value = res.items;
   loading.value = false;
 });

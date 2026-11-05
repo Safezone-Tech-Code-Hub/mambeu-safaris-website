@@ -22,23 +22,27 @@ export const getPublicSiteUrl = () =>
 export const pb = new PocketBase(getPbUrl());
 pb.autoCancellation(false);
 
-/** PocketBase 0.20.x rejects `sort=-created`; newer versions accept it. */
-/** v0.20.x often only allows `-id`; try system date fields first on newer PB. */
-const RECORD_SORT_FALLBACKS = ['-@created', '-created', '-updated', '-id', ''];
+/** PocketBase 0.20.x only reliably supports `sort=-id` (not `-created`). */
+const RECORD_SORT_FALLBACKS = ['-id', '-@created', '-created', '-updated'];
 
 export async function getListWithSort(collection, page = 1, perPage = 30, options = {}) {
   const { sort, ...rest } = options;
-  const candidates = [...new Set([sort, ...RECORD_SORT_FALLBACKS].filter(Boolean))];
+  const candidates = [...new Set([...(sort ? [sort] : []), ...RECORD_SORT_FALLBACKS, ''])];
+  let lastError;
   for (const candidate of candidates) {
     try {
-      const query = candidate ? { ...rest, sort: candidate } : { ...rest };
+      const query = candidate === '' ? rest : { ...rest, sort: candidate };
       return await pb.collection(collection).getList(page, perPage, query);
     } catch (e) {
+      lastError = e;
+      const status = e?.status ?? e?.response?.status ?? e?.response?.code;
       const msg = `${e?.message || ''} ${e?.response?.message || ''} ${e?.response?.data?.details || ''}`;
-      if (!/invalid sort field/i.test(msg)) throw e;
+      const retrySort =
+        candidate !== '' && (status === 400 || /invalid sort field/i.test(msg));
+      if (!retrySort) throw e;
     }
   }
-  return pb.collection(collection).getList(page, perPage, rest);
+  throw lastError || new Error('Could not list records.');
 }
 
 const COLLECTION_HINT =

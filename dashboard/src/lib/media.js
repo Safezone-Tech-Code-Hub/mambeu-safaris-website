@@ -18,7 +18,7 @@ export function previewUrlForValue(value) {
 }
 
 export async function listMediaRecords(page = 1, perPage = 48) {
-  return getListWithSort(COLLECTIONS.media, page, perPage, { sort: '-@created' });
+  return getListWithSort(COLLECTIONS.media, page, perPage);
 }
 
 export async function uploadMediaFile(file, alt = '') {
