@@ -14,9 +14,8 @@
   --radius-xl: 12px;
   --radius-2xl: 16px;
   --transition-hover: cubic-bezier(0.4, 0, 0.2, 1);
-  /* General Sans & Satoshi are commercial; Inter matches the corporate spec closely */
-  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'General Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Satoshi', 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 *,
@@ -35,7 +34,7 @@ body,
 
 body {
   font-family: var(--font-body);
-  font-weight: 450;
+  font-weight: 500;
   background: var(--page-bg);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
@@ -154,6 +153,10 @@ h4,
 .page-header h1 {
   margin: 0;
   font-size: 1.5rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
 .field-grid {
@@ -172,6 +175,64 @@ h4,
   font-size: 0.875rem;
   margin: 0.25rem 0 0;
   line-height: 1.45;
+}
+
+/* Form labels in editors (Vue uses plain <label>) */
+.app-content label:not(.p-hidden-accessible) {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+/* Centered loading state inside scrollable main area */
+.editor-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(320px, 60vh);
+  width: 100%;
+  padding: 3rem 1rem;
+}
+
+.editor-loading :deep(.p-progressspinner) {
+  width: 3rem !important;
+  height: 3rem !important;
+}
+
+.editor-loading :deep(.p-progressspinner-circle) {
+  stroke: var(--brand) !important;
+}
+
+/* Smaller vertical footprint inside dialogs (e.g. media picker) */
+.editor-loading.editor-loading--compact {
+  min-height: 12rem;
+  padding: 2rem 1rem;
+}
+
+/* Layout helpers used in editors */
+.flex {
+  display: flex;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.align-items-center {
+  align-items: center;
+}
+
+/* Page editor: secondary title under global top bar */
+.page-editor-root .page-header h1 {
+  font-size: 1.25rem;
+}
+
+.page-editor-root .page-card {
+  padding: 1.75rem 1.5rem;
+}
+
+.page-editor-root .field-grid {
+  gap: 1.25rem;
 }
 
 /* PrimeVue: border-first, no heavy shadow */
@@ -196,6 +257,7 @@ h4,
 .p-button,
 .p-inputtext,
 .p-inputtextarea,
+.p-inputnumber-input,
 .p-select,
 .p-password-input {
   border-radius: var(--radius-xl);
@@ -229,12 +291,57 @@ h4,
 
 .p-tabs .p-tablist-tab-list,
 .p-tabview .p-tabview-nav {
-  border-color: var(--border);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  gap: 0.25rem;
+  padding: 0 0 0.25rem;
+  margin-bottom: 1.25rem;
 }
 
-.p-tabview .p-tabview-nav-link {
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  transition: color 0.2s var(--transition-hover), background 0.2s var(--transition-hover);
+.p-tabview-tablist-item .p-tabview-tab-header {
+  border: none;
+  border-radius: var(--radius-xl);
+  margin: 0;
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  transition:
+    color 0.2s var(--transition-hover),
+    background 0.2s var(--transition-hover);
+}
+
+.p-tabview-tablist-item.p-tabview-tablist-item-active .p-tabview-tab-header {
+  color: var(--brand);
+  font-weight: 600;
+  background: var(--brand-soft);
+}
+
+.p-tabview-tablist-item:not(.p-tabview-tablist-item-active) .p-tabview-tab-header:hover {
+  color: var(--text-primary);
+  background: #f8fafc;
+}
+
+/* Hide PrimeVue ink bar (often green/teal) — active state uses pill above */
+.p-tabview .p-tabview-ink-bar {
+  display: none;
+}
+
+.p-tabview .p-tabview-panels {
+  background: transparent;
+  padding: 0;
+}
+
+.p-tabview-panel {
+  padding: 0 !important;
+}
+
+/* Nested cards inside tab panels (e.g. Tour edit) */
+.p-tabview-panel > .page-card {
+  margin-top: 0;
 }
 
 .p-datatable .p-datatable-header,

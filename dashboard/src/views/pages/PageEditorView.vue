@@ -1,7 +1,8 @@
 <template>
-  <div v-if="loading"><ProgressSpinner /></div>
+  <div v-if="loading" class="editor-loading"><ProgressSpinner /></div>
   <template v-else>
-    <div class="page-header">
+    <div class="page-editor-root">
+      <div class="page-header">
       <div>
         <h1>{{ title }}</h1>
         <p class="hint">Changes here update the public page after you publish the website.</p>
@@ -16,13 +17,13 @@
           Per-park name, photo and copy: <strong>Content → Places</strong>.
         </p>
       </div>
-      <div class="flex gap-2">
-        <Select v-model="status" :options="statusOptions" optionLabel="label" optionValue="value" />
-        <Button label="Save" icon="pi pi-save" :loading="saving" @click="onSave" />
+        <div class="flex gap-2 align-items-center">
+          <Select v-model="status" :options="statusOptions" optionLabel="label" optionValue="value" />
+          <Button label="Save" icon="pi pi-save" :loading="saving" @click="onSave" />
+        </div>
       </div>
-    </div>
-    <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
-    <div class="page-card">
+      <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
+      <div class="page-card">
       <TabView v-if="tabs.length">
         <TabPanel v-for="tab in tabs" :key="tab.label" :header="tab.label">
           <div v-if="tab.fields?.length" class="field-grid">
@@ -65,6 +66,7 @@
           <p class="hint">Structured fields for this page can be added in a later pass. Edit raw content below.</p>
           <Textarea v-model="rawJson" rows="16" class="w-full" />
         </div>
+      </div>
       </div>
     </div>
   </template>
@@ -132,9 +134,8 @@ async function onSave() {
   width: 100%;
 }
 label {
-  font-weight: 600;
   display: block;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 .tab-panel-extra {
   margin-top: 1.5rem;

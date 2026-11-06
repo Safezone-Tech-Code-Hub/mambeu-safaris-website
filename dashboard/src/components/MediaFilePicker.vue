@@ -47,7 +47,9 @@
         <span class="hint">JPEG, PNG, WebP or GIF · stored in PocketBase media library</span>
       </div>
       <Message v-if="dialogError" severity="error" :closable="false">{{ dialogError }}</Message>
-      <ProgressSpinner v-if="libraryLoading" />
+      <div v-if="libraryLoading" class="editor-loading editor-loading--compact">
+        <ProgressSpinner />
+      </div>
       <div v-else class="media-grid">
         <button
           v-for="row in library"
@@ -230,8 +232,8 @@ async function onFilesChosen(event) {
   max-width: 280px;
   max-height: 160px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid var(--p-content-border-color);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
 }
 .media-upload-bar {
   display: flex;
@@ -248,16 +250,16 @@ async function onFilesChosen(event) {
   overflow-y: auto;
 }
 .media-tile {
-  border: 2px solid var(--p-content-border-color);
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
   padding: 0.35rem;
-  background: var(--p-content-background);
+  background: var(--surface);
   cursor: pointer;
   text-align: left;
   font: inherit;
 }
 .media-tile.selected {
-  border-color: var(--brand-accent, #c45d2a);
+  border-color: var(--brand);
 }
 .media-tile img {
   width: 100%;
@@ -287,8 +289,8 @@ async function onFilesChosen(event) {
   align-items: center;
   gap: 0.5rem;
   padding: 0.35rem 0.5rem;
-  background: var(--p-surface-100);
-  border-radius: 8px;
+  background: #f1f5f9;
+  border-radius: var(--radius-xl);
 }
 .media-chip img {
   width: 48px;

@@ -18,7 +18,7 @@
     </p>
   </Message>
 
-  <ProgressSpinner v-if="loading && !rows.length" />
+  <div v-if="loading && !rows.length" class="editor-loading"><ProgressSpinner /></div>
 
   <div v-else class="media-library">
     <div v-if="!rows.length" class="empty-state page-card">
