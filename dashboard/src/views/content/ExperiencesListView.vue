@@ -13,6 +13,11 @@
       <div><label>Headline</label><InputText v-model="payload.headline" class="w-full" /></div>
       <div><label>Photo</label><MediaFilePicker v-model="payload.photo" /></div>
       <div><label>Body</label><Textarea v-model="payload.body" rows="4" class="w-full" autoResize /></div>
+      <div>
+        <label>Plan form interest tag</label>
+        <InputText v-model="payload.planInterest" class="w-full" />
+        <p class="hint">Shown in the enquiry link as ?interest=… Must match options on the plan page if you use dropdowns.</p>
+      </div>
       <Button label="Save" @click="saveCurrent" :loading="saving" />
     </div>
   </Dialog>
@@ -54,7 +59,7 @@ function open({ data }) {
 function add() {
   current.value = { id: '', title: '', slug: '', status: 'published' };
   Object.keys(payload).forEach((key) => delete payload[key]);
-  Object.assign(payload, { headline: '', photo: 'hero.webp', body: '', planInterest: '' });
+  Object.assign(payload, { headline: '', photo: 'hero.webp', body: '', planInterest: 'General' });
   editOpen.value = true;
 }
 
@@ -88,5 +93,6 @@ async function saveCurrent() {
 <style scoped>
 .w-full { width: 100%; }
 label { font-weight: 600; display: block; margin-bottom: 0.25rem; }
+.hint { font-size: 0.85rem; opacity: 0.85; margin-top: 0.25rem; }
 :deep(.p-datatable-tbody > tr) { cursor: pointer; }
 </style>

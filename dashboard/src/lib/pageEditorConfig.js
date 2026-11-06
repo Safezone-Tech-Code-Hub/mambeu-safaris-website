@@ -287,8 +287,21 @@ export const pageEditorTabs = {
       label: 'Page head',
       fields: [
         { key: 'head.label', label: 'Eyebrow', path: ['head', 'label'] },
-        { key: 'head.title', label: 'Title', path: ['head', 'title'], long: true },
+        { key: 'head.titleLine1', label: 'Title line 1', path: ['head', 'titleLine1'] },
+        { key: 'head.titleLine2', label: 'Title line 2 (accent colour)', path: ['head', 'titleLine2'] },
         { key: 'head.text', label: 'Intro', path: ['head', 'text'], long: true },
+      ],
+    },
+    {
+      label: 'Experience rows',
+      panel: 'experiences-list',
+      fields: [
+        {
+          key: 'list.buttonText',
+          label: 'Button text (all rows)',
+          path: ['list', 'buttonText'],
+          hint: 'Each row’s title, photo and text: Content → Experiences.',
+        },
       ],
     },
   ],

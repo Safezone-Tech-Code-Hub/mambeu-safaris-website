@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import { mergeAboutContent } from '@site/content/aboutDefaults.js';
 import { mergeComfortContent } from '@site/content/comfortDefaults.js';
 import { mergeDestinationsContent } from '@site/content/destinationsDefaults.js';
+import { mergeExperiencesContent } from '@site/content/experiencesDefaults.js';
 import { mergeHomeContent } from '@site/content/homeDefaults.js';
 import { COLLECTIONS, describePbError, pb } from '@/lib/pb';
 
@@ -29,7 +30,9 @@ export function usePageContent(pageKey) {
               ? mergeComfortContent(raw)
               : pageKey === 'destinations'
                 ? mergeDestinationsContent(raw)
-                : raw;
+                : pageKey === 'experiences'
+                  ? mergeExperiencesContent(raw)
+                  : raw;
       status.value = row.status || 'published';
     } catch (e) {
       error.value = describePbError(e, 'Could not load this page.');

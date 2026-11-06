@@ -1,20 +1,21 @@
 import { Link } from 'react-router-dom';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
-import { Img } from '../lib/utils.js';
+import { mergeExperiencesContent } from '../content/experiencesDefaults.js';
+import { href, Img } from '../lib/utils.js';
 
 export default function Experiences() {
   const { experiences, pages } = useCms();
-  const head = pages.experiences?.head || {};
+  const exp = mergeExperiencesContent(pages.experiences);
+  const { head, list } = exp;
+  const buttonText = list.buttonText || 'Include this in my journey';
   return (
     <main id="main">
       <PageHead
-        label={head.label || 'FOLLOW YOUR CURIOSITY'}
-        title={head.title || 'A safari is only<br><span class="accent">the beginning.</span>'}
-        text={
-          head.text ||
-          'Add experiences that mean something to you, from cultural connections to a different view of the plains.'
-        }
+        label={head.label}
+        titleLine1={head.titleLine1}
+        titleLine2={head.titleLine2}
+        text={head.text}
       />
       <section className="wrap experience-list">
         {experiences.map((x, i) => (
@@ -24,12 +25,12 @@ export default function Experiences() {
             </div>
             <div>
               <span className="eyebrow">
-                0{i + 1} / {x[0].toUpperCase()}
+                {String(i + 1).padStart(2, '0')} / {String(x[0]).toUpperCase()}
               </span>
               <h2>{x[1]}</h2>
               <p>{x[3]}</p>
-              <Link className="button outline" to={`/plan/?interest=${encodeURIComponent(x[4])}`}>
-                Include this in my journey
+              <Link className="button outline" to={href(`plan/?interest=${encodeURIComponent(x[4])}`)}>
+                {buttonText}
               </Link>
             </div>
           </article>

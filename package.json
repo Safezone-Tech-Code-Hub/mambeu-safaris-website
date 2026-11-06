@@ -16,6 +16,7 @@
     "merge:about-page": "node scripts/merge-about-page-content.mjs",
     "merge:comfort-page": "node scripts/merge-comfort-page-content.mjs",
     "merge:destinations-page": "node scripts/merge-destinations-page-content.mjs",
+    "merge:experiences-page": "node scripts/merge-experiences-page-content.mjs",
     "docker:up": "docker compose up -d --build"
   },
   "dependencies": {

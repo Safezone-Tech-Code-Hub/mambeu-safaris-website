@@ -2,6 +2,7 @@
 import { aboutPageDefaults } from '../src/content/aboutDefaults.js';
 import { comfortPageDefaults } from '../src/content/comfortDefaults.js';
 import { destinationsPageDefaults } from '../src/content/destinationsDefaults.js';
+import { experiencesPageDefaults } from '../src/content/experiencesDefaults.js';
 import { homePageDefaults } from '../src/content/homeDefaults.js';
 
 export const siteChromeDefault = {
@@ -61,7 +62,7 @@ export const pageRegistry = [
   { pageKey: 'about', label: 'About page', content: aboutPageDefault },
   { pageKey: 'comfort', label: 'Comfort page', content: comfortPageDefaults },
   { pageKey: 'destinations', label: 'Destinations hub', content: destinationsPageDefaults },
-  { pageKey: 'experiences', label: 'Experiences page', content: { head: { label: 'BEYOND THE GAME DRIVE', title: 'Experiences to make it yours.', text: '' } } },
+  { pageKey: 'experiences', label: 'Experiences page', content: experiencesPageDefaults },
   { pageKey: 'travel_guide', label: 'Travel guide & FAQs', content: { head: { label: 'PLAN WITH CONFIDENCE', title: 'Travel guide & FAQs', text: '' } } },
   { pageKey: 'plan', label: 'Plan your trip', content: planPageDefault },
   { pageKey: 'kilimanjaro', label: 'Kilimanjaro page', content: thematicDefaults.kilimanjaro },
