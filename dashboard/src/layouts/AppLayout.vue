@@ -1,18 +1,18 @@
 <template>
   <div class="app-shell">
-    <aside class="app-sidebar">
-      <div class="sidebar-brand">
-        <div class="sidebar-brand-row">
-          <div class="sidebar-brand-mark" aria-hidden="true">
-            <i class="pi pi-compass"></i>
-          </div>
-          <div class="sidebar-brand-text">
-            <strong>Mambeu Manage</strong>
-            <span>Content &amp; enquiries</span>
-          </div>
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-row">
+        <div class="sidebar-brand-mark" aria-hidden="true">
+          <i class="pi pi-compass"></i>
+        </div>
+        <div class="sidebar-brand-text">
+          <strong>Mambeu Manage</strong>
+          <span>Content &amp; enquiries</span>
         </div>
       </div>
-      <nav class="sidebar-scroll" aria-label="Main">
+    </div>
+    <aside class="app-sidebar-body" aria-label="Main navigation">
+      <nav class="sidebar-scroll">
         <button type="button" class="sidebar-link" :class="{ 'sidebar-link-active': isRoute('overview') }" @click="go('overview')">
           <i class="pi pi-home"></i>
           Overview
@@ -93,8 +93,7 @@
         </div>
       </div>
     </aside>
-    <div class="app-main">
-      <header class="app-topbar">
+    <header class="app-topbar">
         <div>
           <h1 class="app-topbar-title">{{ headerTitle }}</h1>
           <p class="app-topbar-sub">{{ headerSubtitle }}</p>
@@ -113,11 +112,10 @@
           <Button label="Publish" icon="pi pi-cloud-upload" @click="publishSite" :loading="publishing" />
           <Button icon="pi pi-sign-out" severity="secondary" text rounded @click="onLogout" v-tooltip.bottom="'Sign out'" aria-label="Sign out" />
         </div>
-      </header>
-      <main class="app-content">
-        <RouterView :key="route.fullPath" />
-      </main>
-    </div>
+    </header>
+    <main class="app-content">
+      <RouterView :key="route.fullPath" />
+    </main>
     <Toast />
     <ConfirmDialog />
   </div>
