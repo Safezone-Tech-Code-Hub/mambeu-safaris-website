@@ -2,18 +2,16 @@ import { Link, useParams } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
-import { mergePlaceDetailContent } from '../content/placeDefaults.js';
-import Destinations from './Destinations.jsx';
-import { href } from '../lib/utils.js';
+import { planHref } from '../lib/plan-link.js';
+import NotFound from './NotFound.jsx';
 
 export default function Place() {
-  const { places, tours, pages } = useCms();
+  const { places, tours } = useCms();
   const { slug } = useParams();
   const p = places.find((x) => x.slug === slug);
-  const copy = mergePlaceDetailContent(pages.place_detail);
 
   if (!p) {
-    return <Destinations />;
+    return <NotFound />;
   }
 
   const needle = String(p.q || p.name || '').toLowerCase();
@@ -23,14 +21,14 @@ export default function Place() {
 
   return (
     <main id="main">
-      <PageHead label={copy.head.label || 'MEET TANZANIA'} title={p.name} text={p.tag} photo={p.photo} />
+      <PageHead label="MEET TANZANIA" title={p.name} text={p.tag} photo={p.photo} />
       <section className="wrap split-story">
         <div>
-          <span className="eyebrow">{copy.story.eyebrow}</span>
+          <span className="eyebrow">A PLACE TO REMEMBER</span>
           <h2>
-            {copy.story.titleLine1}
+            A different view.
             <br />
-            {copy.story.titleLine2}
+            A deeper connection.
           </h2>
         </div>
         <div>
@@ -41,30 +39,32 @@ export default function Place() {
             ))}
           </div>
           <Link className="button" to={`/safaris/?q=${encodeURIComponent(p.q)}`}>
-            {copy.searchButton}
+            Explore journeys here
           </Link>
         </div>
       </section>
       <section className="wrap related">
         <div className="section-heading">
-          <h2>{copy.related.heading}</h2>
-          <Link className="text-link" to={`/plan/?interest=${encodeURIComponent(p.name)}`}>
-            {copy.related.planLinkText}
+          <h2>Start with a journey.</h2>
+          <Link className="text-link" to={planHref({ destination: p.slug })}>
+            Plan a trip to {p.name}
           </Link>
         </div>
-        <div className="related-grid">
-          {related.length ? (
-            related.map((t) => <JourneyCard key={t.id} t={t} />)
-          ) : (
-            <div className="empty-results">
-              <h3>{copy.empty.heading}</h3>
-              <p>{copy.empty.text}</p>
-              <Link className="button" to={`/plan/?interest=${encodeURIComponent(p.name)}`}>
-                {copy.empty.button}
-              </Link>
-            </div>
-          )}
-        </div>
+        {related.length ? (
+          <ul className="related-grid">
+            {related.map((t) => (
+              <JourneyCard key={t.id} t={t} />
+            ))}
+          </ul>
+        ) : (
+          <div className="empty-results">
+            <h3>A journey made for you.</h3>
+            <p>Ask our local team to include this destination in a personal itinerary.</p>
+            <Link className="button" to={planHref({ destination: p.slug })}>
+              Plan a trip to {p.name}
+            </Link>
+          </div>
+        )}
       </section>
     </main>
   );

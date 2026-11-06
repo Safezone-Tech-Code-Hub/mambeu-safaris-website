@@ -2,28 +2,26 @@ import { Link } from 'react-router-dom';
 import FaqItem from '../components/FaqItem.jsx';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
-import { mergeTravelGuideContent } from '../content/travelGuideDefaults.js';
+import { planHref } from '../lib/plan-link.js';
 import { href } from '../lib/utils.js';
 
 export default function TravelGuide() {
   const { faq, pages } = useCms();
-  const tg = mergeTravelGuideContent(pages.travel_guide);
-  const { head, aside } = tg;
+  const head = pages.travel_guide?.head || {};
   return (
     <main id="main">
       <PageHead
-        label={head.label}
-        titleLine1={head.titleLine1}
-        titleLine2={head.titleLine2}
-        text={head.text}
+        label={head.label || 'A LITTLE PLANNING GOES A LONG WAY'}
+        title={head.title || 'Good questions.<br><span class="accent">Clear answers.</span>'}
+        text={head.text || 'Practical starting points for your safari, mountain journey or Zanzibar escape.'}
       />
       <section className="wrap faq-page">
         <aside>
-          <span className="eyebrow">{aside.eyebrow}</span>
-          <h2>{aside.title}</h2>
-          <p>{aside.intro}</p>
-          <Link to={href(aside.buttonPath || 'plan')} className="button">
-            {aside.buttonText}
+          <span className="eyebrow">YOUR LOCAL TEAM</span>
+          <h2>Still curious?</h2>
+          <p>Let’s talk through your plans.</p>
+          <Link to={planHref()} className="button">
+            Ask a safari specialist
           </Link>
         </aside>
         <div className="faq-list">
