@@ -516,14 +516,20 @@ h4,
 }
 
 .sidebar-link-active {
-  background: #f1f5f9;
-  color: var(--brand);
-  box-shadow: inset 4px 0 0 0 var(--brand);
+  background: var(--brand);
+  color: #fff;
+  box-shadow: none;
+  font-weight: 600;
 }
 
 .sidebar-link-active:hover {
-  background: #f1f5f9;
-  color: var(--brand);
+  background: #dc2626;
+  color: #fff;
+}
+
+.sidebar-link-active i {
+  color: #fff;
+  opacity: 1;
 }
 
 .sidebar-toggle {
@@ -552,8 +558,8 @@ h4,
   color: var(--text-secondary);
 }
 
-.sidebar-nested .sidebar-link-active {
-  color: var(--brand);
+.sidebar-nested .sidebar-link.sidebar-link-active {
+  color: #fff;
   font-weight: 600;
 }
 

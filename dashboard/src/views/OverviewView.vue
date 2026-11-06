@@ -71,12 +71,20 @@
         <div class="page-card overview-section">
           <div class="section-head">
             <h2>Activity mix</h2>
-            <span class="hint">Placeholder trend — counts from your CMS</span>
+            <span class="hint">Record totals from PocketBase (relative scale)</span>
           </div>
-          <div class="bar-chart" role="img" aria-label="Relative activity by area">
+          <div
+            class="bar-chart"
+            role="img"
+            :aria-label="activityMixAria"
+          >
             <div v-for="(b, i) in barHeights" :key="i" class="bar-chart-col">
               <div class="bar-track">
-                <div class="bar-fill" :style="{ height: b.p + '%' }"></div>
+                <div
+                  class="bar-fill"
+                  :style="{ height: b.p + '%' }"
+                  :title="`${b.count} ${b.label}`"
+                ></div>
               </div>
               <span class="bar-label">{{ b.label }}</span>
             </div>
@@ -123,7 +131,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { COLLECTIONS, pb } from '@/lib/pb';
 
@@ -134,30 +142,83 @@ const counts = reactive({
   publishedPages: 0,
 });
 
-const barHeights = [
-  { label: 'Leads', p: 72 },
-  { label: 'Tours', p: 88 },
-  { label: 'Pages', p: 64 },
-  { label: 'Media', p: 52 },
-  { label: 'FAQ', p: 38 },
-  { label: 'Team', p: 45 },
-];
+/** Bar chart: live totals per collection, height = share of largest bucket */
+const barHeights = ref([
+  { label: 'Leads', count: 0, p: 0 },
+  { label: 'Tours', count: 0, p: 0 },
+  { label: 'Pages', count: 0, p: 0 },
+  { label: 'Media', count: 0, p: 0 },
+  { label: 'FAQ', count: 0, p: 0 },
+  { label: 'Team', count: 0, p: 0 },
+]);
+
+const activityMixAria = computed(() =>
+  barHeights.value.map((b) => `${b.label}: ${b.count}`).join('; '),
+);
+
+function mixRowsFromTotals(totals) {
+  const rows = [
+    { label: 'Leads', count: totals.enquiries },
+    { label: 'Tours', count: totals.tours },
+    { label: 'Pages', count: totals.pageContent },
+    { label: 'Media', count: totals.media },
+    { label: 'FAQ', count: totals.faqItems },
+    { label: 'Team', count: totals.staff },
+  ];
+  const max = Math.max(...rows.map((r) => r.count), 0);
+  const scale = max > 0 ? max : 1;
+  return rows.map((r) => ({
+    ...r,
+    p: r.count === 0 ? 0 : Math.round((r.count / scale) * 100),
+  }));
+}
+
+/** PocketBase total count; failures return 0 so one missing collection does not blank the chart */
+async function collectionTotal(name, query = {}) {
+  try {
+    const res = await pb.collection(name).getList(1, 1, query);
+    return res.totalItems;
+  } catch {
+    return 0;
+  }
+}
 
 onMounted(async () => {
-  try {
-    const [enq, tours, media, pages] = await Promise.all([
-      pb.collection(COLLECTIONS.enquiries).getList(1, 1, { filter: 'status = "new"' }),
-      pb.collection(COLLECTIONS.tours).getList(1, 1, { filter: 'status = "draft"' }),
-      pb.collection(COLLECTIONS.media).getList(1, 1),
-      pb.collection(COLLECTIONS.pageContent).getList(1, 1, { filter: 'status = "published"' }),
-    ]);
-    counts.newEnquiries = enq.totalItems;
-    counts.draftTours = tours.totalItems;
-    counts.mediaFiles = media.totalItems;
-    counts.publishedPages = pages.totalItems;
-  } catch {
-    /* overview is best-effort */
-  }
+  const [
+    newEnq,
+    draftTours,
+    mediaTotal,
+    publishedPages,
+    enqAll,
+    toursAll,
+    pagesAll,
+    faqAll,
+    staffAll,
+  ] = await Promise.all([
+    collectionTotal(COLLECTIONS.enquiries, { filter: 'status = "new"' }),
+    collectionTotal(COLLECTIONS.tours, { filter: 'status = "draft"' }),
+    collectionTotal(COLLECTIONS.media),
+    collectionTotal(COLLECTIONS.pageContent, { filter: 'status = "published"' }),
+    collectionTotal(COLLECTIONS.enquiries),
+    collectionTotal(COLLECTIONS.tours),
+    collectionTotal(COLLECTIONS.pageContent),
+    collectionTotal(COLLECTIONS.faqItems),
+    collectionTotal(COLLECTIONS.staff),
+  ]);
+
+  counts.newEnquiries = newEnq;
+  counts.draftTours = draftTours;
+  counts.mediaFiles = mediaTotal;
+  counts.publishedPages = publishedPages;
+
+  barHeights.value = mixRowsFromTotals({
+    enquiries: enqAll,
+    tours: toursAll,
+    pageContent: pagesAll,
+    media: mediaTotal,
+    faqItems: faqAll,
+    staff: staffAll,
+  });
 });
 </script>
 
