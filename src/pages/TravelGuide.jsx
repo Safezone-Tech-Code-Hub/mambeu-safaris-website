@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import FaqItem from '../components/FaqItem.jsx';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
+import { planHref } from '../lib/plan-link.js';
 import { href } from '../lib/utils.js';
 
 export default function TravelGuide() {
@@ -19,7 +20,7 @@ export default function TravelGuide() {
           <span className="eyebrow">YOUR LOCAL TEAM</span>
           <h2>Still curious?</h2>
           <p>Let’s talk through your plans.</p>
-          <Link to={href('plan')} className="button">
+          <Link to={planHref()} className="button">
             Ask a safari specialist
           </Link>
         </aside>

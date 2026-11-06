@@ -9,3 +9,4 @@ pocketbase/pb_data/*
 dashboard/node_modules/
 dashboard/dist/
 src/data/cms-meta.json
+.env

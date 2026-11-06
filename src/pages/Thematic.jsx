@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
+import { planHref } from '../lib/plan-link.js';
 import { href } from '../lib/utils.js';
 
 const fallback = {
@@ -34,7 +35,9 @@ export default function Thematic({ type }) {
   const mountain = type === 'kilimanjaro';
   const copy = { ...fallback[type], ...(pages[type] || {}) };
   const blocks = copy.blocks?.length ? copy.blocks : fallback[type].blocks;
-  const zanzibarTours = tours.filter((t) => String(t.title || '').includes('Zanzibar'));
+  const relatedTours = mountain
+    ? tours.filter((t) => /kilimanjaro|kili/i.test(JSON.stringify(t)))
+    : tours.filter((t) => String(t.title || '').includes('Zanzibar'));
 
   return (
     <main id="main">
@@ -68,7 +71,7 @@ export default function Thematic({ type }) {
           </p>
           <Link
             className="button orange"
-            to={`/plan/?interest=${mountain ? 'Kilimanjaro' : 'Zanzibar'}`}
+            to={planHref({ destination: mountain ? 'kilimanjaro' : 'zanzibar' })}
           >
             Plan my {mountain ? 'mountain adventure' : 'island escape'}
           </Link>
@@ -85,19 +88,22 @@ export default function Thematic({ type }) {
           ))}
         </div>
       </section>
-      {!mountain ? (
+      {relatedTours.length ? (
         <section className="wrap related">
           <div className="section-heading">
-            <h2>Safari from Zanzibar.</h2>
-            <Link to={href('safaris?q=Zanzibar')} className="text-link">
+            <h2>{mountain ? 'Related journeys.' : 'Safari from Zanzibar.'}</h2>
+            <Link
+              to={href(mountain ? 'safaris?q=Kilimanjaro' : 'safaris?q=Zanzibar')}
+              className="text-link"
+            >
               Explore these journeys
             </Link>
           </div>
-          <div className="related-grid">
-            {zanzibarTours.map((t) => (
+          <ul className="related-grid">
+            {relatedTours.map((t) => (
               <JourneyCard key={t.id} t={t} />
             ))}
-          </div>
+          </ul>
         </section>
       ) : null}
     </main>

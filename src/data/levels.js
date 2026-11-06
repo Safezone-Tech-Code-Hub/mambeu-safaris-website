@@ -39,7 +39,7 @@ export const levels = {
     bullets: [
       'Premium lodge and camp options',
       'Optional flights and special experiences',
-      'A bespoke journey with personal attention',
+      'A custom-made journey with personal attention',
     ],
     note: 'Luxury itineraries in the collection feature stays such as Kubu Kubu Tented Lodge and Gran Meliá Arusha. Availability is confirmed with your quotation.',
     cta: 'Plan my luxury safari',

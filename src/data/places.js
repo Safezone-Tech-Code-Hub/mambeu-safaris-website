@@ -41,7 +41,7 @@ export const places = [
     tag: 'Life begins on the southern plains.',
     photo: 'tour-291.webp',
     text: 'Mambeu’s calving-season safaris focus on the southern Serengeti ecosystem, with mobile camps and routes planned around seasonal wildlife movements.',
-    q: 'Calving',
+    q: 'Ndutu',
     facts: ['Calving-season journeys', 'Mobile tented camps', 'Seasonal wildlife'],
   },
   {

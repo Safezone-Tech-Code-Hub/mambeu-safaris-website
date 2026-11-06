@@ -36,7 +36,7 @@ export default function Comfort() {
             The published journeys are starting points. When you enquire, we’ll suggest specific lodges
             and tented camps for your dates and confirm what is included before you book.
           </p>
-          <Link to={href('safaris?style=Camping')} className="text-link">
+          <Link to={href('safaris?style=camping')} className="text-link">
             Explore our camping journeys
           </Link>
         </div>

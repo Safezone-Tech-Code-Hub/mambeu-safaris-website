@@ -19,6 +19,8 @@ const routes = [
   'experiences',
   'travel-guide',
   'plan',
+  'favourites',
+  'privacy',
   ...['serengeti', 'ngorongoro', 'tarangire', 'lake-manyara', 'ndutu', 'lake-natron'].map(
     (s) => 'destinations/' + s,
   ),

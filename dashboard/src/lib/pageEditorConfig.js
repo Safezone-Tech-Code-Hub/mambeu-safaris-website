@@ -33,11 +33,38 @@ export const pageEditorTabs = {
   ],
   plan: [
     {
-      label: 'Page head',
+      label: 'Hero',
       fields: [
-        { key: 'head.label', label: 'Eyebrow', path: ['head', 'label'] },
-        { key: 'head.title', label: 'Title', path: ['head', 'title'] },
-        { key: 'head.text', label: 'Intro', path: ['head', 'text'], long: true },
+        { key: 'hero.eyebrow', label: 'Eyebrow', path: ['hero', 'eyebrow'] },
+        { key: 'hero.titleLine1', label: 'Title line 1', path: ['hero', 'titleLine1'] },
+        { key: 'hero.titleLine2', label: 'Title line 2', path: ['hero', 'titleLine2'] },
+        { key: 'hero.text', label: 'Intro', path: ['hero', 'text'], long: true },
+      ],
+    },
+    {
+      label: 'Form copy',
+      fields: [
+        { key: 'form.title', label: 'Form title', path: ['form', 'title'] },
+        { key: 'form.requiredNote', label: 'Required note', path: ['form', 'requiredNote'], long: true },
+        { key: 'form.chipsTitle', label: 'Chips title', path: ['form', 'chipsTitle'] },
+        { key: 'form.submitNote', label: 'Submit note', path: ['form', 'submitNote'], long: true },
+        { key: 'form.replyTime', label: 'Reply time (optional)', path: ['form', 'replyTime'], hint: 'e.g. one working day' },
+      ],
+    },
+    {
+      label: 'Aside',
+      fields: [
+        { key: 'aside.title', label: 'Aside title', path: ['aside', 'title'] },
+        { key: 'aside.text', label: 'Aside text', path: ['aside', 'text'], long: true },
+        { key: 'aside.talkLabel', label: 'Talk label', path: ['aside', 'talkLabel'] },
+      ],
+    },
+    {
+      label: 'Legacy head',
+      fields: [
+        { key: 'head.label', label: 'Eyebrow (legacy)', path: ['head', 'label'] },
+        { key: 'head.title', label: 'Title (legacy)', path: ['head', 'title'] },
+        { key: 'head.text', label: 'Intro (legacy)', path: ['head', 'text'], long: true },
       ],
     },
   ],

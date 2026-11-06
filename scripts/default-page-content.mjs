@@ -8,7 +8,7 @@ export const siteChromeDefault = {
   phoneE164: '255796086799',
   whatsapp: '255796086799',
   officeLocation: 'Arusha, Tanzania',
-  officeHours: '08:00–19:30',
+  officeHours: '08:00 to 18:00',
   footerTagline: 'Dream · Discover · Explore',
   finalInviteEyebrow: 'TELL US WHAT YOU’RE DREAMING OF',
   finalInviteTitle: 'Your next chapter\nstarts in Tanzania.',
@@ -17,21 +17,22 @@ export const siteChromeDefault = {
 
 export const homePageDefault = {
   hero: {
-    eyebrow: 'TANZANIA, YOUR WAY',
-    titleLine1: 'Your Tanzania.',
-    titleLine2: 'Wildly personal.',
-    text: 'Extraordinary wildlife. Welcoming stays.\nThoughtfully planned around you.',
+    eyebrow: 'Arusha · Northern Tanzania',
+    titleLine1: 'Wildlife safaris',
+    titleLine2: 'across northern Tanzania.',
+    text: 'Routes and lodges quoted before you commit.',
     image: 'hero.webp',
-    ctaPrimary: 'Explore safaris',
-    ctaSecondary: 'Plan your trip',
+    ctaPrimary: 'Plan with us',
   },
   finder: {
-    title: 'Find your safari',
-    styleLabel: 'Comfort level',
-    durationLabel: 'Duration',
-    interestLabel: 'What interests you?',
+    eyebrow: 'Find your starting point',
+    title: 'Three filters.\nMatching safaris.',
+    lead: 'Pick a style, trip length, and focus—we’ll show what fits.',
+    styleLabel: 'Safari style',
+    durationLabel: 'Trip length',
+    interestLabel: 'Main interest',
   },
-  featuredComfortIds: [302, 298, 291],
+  featuredComfortIds: [302, 298, 291, 293, 294, 64],
   placesSection: {
     eyebrow: 'DESTINATIONS',
     title: 'Places that stay with you.',
@@ -57,10 +58,44 @@ export const aboutPageDefault = {
 };
 
 export const planPageDefault = {
+  // Legacy head keys kept for existing CMS / dashboard editors.
   head: {
     label: 'START THE CONVERSATION',
     title: 'Let’s plan your safari.',
     text: 'Share a few details and we’ll help shape a personal quotation. You can send your message by WhatsApp or email when you’re ready.',
+  },
+  hero: {
+    eyebrow: 'Start the conversation',
+    titleLine1: 'Let’s plan',
+    titleLine2: 'your safari.',
+    text: 'Share a few details and we’ll help shape a personal quotation. You can send your message by WhatsApp or email when you’re ready.',
+  },
+  form: {
+    title: 'Tell us about your trip',
+    requiredNote: 'Fields marked * are required. Everything else is optional.',
+    groups: { you: 'About you', trip: 'Your trip', interests: 'What you have in mind' },
+    chipsTitle: 'You’re asking about',
+    submitNote:
+      'Review your enquiry below, then send it through WhatsApp or your email app. Nothing is sent until you do.',
+    replyTime: '',
+    placeholders: {
+      name: 'Your full name',
+      email: 'you@example.com',
+      phone: '+255 …  (include your country code)',
+      country: 'e.g. United Kingdom',
+      journey: 'A journey name, or a park you have in mind',
+      message:
+        'Parks you would like to see, children’s ages, special occasions, anything we should know',
+    },
+    hints: {
+      phone: 'We can reply on WhatsApp if you add your number.',
+      date: 'An approximate date is fine. Leave it blank if you are still deciding.',
+    },
+  },
+  aside: {
+    title: 'No perfect plan needed.',
+    text: 'Share what you know. We’ll help with the rest.',
+    talkLabel: 'Prefer to talk?',
   },
 };
 

@@ -2,7 +2,25 @@ import toursStatic from '../data/tours.json';
 import { experiences as experiencesStatic } from '../data/experiences.js';
 import { faqItems } from '../data/faq.js';
 import { levels as levelsStatic } from '../data/levels.js';
+import { homePageDefaults } from '../data/home-page-defaults.js';
 import { places as placesStatic } from '../data/places.js';
+
+function withHomePageDefaults(pages) {
+  const next = { ...pages };
+  next.home = {
+    ...homePageDefaults,
+    ...(next.home || {}),
+    hero: { ...homePageDefaults.hero, ...(next.home?.hero || {}) },
+    finder: { ...homePageDefaults.finder, ...(next.home?.finder || {}) },
+    intro: { ...homePageDefaults.intro, ...(next.home?.intro || {}) },
+    beyond: { ...homePageDefaults.beyond, ...(next.home?.beyond || {}) },
+    featuredComfortIds:
+      next.home?.featuredComfortIds?.length >= homePageDefaults.featuredComfortIds.length
+        ? next.home.featuredComfortIds
+        : homePageDefaults.featuredComfortIds,
+  };
+  return next;
+}
 
 const pbUrl = () =>
   (import.meta.env.VITE_POCKETBASE_URL || 'https://dashboard-mambeu.schoolhub.space').replace(/\/$/, '');
@@ -13,7 +31,7 @@ export const staticCatalog = {
   experiences: experiencesStatic,
   levels: levelsStatic,
   faq: faqItems(),
-  pages: {},
+  pages: withHomePageDefaults({}),
 };
 
 async function listPublished(name, { sort = true } = {}) {
@@ -81,9 +99,11 @@ export async function fetchCatalog() {
       ? Object.fromEntries(levels.map((row) => [row.levelKey || row.title, row.payload || {}]))
       : staticCatalog.levels,
     faq: faq ? faq.map((row) => [row.question, row.answer]) : staticCatalog.faq,
-    pages: pages
-      ? Object.fromEntries(pages.map((row) => [row.pageKey, row.content || {}]))
-      : staticCatalog.pages,
+    pages: withHomePageDefaults(
+      pages
+        ? Object.fromEntries(pages.map((row) => [row.pageKey, row.content || {}]))
+        : staticCatalog.pages,
+    ),
   };
 }
 
@@ -93,7 +113,7 @@ const chromeFallback = {
   phoneE164: '255796086799',
   whatsapp: '255796086799',
   officeLocation: 'Arusha, Tanzania',
-  officeHours: '08:00–19:30',
+  officeHours: '08:00 to 18:00',
   footerTagline: 'Dream · Discover · Explore',
   finalInviteEyebrow: 'TELL US WHAT YOU’RE DREAMING OF',
   finalInviteTitle: 'Your next chapter\nstarts in Tanzania.',
@@ -101,5 +121,11 @@ const chromeFallback = {
 };
 
 export function siteChrome(pages) {
-  return { ...chromeFallback, ...(pages?.site_chrome || {}) };
+  const chrome = pages?.site_chrome || {};
+  return {
+    ...chromeFallback,
+    ...chrome,
+    // Keep the published hours from code; dashboard has no editor for this field.
+    officeHours: chromeFallback.officeHours,
+  };
 }

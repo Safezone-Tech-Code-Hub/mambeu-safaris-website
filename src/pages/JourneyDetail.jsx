@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
+import Reveal from '../components/Reveal.jsx';
 import { useCms } from '../CmsProvider.jsx';
 import { siteChrome } from '../lib/cms.js';
+import { planHref, urlKey } from '../lib/plan-link.js';
 import { esc, href, itineraryRoute, money, Img } from '../lib/utils.js';
+import NotFound from './NotFound.jsx';
 
 export default function JourneyDetail({ tourPath }) {
   const params = useParams();
@@ -22,16 +25,7 @@ export default function JourneyDetail({ tourPath }) {
   }, [t]);
 
   if (!t) {
-    return (
-      <main id="main">
-        <section className="wrap">
-          <h1>Journey not found</h1>
-          <Link to={href('safaris')} className="button">
-            Explore our safaris
-          </Link>
-        </section>
-      </main>
-    );
+    return <NotFound />;
   }
 
   t.highlights = t.highlights || [];
@@ -76,7 +70,7 @@ export default function JourneyDetail({ tourPath }) {
 
       <section className="wrap journey-layout">
         <article>
-          <div id="overview" className="journey-section">
+          <Reveal as="div" id="overview" className="journey-section">
             <span className="eyebrow">THE JOURNEY AT A GLANCE</span>
             <h2>
               Make every
@@ -105,9 +99,9 @@ export default function JourneyDetail({ tourPath }) {
                 ))}
               </div>
             ) : null}
-          </div>
+          </Reveal>
 
-          <div className="journey-section" id="itinerary">
+          <Reveal as="div" className="journey-section" id="itinerary">
             <div className="section-heading">
               <div>
                 <span className="eyebrow">YOUR TIME IN TANZANIA</span>
@@ -177,9 +171,9 @@ export default function JourneyDetail({ tourPath }) {
                 quotation.
               </p>
             )}
-          </div>
+          </Reveal>
 
-          <div className="journey-section" id="stays">
+          <Reveal as="div" className="journey-section" id="stays">
             <span className="eyebrow">YOUR HOME ALONG THE WAY</span>
             <h2>Where you’ll rest.</h2>
             <div className="stay-list">
@@ -202,13 +196,13 @@ export default function JourneyDetail({ tourPath }) {
             </p>
             <Link
               className="text-link"
-              to={`/plan/?journey=${encodeURIComponent(t.title)}`}
+              to={planHref({ journey: urlKey(t) })}
             >
               Ask about different accommodation
             </Link>
-          </div>
+          </Reveal>
 
-          <div className="journey-section inclusions" id="included">
+          <Reveal as="div" className="journey-section inclusions" id="included">
             <div>
               <span className="eyebrow">WHAT’S IN YOUR JOURNEY</span>
               <h3>Included</h3>
@@ -239,7 +233,7 @@ export default function JourneyDetail({ tourPath }) {
                 <p>Exclusions and optional activities are set out in your quotation.</p>
               )}
             </div>
-          </div>
+          </Reveal>
           <p className="fineprint">
             Activities and meals apply as specified in the itinerary. Optional experiences, upgrades
             and changes are quoted separately.
@@ -283,7 +277,7 @@ export default function JourneyDetail({ tourPath }) {
           )}
           <Link
             className="button orange"
-            to={`/plan/?journey=${encodeURIComponent(t.title)}&style=${t.style}`}
+            to={planHref({ journey: urlKey(t) })}
           >
             Enquire about this journey
           </Link>
@@ -305,17 +299,19 @@ export default function JourneyDetail({ tourPath }) {
       </section>
 
       <section className="wrap related">
-        <div className="section-heading">
-          <h2>Keep exploring.</h2>
-          <Link to={href('safaris')} className="text-link">
-            All safari journeys
-          </Link>
-        </div>
-        <div className="related-grid">
+        <Reveal>
+          <div className="section-heading">
+            <h2>Keep exploring.</h2>
+            <Link to={href('safaris')} className="text-link">
+              All safari journeys
+            </Link>
+          </div>
+        </Reveal>
+        <Reveal as="ul" stagger className="related-grid">
           {related.map((x) => (
             <JourneyCard key={x.id} t={x} />
           ))}
-        </div>
+        </Reveal>
       </section>
     </main>
   );

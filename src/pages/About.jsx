@@ -1,110 +1,184 @@
-import { Link } from 'react-router-dom';
-import PageHead from '../components/PageHead.jsx';
+import AboutIntro from '../components/AboutIntro.jsx';
+import FinalCta from '../components/FinalCta.jsx';
+import PageHeader from '../components/PageHeader.jsx';
+import Principles from '../components/Principles.jsx';
+import Reveal from '../components/Reveal.jsx';
 import { useCms } from '../CmsProvider.jsx';
-import { href, Img } from '../lib/utils.js';
+import { aboutPageDefaults } from '../data/about-page-defaults.js';
 
-const values = [
-  [
-    '01',
-    'Personal by design',
-    'Your dates, interests and comfort level shape the journey. We listen first, then help you connect the details.',
-  ],
-  [
-    '02',
-    'Rooted in Tanzania',
-    'Local knowledge helps us choose routes, stays and experiences that work together.',
-  ],
-  [
-    '03',
-    'Travel responsibly',
-    'Respect for nature and communities guides how we share Tanzania with our visitors.',
-  ],
-];
+function mergeAbout(cms) {
+  const next = cms && typeof cms === 'object' ? cms : {};
+  const who = { ...aboutPageDefaults.who, ...(next.who || {}) };
+  const principles = { ...aboutPageDefaults.principles, ...(next.principles || {}) };
+  const why = { ...aboutPageDefaults.why, ...(next.why || {}) };
+  const mv = { ...aboutPageDefaults.missionVision, ...(next.missionVision || {}) };
+  return {
+    ...aboutPageDefaults,
+    ...next,
+    hero: { ...aboutPageDefaults.hero, ...(next.hero || {}) },
+    who: {
+      ...who,
+      paragraphs:
+        Array.isArray(who.paragraphs) && who.paragraphs.length
+          ? who.paragraphs
+          : aboutPageDefaults.who.paragraphs,
+      image: { ...aboutPageDefaults.who.image, ...(who.image || {}) },
+    },
+    proof: { ...aboutPageDefaults.proof, ...(next.proof || {}) },
+    principles: {
+      ...principles,
+      items:
+        Array.isArray(principles.items) && principles.items.length
+          ? principles.items
+          : aboutPageDefaults.principles.items,
+    },
+    missionVision: {
+      mission: { ...aboutPageDefaults.missionVision.mission, ...(mv.mission || {}) },
+      vision: { ...aboutPageDefaults.missionVision.vision, ...(mv.vision || {}) },
+    },
+    why: {
+      ...why,
+      items:
+        Array.isArray(why.items) && why.items.length ? why.items : aboutPageDefaults.why.items,
+    },
+  };
+}
+
+function WhyIcon({ name }) {
+  const common = {
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'var(--forest-display)',
+    strokeWidth: '2',
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    'aria-hidden': true,
+  };
+
+  if (name === 'Local expertise') {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="7.5" r="2.25" />
+        <path d="M8 19c.5-3.4 1.8-5 4-5s3.5 1.6 4 5" />
+      </svg>
+    );
+  }
+
+  if (name === 'Sustainable') {
+    return (
+      <svg {...common}>
+        <path d="M12 20V10" />
+        <path d="M12 10c0-4.2 4.8-5.2 4.8-1.4 0 2.6-3.2 4-4.8 4.4-1.6-.4-4.8-1.8-4.8-4.4 0-3.8 4.8-2.8 4.8 1.4z" />
+      </svg>
+    );
+  }
+
+  if (name === 'Cultural exchange') {
+    return (
+      <svg {...common}>
+        <circle cx="8" cy="8" r="2" />
+        <path d="M5 19c.4-3.2 1.5-4.6 3-4.6s2.6 1.4 3 4.6" />
+        <circle cx="16" cy="8" r="2" />
+        <path d="M13 19c.4-3.2 1.5-4.6 3-4.6s2.6 1.4 3 4.6" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M3 17.5h18" />
+      <path d="M3 17.5l5.2-6.2 3.1 3.4L16 8.5l5 9" />
+    </svg>
+  );
+}
 
 export default function About() {
   const { pages } = useCms();
-  const head = pages.about?.head || {};
-  const photo = pages.about?.storyPhoto || 'team.webp';
-  const valueItems = pages.about?.values?.length ? pages.about.values : values;
+  const a = mergeAbout(pages.about);
+
   return (
-    <main id="main">
-      <PageHead
-        label={head.label || 'THE PEOPLE BEHIND YOUR JOURNEY'}
-        title={head.title || 'Rooted in Tanzania.<br><span class="accent">Made around you.</span>'}
-        text={
-          head.text ||
-          'Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys.'
+    <main id="main" className="about">
+      <PageHeader
+        id="about-heading"
+        eyebrow={a.hero.eyebrow}
+        title={
+          <>
+            {a.hero.titleLine1}
+            <br />
+            <span className="page-header__quiet">{a.hero.titleLine2}</span>
+          </>
         }
+        description={a.hero.text}
+        image={a.hero.image}
+        imagePosition={a.hero.imagePosition}
       />
-      <section className="wrap story-grid about-story">
-        <div className="story-photo">
-          <Img src={photo} alt="Mambeu guests and safari vehicle in Tanzania" />
-          <span>LOCAL ROOTS. PERSONAL JOURNEYS.</span>
-        </div>
-        <div>
-          <span className="eyebrow">WHO WE ARE</span>
-          <h2>
-            Local knowledge.
-            <br />
-            Human connections.
-          </h2>
-          <p>
-            Founded by local Tanzanians, Mambeu brings a close connection to Tanzania’s landscapes,
-            wildlife and communities. Our team plans bespoke journeys through the places we know and
-            love.
-          </p>
-          <p>
-            We welcome different budgets and travel styles. We help choose routes, stays and activities
-            around your comfort, interests and time available.
-          </p>
-          <p>
-            Responsible tourism is part of our approach: respecting wildlife, supporting local
-            communities and making meaningful connections with the places you visit.
-          </p>
-        </div>
-      </section>
-      <section className="values">
-        <div className="wrap">
-          <span className="eyebrow">WHAT GUIDES US</span>
-          <h2>
-            A journey with care
-            <br />
-            at its heart.
-          </h2>
-          <div className="values-grid">
-            {valueItems.map((v) => (
-              <article key={v[0]}>
-                <span>{v[0]}</span>
-                <h3>{v[1]}</h3>
-                <p>{v[2]}</p>
-              </article>
-            ))}
+
+      <AboutIntro />
+
+      <div className="about-proof">
+        <Reveal className="about-container about-proof__inner">
+          {a.proof.logo ? (
+            <img
+              src={a.proof.logo}
+              alt={a.proof.logoAlt || 'SafariBookings'}
+              className="about-proof__logo"
+              width="225"
+              height="225"
+            />
+          ) : null}
+          <div className="about-proof__copy">
+            <p className="about-proof__label">{a.proof.label}</p>
+            <p className="about-proof__text">{a.proof.text}</p>
           </div>
+          <a
+            className="about-button"
+            href={a.proof.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View our profile
+            <span className="xp-sr-only"> on SafariBookings (opens in a new tab)</span>
+          </a>
+        </Reveal>
+      </div>
+
+      <Principles />
+
+      <section className="about-mv" aria-label="Mission and vision">
+        <Reveal stagger className="about-container about-mv__grid">
+          {[a.missionVision.mission, a.missionVision.vision].map((b) => (
+            <div key={b.label} className="about-mv__block">
+              <p className="about-eyebrow">{b.label}</p>
+              <p className="about-mv__text">{b.text}</p>
+            </div>
+          ))}
+        </Reveal>
+      </section>
+
+      <section className="about-why" aria-labelledby="about-why-heading">
+        <div className="about-container">
+          <Reveal>
+            <p className="about-eyebrow">{a.why.eyebrow}</p>
+            <h2 id="about-why-heading" className="about-heading">
+              {a.why.title}
+            </h2>
+            <p className="about-why__intro">{a.why.text}</p>
+          </Reveal>
+          <Reveal as="ul" stagger className="about-why__list">
+            {a.why.items.map((it) => (
+              <li key={it.title} className="about-why__item">
+                <span className="about-why__icon">
+                  <WhyIcon name={it.title} />
+                </span>
+                <h3 className="about-why__title">{it.title}</h3>
+                <p className="about-body">{it.text}</p>
+              </li>
+            ))}
+          </Reveal>
         </div>
       </section>
-      <section className="wrap split-story">
-        <div>
-          <span className="eyebrow">OUR MISSION</span>
-          <h2>
-            Help every traveller
-            <br />
-            find their Tanzania.
-          </h2>
-        </div>
-        <div>
-          <p className="lead">
-            We create personalised travel experiences that showcase Tanzania’s natural beauty and
-            cultural richness, with comfort, safety and local insight.
-          </p>
-          <p>
-            Our vision is to grow through thoughtful service and responsible tourism, supporting local
-            communities while sharing the country’s extraordinary places.
-          </p>
-          <Link to={href('plan')} className="button">
-            Meet your safari specialist
-          </Link>
-        </div>
-      </section>
+
+      <FinalCta />
     </main>
   );
 }

@@ -20,7 +20,7 @@ export async function submitEnquiry(fields) {
     journey: fields.journey || '',
     interest: fields.interest || '',
     travelDate: fields.date || '',
-    adults: fields.adults || '',
+    adults: fields.adults || fields.guests || '',
     children: fields.children || '',
     message: fields.message || '',
     payload: fields,

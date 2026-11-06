@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCms } from '../CmsProvider.jsx';
 import { levels as staticLevels } from '../data/levels.js';
+import { planHref } from '../lib/plan-link.js';
 import { Img } from '../lib/utils.js';
 
 function imageNote(style) {
@@ -16,31 +17,37 @@ function tabSubtitle(style) {
   return 'Elevated experiences';
 }
 
+/** @param {{ style?: string; levels: Record<string, Record<string, unknown>> }} props */
 function StylePanel({ style = 'Comfort', levels }) {
   const s = levels[style];
   if (!s) return null;
   return (
     <>
-      <div className="stay-photo">
-        <Img src={s.image} alt={s.alt} />
-        <span className="image-note">{imageNote(style)}</span>
-      </div>
-      <div className="stay-copy">
-        <span className="eyebrow">
+      <figure className="comfort-section__figure">
+        <div className="comfort-section__photo">
+          <Img src={s.image} alt={s.alt} />
+        </div>
+        <figcaption className="comfort-section__caption">{imageNote(style)}</figcaption>
+      </figure>
+      <div className="comfort-section__copy">
+        <p className="comfort-section__panel-eyebrow">
           {s.number} / {style.toUpperCase()} SAFARIS
-        </span>
-        <h3 dangerouslySetInnerHTML={{ __html: s.title }} />
-        <p className="stay-sub">{s.sub}</p>
-        <p>{s.body}</p>
-        <ul className="check-list">
+        </p>
+        <h3
+          className="comfort-section__panel-title"
+          dangerouslySetInnerHTML={{ __html: s.title }}
+        />
+        <p className="comfort-section__panel-lead">{s.sub}</p>
+        <p className="comfort-section__panel-body">{s.body}</p>
+        <ul className="comfort-section__list">
           {(s.bullets || []).map((b) => (
             <li key={b}>{b}</li>
           ))}
         </ul>
-        <Link className="button" to={`/plan/?style=${style}`}>
+        <Link className="comfort-section__cta button" to={planHref({ style })}>
           {s.cta}
         </Link>
-        <p className="fineprint">{s.note}</p>
+        <p className="comfort-section__note">{s.note}</p>
       </div>
     </>
   );
@@ -73,45 +80,55 @@ export default function ComfortSection() {
   };
 
   return (
-    <section className="comfort-section" id="comfort">
-      <div className="wrap">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">YOUR SAFARI. YOUR KIND OF STAY.</span>
-            <h2>
+    <section className="comfort-section" id="comfort" aria-labelledby="comfort-heading">
+      <div className="comfort-section__inner">
+        <header className="comfort-section__header">
+          <div className="comfort-section__intro">
+            <p className="comfort-section__eyebrow">Your safari. Your kind of stay.</p>
+            <h2 id="comfort-heading" className="comfort-section__heading">
               Comfort is personal.
               <br />
               Let’s find yours.
             </h2>
           </div>
-          <p>
+          <p className="comfort-section__lede">
             Midrange and comfort at our heart.
             <br />
             Luxury when you want a little more.
           </p>
+        </header>
+
+        <div className="comfort-section__tabs" role="tablist" aria-label="Safari comfort levels">
+          {styleKeys.map((s, i) => {
+            const selected = s === activeStyle;
+            return (
+              <button
+                key={s}
+                role="tab"
+                type="button"
+                id={`tab-${s}`}
+                data-style={s}
+                aria-selected={selected}
+                aria-controls="comfort-panel"
+                tabIndex={selected ? 0 : -1}
+                className={
+                  selected
+                    ? 'comfort-section__tab comfort-section__tab--active'
+                    : 'comfort-section__tab'
+                }
+                onClick={() => switchStyle(s, `tab-${s}`)}
+                onKeyDown={(e) => onKeyDown(e, i)}
+              >
+                <span className="comfort-section__tab-label">{s}</span>
+                <span className="comfort-section__tab-hint">{tabSubtitle(s)}</span>
+              </button>
+            );
+          })}
         </div>
-        <div className="style-tabs" role="tablist" aria-label="Safari comfort levels">
-          {styleKeys.map((s, i) => (
-            <button
-              key={s}
-              role="tab"
-              type="button"
-              id={`tab-${s}`}
-              data-style={s}
-              aria-selected={s === activeStyle}
-              aria-controls="stay-panel"
-              tabIndex={s === activeStyle ? 0 : -1}
-              onClick={() => switchStyle(s, `tab-${s}`)}
-              onKeyDown={(e) => onKeyDown(e, i)}
-            >
-              {s}
-              <span>{tabSubtitle(s)}</span>
-            </button>
-          ))}
-        </div>
+
         <div
-          className="stay-panel"
-          id="stay-panel"
+          className="comfort-section__panel"
+          id="comfort-panel"
           role="tabpanel"
           aria-labelledby={tabId}
         >
