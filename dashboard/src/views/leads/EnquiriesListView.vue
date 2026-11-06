@@ -35,7 +35,7 @@ import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Tag from 'primevue/tag';
-import { COLLECTIONS, pb } from '@/lib/pb';
+import { COLLECTIONS, getListWithSort } from '@/lib/pb';
 
 const router = useRouter();
 const rows = ref([]);
@@ -62,7 +62,7 @@ const filtered = computed(() => {
 });
 
 onMounted(async () => {
-  const res = await pb.collection(COLLECTIONS.enquiries).getList(1, 200, { sort: '-created' });
+  const res = await getListWithSort(COLLECTIONS.enquiries, 1, 200);
   rows.value = res.items;
   loading.value = false;
 });

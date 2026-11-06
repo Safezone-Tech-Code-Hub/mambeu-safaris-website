@@ -1,4 +1,5 @@
-import { ref } from 'vue';
+import { ref, unref, watch } from 'vue';
+import { mergePageCatalog } from '@site/content/pageCatalogMerge.js';
 import { COLLECTIONS, describePbError, pb } from '@/lib/pb';
 
 export function usePageContent(pageKey) {
@@ -9,22 +10,34 @@ export function usePageContent(pageKey) {
   const status = ref('published');
   const error = ref('');
 
+  function currentKey() {
+    return unref(pageKey);
+  }
+
   async function load() {
+    const key = currentKey();
     loading.value = true;
     error.value = '';
+    content.value = {};
+    recordId.value = '';
     try {
-      const row = await pb.collection(COLLECTIONS.pageContent).getFirstListItem(`pageKey="${pageKey}"`);
+      const row = await pb.collection(COLLECTIONS.pageContent).getFirstListItem(`pageKey="${key}"`);
+      if (currentKey() !== key) return;
       recordId.value = row.id;
-      content.value = row.content || {};
+      const raw = row.content || {};
+      const merged = mergePageCatalog({ [key]: raw });
+      content.value = merged[key] !== undefined ? structuredClone(merged[key]) : raw;
       status.value = row.status || 'published';
     } catch (e) {
+      if (currentKey() !== key) return;
       error.value = describePbError(e, 'Could not load this page.');
     } finally {
-      loading.value = false;
+      if (currentKey() === key) loading.value = false;
     }
   }
 
   async function save() {
+    const key = currentKey();
     saving.value = true;
     error.value = '';
     try {
@@ -33,8 +46,8 @@ export function usePageContent(pageKey) {
         await pb.collection(COLLECTIONS.pageContent).update(recordId.value, data);
       } else {
         const row = await pb.collection(COLLECTIONS.pageContent).create({
-          pageKey,
-          label: pageKey,
+          pageKey: key,
+          label: key,
           ...data,
         });
         recordId.value = row.id;
@@ -47,6 +60,10 @@ export function usePageContent(pageKey) {
       saving.value = false;
     }
   }
+
+  watch(() => currentKey(), () => {
+    load();
+  }, { immediate: true });
 
   return { loading, saving, content, status, error, load, save };
 }

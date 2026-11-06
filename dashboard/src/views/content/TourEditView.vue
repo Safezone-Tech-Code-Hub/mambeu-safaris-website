@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading"><ProgressSpinner /></div>
+  <div v-if="loading" class="editor-loading"><ProgressSpinner /></div>
   <template v-else-if="tour">
     <div class="page-header">
       <div>
@@ -22,8 +22,15 @@
           <div><label>Days</label><InputNumber v-model="tour.days" class="w-full" /></div>
           <div class="col-span-2"><label>Short description</label><Textarea v-model="tour.description" rows="3" class="w-full" autoResize /></div>
           <div class="col-span-2"><label>Full description</label><Textarea v-model="payload.fullDescription" rows="5" class="w-full" autoResize /></div>
-          <div><label>Hero image path</label><InputText v-model="tour.image" class="w-full" /></div>
+          <div class="col-span-2">
+            <label>Hero image</label>
+            <MediaFilePicker v-model="tour.image" />
+          </div>
           <div><label>Featured on home</label><ToggleSwitch v-model="tour.featured" /></div>
+          <div class="col-span-2">
+            <label>Highlights (one per line)</label>
+            <Textarea v-model="highlightsText" rows="4" class="w-full" autoResize />
+          </div>
         </div>
       </TabPanel>
       <TabPanel header="Pricing">
@@ -35,16 +42,41 @@
         </div>
         <Button label="Add price row" icon="pi pi-plus" text @click="payload.pricingTiers.push({ people: '', price: 0 })" />
       </TabPanel>
+      <TabPanel header="Gallery">
+        <div class="page-card">
+          <label>Gallery images</label>
+          <p class="hint">Optional extra photos for this journey.</p>
+          <MediaFilePicker v-model="payload.gallery" multiple />
+        </div>
+      </TabPanel>
       <TabPanel header="Itinerary">
         <div v-for="(day, i) in payload.itinerary" :key="i" class="day-card page-card">
           <div class="field-grid two">
             <div><label>Day</label><InputText v-model="day.day" class="w-full" /></div>
             <div><label>Title</label><InputText v-model="day.title" class="w-full" /></div>
             <div class="col-span-2"><label>Description</label><Textarea v-model="day.description" rows="3" class="w-full" autoResize /></div>
+            <div><label>Accommodation</label><InputText v-model="day.accommodation" class="w-full" /></div>
+            <div><label>Meals & drinks</label><InputText v-model="day.meals" class="w-full" /></div>
+            <div class="col-span-2">
+              <label>Day photo</label>
+              <MediaFilePicker v-model="day.image" />
+            </div>
           </div>
           <Button label="Remove day" icon="pi pi-trash" severity="danger" text @click="payload.itinerary.splice(i, 1)" />
         </div>
         <Button label="Add day" icon="pi pi-plus" @click="payload.itinerary.push({ day: '', title: '', description: '', image: '', accommodation: '', meals: '' })" />
+      </TabPanel>
+      <TabPanel header="Included & excluded">
+        <div class="page-card field-grid">
+          <div>
+            <label>Included (one per line)</label>
+            <Textarea v-model="includedText" rows="8" class="w-full" autoResize />
+          </div>
+          <div>
+            <label>Excluded (one per line)</label>
+            <Textarea v-model="excludedText" rows="8" class="w-full" autoResize />
+          </div>
+        </div>
       </TabPanel>
     </TabView>
   </template>
@@ -64,6 +96,7 @@ import Select from 'primevue/select';
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
+import MediaFilePicker from '@/components/MediaFilePicker.vue';
 import { COLLECTIONS, describePbError, pb } from '@/lib/pb';
 
 const route = useRoute();
@@ -81,6 +114,40 @@ const payload = reactive({
   excluded: [],
   gallery: [],
 });
+const highlightsText = ref('');
+const includedText = ref('');
+const excludedText = ref('');
+
+function lines(text) {
+  return String(text || '')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function applyPayload(src) {
+  const next = {
+    fullDescription: '',
+    pricingTiers: [],
+    itinerary: [],
+    highlights: [],
+    included: [],
+    excluded: [],
+    gallery: [],
+    ...(src || {}),
+  };
+  if (!Array.isArray(next.pricingTiers)) next.pricingTiers = [];
+  if (!Array.isArray(next.itinerary)) next.itinerary = [];
+  if (!Array.isArray(next.gallery)) next.gallery = [];
+  if (!Array.isArray(next.highlights)) next.highlights = [];
+  if (!Array.isArray(next.included)) next.included = [];
+  if (!Array.isArray(next.excluded)) next.excluded = [];
+  Object.keys(payload).forEach((key) => delete payload[key]);
+  Object.assign(payload, next);
+  highlightsText.value = next.highlights.join('\n');
+  includedText.value = next.included.join('\n');
+  excludedText.value = next.excluded.join('\n');
+}
 
 const statusOptions = [
   { label: 'Published', value: 'published' },
@@ -91,9 +158,15 @@ onMounted(async () => {
   try {
     const row = await pb.collection(COLLECTIONS.tours).getOne(route.params.id);
     tour.value = { ...row };
-    Object.assign(payload, row.payload || {});
-    if (!Array.isArray(payload.pricingTiers)) payload.pricingTiers = [];
-    if (!Array.isArray(payload.itinerary)) payload.itinerary = [];
+    const stored = { ...(row.payload || {}) };
+    for (const key of ['itinerary', 'pricingTiers', 'gallery', 'included', 'excluded', 'highlights', 'fullDescription']) {
+      const fromPayload = stored[key];
+      const fromRow = row[key];
+      const payloadEmpty = fromPayload == null || (Array.isArray(fromPayload) && fromPayload.length === 0);
+      const rowHas = Array.isArray(fromRow) ? fromRow.length > 0 : fromRow != null && fromRow !== '';
+      if (payloadEmpty && rowHas) stored[key] = fromRow;
+    }
+    applyPayload(stored);
   } catch (e) {
     error.value = describePbError(e);
   } finally {
@@ -105,6 +178,9 @@ async function save() {
   saving.value = true;
   error.value = '';
   try {
+    payload.highlights = lines(highlightsText.value);
+    payload.included = lines(includedText.value);
+    payload.excluded = lines(excludedText.value);
     const merged = { ...tour.value.payload, ...payload, title: tour.value.title, style: tour.value.style, duration: tour.value.duration, days: tour.value.days, description: tour.value.description, image: tour.value.image, featured: tour.value.featured };
     await pb.collection(COLLECTIONS.tours).update(tour.value.id, {
       title: tour.value.title,

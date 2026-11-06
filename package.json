@@ -10,6 +10,14 @@
     "preview": "vite preview",
     "check": "node --check scripts/prerender.mjs",
     "seed:pb": "node scripts/seed-pocketbase.mjs",
+    "ensure:pb-collections": "node scripts/ensure-pb-collections.mjs",
+    "backup:pb": "node scripts/backup-pocketbase.mjs",
+    "merge:home-page": "node scripts/merge-home-page-content.mjs",
+    "merge:about-page": "node scripts/merge-about-page-content.mjs",
+    "merge:comfort-page": "node scripts/merge-comfort-page-content.mjs",
+    "merge:destinations-page": "node scripts/merge-destinations-page-content.mjs",
+    "merge:experiences-page": "node scripts/merge-experiences-page-content.mjs",
+    "merge:all-pages": "node scripts/merge-all-page-content.mjs",
     "docker:up": "docker compose up -d --build"
   },
   "dependencies": {

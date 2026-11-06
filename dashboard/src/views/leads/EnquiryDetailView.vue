@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading"><ProgressSpinner /></div>
+  <div v-if="loading" class="editor-loading"><ProgressSpinner /></div>
   <template v-else-if="row">
     <div class="page-header">
       <div>

@@ -7,6 +7,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import PocketBase from 'pocketbase';
+import { mergePageCatalog } from '../src/content/pageCatalogMerge.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -96,7 +97,7 @@ async function main() {
     const pages = await pb.collection('page_content').getFullList({ filter: 'status = "published"' });
     if (pages.length) {
       const byKey = Object.fromEntries(pages.map((row) => [row.pageKey, row.content || {}]));
-      writeFileSync(join(root, 'src/data/pages.json'), JSON.stringify(byKey, null, 2));
+      writeFileSync(join(root, 'src/data/pages.json'), JSON.stringify(mergePageCatalog(byKey), null, 2));
       console.log('synced pages.json', pages.length);
     }
 
