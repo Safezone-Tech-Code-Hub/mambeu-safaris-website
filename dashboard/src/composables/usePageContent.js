@@ -1,9 +1,5 @@
 import { ref } from 'vue';
-import { mergeAboutContent } from '@site/content/aboutDefaults.js';
-import { mergeComfortContent } from '@site/content/comfortDefaults.js';
-import { mergeDestinationsContent } from '@site/content/destinationsDefaults.js';
-import { mergeExperiencesContent } from '@site/content/experiencesDefaults.js';
-import { mergeHomeContent } from '@site/content/homeDefaults.js';
+import { mergePageCatalog } from '@site/content/pageCatalogMerge.js';
 import { COLLECTIONS, describePbError, pb } from '@/lib/pb';
 
 export function usePageContent(pageKey) {
@@ -21,18 +17,8 @@ export function usePageContent(pageKey) {
       const row = await pb.collection(COLLECTIONS.pageContent).getFirstListItem(`pageKey="${pageKey}"`);
       recordId.value = row.id;
       const raw = row.content || {};
-      content.value =
-        pageKey === 'home'
-          ? mergeHomeContent(raw)
-          : pageKey === 'about'
-            ? mergeAboutContent(raw)
-            : pageKey === 'comfort'
-              ? mergeComfortContent(raw)
-              : pageKey === 'destinations'
-                ? mergeDestinationsContent(raw)
-                : pageKey === 'experiences'
-                  ? mergeExperiencesContent(raw)
-                  : raw;
+      const merged = mergePageCatalog({ [pageKey]: raw });
+      content.value = merged[pageKey] !== undefined ? merged[pageKey] : raw;
       status.value = row.status || 'published';
     } catch (e) {
       error.value = describePbError(e, 'Could not load this page.');

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useCms } from '../CmsProvider.jsx';
+import { mergeSafarisContent } from '../content/safarisDefaults.js';
 import JourneyCard from '../components/JourneyCard.jsx';
 import PageHead from '../components/PageHead.jsx';
 import { href } from '../lib/utils.js';
@@ -25,7 +26,9 @@ function filterTours(tours, { q, style, duration, sort }) {
 }
 
 export default function Safaris() {
-  const { tours } = useCms();
+  const { tours, pages } = useCms();
+  const safari = mergeSafarisContent(pages.safaris);
+  const { head, catalogue } = safari;
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get('q') || '');
   const [style, setStyle] = useState(searchParams.get('style') || '');
@@ -62,27 +65,28 @@ export default function Safaris() {
     setSort('recommended');
   };
 
-  const countLabel = `${results.length} ${results.length === 1 ? 'journey' : 'journeys'} to explore`;
+  const countLabel = `${results.length} ${results.length === 1 ? catalogue.resultSuffixSingular : catalogue.resultSuffixPlural}`;
 
   return (
     <main id="main">
       <PageHead
-        label="THE MAMBEU COLLECTION"
-        title={'Find your<br><span class="accent">kind of wild.</span>'}
-        text="22 starting points. Endless ways to make them yours. Explore our existing journeys, then tailor your route, dates and stays."
+        label={head.label}
+        titleLine1={head.titleLine1}
+        titleLine2={head.titleLine2}
+        text={head.text}
       />
       <section className="wrap catalogue-layout">
         <aside className="catalogue-filters">
-          <h2>Shape your safari</h2>
-          <label htmlFor="search">Search journeys</label>
+          <h2>{catalogue.asideHeading}</h2>
+          <label htmlFor="search">{catalogue.searchLabel}</label>
           <input
             id="search"
             type="search"
-            placeholder="Park, wildlife or experience"
+            placeholder={catalogue.searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <label htmlFor="style">Comfort level</label>
+          <label htmlFor="style">{catalogue.styleLabel}</label>
           <select id="style" value={style} onChange={(e) => setStyle(e.target.value)}>
             <option value="">All styles</option>
             <option>Midrange</option>
@@ -90,27 +94,27 @@ export default function Safaris() {
             <option>Luxury</option>
             <option>Camping</option>
           </select>
-          <label htmlFor="duration">Days to explore</label>
+          <label htmlFor="duration">{catalogue.durationLabel}</label>
           <select id="duration" value={duration} onChange={(e) => setDuration(e.target.value)}>
             <option value="">Any duration</option>
             <option value="short">2–4 days</option>
             <option value="medium">5–6 days</option>
             <option value="long">7+ days</option>
           </select>
-          <label htmlFor="sort">Arrange journeys</label>
+          <label htmlFor="sort">{catalogue.sortLabel}</label>
           <select id="sort" value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="recommended">Recommended</option>
             <option value="shortest">Shortest first</option>
             <option value="longest">Longest first</option>
           </select>
           <button id="reset-filters" type="button" className="text-link" onClick={reset}>
-            Clear filters
+            {catalogue.clearFilters}
           </button>
           <div className="filter-help">
-            <b>Something more personal?</b>
-            <p>Let’s create a journey around your ideas.</p>
+            <b>{catalogue.helpHeading}</b>
+            <p>{catalogue.helpText}</p>
             <Link to={href('plan')} className="button outline">
-              Design my safari
+              {catalogue.helpButton}
             </Link>
           </div>
         </aside>
@@ -119,26 +123,23 @@ export default function Safaris() {
             <p id="result-count" aria-live="polite">
               {countLabel}
             </p>
-            <span>Tailor-made around you</span>
+            <span>{catalogue.tailorLine}</span>
           </div>
           <p id="midrange-note" className="notice" hidden={style !== 'Midrange'}>
-            These routes can be adapted with midrange accommodation. The published prices apply to the
-            original itineraries; request a tailored quotation for a different comfort level.
+            {catalogue.midrangeNotice}
           </p>
           <div className="catalogue-grid" id="catalogue-results">
             {results.length ? (
               results.map((t) => <JourneyCard key={t.id} t={t} />)
             ) : (
               <div className="empty-results">
-                <h3>A different starting point?</h3>
-                <p>
-                  No journeys match these choices. Clear the filters or ask us for a personal itinerary.
-                </p>
+                <h3>{catalogue.emptyHeading}</h3>
+                <p>{catalogue.emptyText}</p>
                 <button className="button outline" id="empty-reset" type="button" onClick={reset}>
-                  Clear filters
+                  {catalogue.clearFilters}
                 </button>
                 <Link className="text-link" to={href('plan')}>
-                  Design my safari
+                  {catalogue.helpButton}
                 </Link>
               </div>
             )}

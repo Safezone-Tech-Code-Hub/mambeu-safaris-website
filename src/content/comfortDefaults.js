@@ -1,5 +1,7 @@
 /** Default Comfort page CMS payload — plain text only. */
 
+import { mergeScalar, mergeSection } from './mergeUtils.js';
+
 export const comfortPageDefaults = {
   head: {
     label: 'HOW YOU STAY',
@@ -24,25 +26,6 @@ export const comfortPageDefaults = {
     linkPath: 'safaris?style=Camping',
   },
 };
-
-function mergeScalar(defaultVal, override) {
-  if (override === undefined || override === null) return defaultVal;
-  if (typeof override === 'string' && override.trim() === '' && String(defaultVal ?? '').trim() !== '') {
-    return defaultVal;
-  }
-  return override;
-}
-
-function mergeSection(defaults, override) {
-  const out = { ...defaults };
-  if (!override || typeof override !== 'object') return out;
-  for (const [k, v] of Object.entries(override)) {
-    if (v === undefined || v === null) continue;
-    if (typeof v === 'string' && v.trim() === '' && String(defaults[k] ?? '').trim() !== '') continue;
-    out[k] = v;
-  }
-  return out;
-}
 
 function parseLegacyTitle(raw) {
   if (!raw || typeof raw !== 'string') return {};

@@ -1,4 +1,5 @@
 import toursStatic from '../data/tours.json';
+import { mergePageCatalog } from '../content/pageCatalogMerge.js';
 import { experiences as experiencesStatic } from '../data/experiences.js';
 import { faqItems } from '../data/faq.js';
 import { levels as levelsStatic } from '../data/levels.js';
@@ -14,7 +15,7 @@ export const staticCatalog = {
   experiences: experiencesStatic,
   levels: normalizeLevelsMap(levelsStatic),
   faq: faqItems(),
-  pages: {},
+  pages: mergePageCatalog({}),
 };
 
 async function listPublished(name, { sort = true } = {}) {
@@ -87,9 +88,9 @@ export async function fetchCatalog() {
         )
       : staticCatalog.levels,
     faq: faq ? faq.map((row) => [row.question, row.answer]) : staticCatalog.faq,
-    pages: pages
-      ? Object.fromEntries(pages.map((row) => [row.pageKey, row.content || {}]))
-      : staticCatalog.pages,
+    pages: mergePageCatalog(
+      pages ? Object.fromEntries(pages.map((row) => [row.pageKey, row.content || {}])) : {},
+    ),
   };
 }
 

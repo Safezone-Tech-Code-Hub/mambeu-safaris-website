@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
+import { mergePlanContent } from '../content/planDefaults.js';
 import { siteChrome } from '../lib/cms.js';
 import { submitEnquiry } from '../lib/enquiry.js';
 
 export default function Plan() {
   const { pages } = useCms();
   const contact = siteChrome(pages);
-  const head = pages.plan?.head || {};
+  const plan = mergePlanContent(pages.plan);
+  const { head, aside, form } = plan;
   const [searchParams] = useSearchParams();
   const formRef = useRef(null);
   const messageRef = useRef(null);
@@ -46,8 +48,8 @@ export default function Plan() {
     }
   }, [searchParams]);
 
-  const buildMessage = (form) => {
-    const values = Object.fromEntries(new FormData(form));
+  const buildMessage = (frm) => {
+    const values = Object.fromEntries(new FormData(frm));
     return (
       'Hello Mambeu Safaris, I would like to plan a journey.\n\n' +
       Object.entries(values)
@@ -59,14 +61,16 @@ export default function Plan() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    if (!form.reportValidity()) return;
-    const msg = buildMessage(form);
-    const values = Object.fromEntries(new FormData(form));
+    const frm = e.currentTarget;
+    if (!frm.reportValidity()) return;
+    const msg = buildMessage(frm);
+    const values = Object.fromEntries(new FormData(frm));
     setEnquiryText(msg);
     setWhatsappHref('https://wa.me/' + contact.whatsapp + '?text=' + encodeURIComponent(msg));
     setEmailHref(
-      'mailto:' + contact.email + '?subject=' +
+      'mailto:' +
+        contact.email +
+        '?subject=' +
         encodeURIComponent('Safari enquiry from ' + values.name) +
         '&body=' +
         encodeURIComponent(msg),
@@ -104,34 +108,32 @@ export default function Plan() {
   return (
     <main id="main">
       <PageHead
-        label={head.label || 'LET’S MAKE IT YOURS'}
-        title={head.title || 'Your ideas.<br><span class="accent">Our Tanzania.</span>'}
-        text={
-          head.text ||
-          'Tell us what you have in mind. We’ll help shape a journey around your interests, dates and comfort level.'
-        }
+        label={head.label}
+        titleLine1={head.titleLine1}
+        titleLine2={head.titleLine2}
+        text={head.text}
       />
       <section className="wrap planner-layout">
         <aside>
-          <span className="eyebrow">TALK TO YOUR LOCAL TEAM</span>
+          <span className="eyebrow">{aside.eyebrow}</span>
           <h2>
-            No perfect plan
+            {aside.titleLine1}
             <br />
-            needed.
+            {aside.titleLine2}
           </h2>
-          <p>Share what you know. We’ll help with the rest.</p>
+          <p>{aside.intro}</p>
           <ol className="plan-steps">
             <li>
-              <b>Share your ideas</b>
-              <span>Your dates, interests and comfort.</span>
+              <b>{aside.step1Title}</b>
+              <span>{aside.step1Detail}</span>
             </li>
             <li>
-              <b>Shape the journey</b>
-              <span>A personal route and quotation.</span>
+              <b>{aside.step2Title}</b>
+              <span>{aside.step2Detail}</span>
             </li>
             <li>
-              <b>Make it happen</b>
-              <span>Confirm the details with our team.</span>
+              <b>{aside.step3Title}</b>
+              <span>{aside.step3Detail}</span>
             </li>
           </ol>
           <div className="planner-contact">
@@ -149,7 +151,7 @@ export default function Plan() {
           encType="text/plain"
           onSubmit={onSubmit}
         >
-          <span className="eyebrow">YOUR JOURNEY STARTS HERE</span>
+          <span className="eyebrow">{form.eyebrow}</span>
           <div className="form-grid">
             <div className="field">
               <label htmlFor="name">Your name *</label>
@@ -255,16 +257,13 @@ export default function Plan() {
           </div>
           <div className="form-actions">
             <button className="button orange" type="submit" name="channel" value="whatsapp">
-              Prepare WhatsApp enquiry
+              {form.whatsappButton}
             </button>
             <button className="button outline" type="submit" name="channel" value="email">
-              Prepare email enquiry
+              {form.emailButton}
             </button>
           </div>
-          <p className="fineprint">
-            Review your enquiry below, then send it through WhatsApp or your email app. Nothing is sent
-            until you do.
-          </p>
+          <p className="fineprint">{form.fineprint}</p>
           <div
             id="enquiry-preview"
             className="enquiry-preview"
@@ -272,18 +271,18 @@ export default function Plan() {
             hidden={previewHidden}
             aria-live="polite"
           >
-            <h3>Your enquiry is ready.</h3>
-            <p>Review the details, then choose how to send your message to Mambeu.</p>
+            <h3>{form.previewTitle}</h3>
+            <p>{form.previewIntro}</p>
             <pre id="enquiry-text">{enquiryText}</pre>
             <div className="form-actions">
               <a id="send-whatsapp" className="button" href={whatsappHref} target="_blank" rel="noopener">
-                Open WhatsApp
+                {form.whatsappOpen}
               </a>
               <a id="send-email" className="button outline" href={emailHref}>
-                Open email
+                {form.emailOpen}
               </a>
               <button className="text-link" type="button" id="copy-enquiry" onClick={onCopy}>
-                Copy enquiry
+                {form.copyLabel}
               </button>
             </div>
             <p id="copy-status" role="status">

@@ -1,5 +1,7 @@
 /** Default homepage CMS payload — keep in sync with dashboard page editor fields. */
 
+import { mergeSection } from './mergeUtils.js';
+
 export const homePageDefaults = {
   hero: {
     eyebrow: 'TANZANIA, YOUR WAY',
@@ -26,8 +28,9 @@ export const homePageDefaults = {
   },
   welcome: {
     eyebrow: 'WELCOME TO MAMBEU',
-    titleHtml:
-      'Big on adventure.<br>Thoughtful about<br><span class="accent">everything else.</span>',
+    titleLine1: 'Big on adventure.',
+    titleLine2: 'Thoughtful about',
+    titleLine3Accent: 'everything else.',
     lead: 'You don’t need the most expensive safari to have an extraordinary one.',
     body: 'You need the right route, a knowledgeable guide and a welcoming place to end the day. From our home in Arusha, we bring these details together in journeys made around you.',
     linkText: 'Meet the people behind your journey',
@@ -108,18 +111,28 @@ export function normalizeLegacyHome(src) {
     const ids = next.featuredComfortIds.join(',');
     next.curated = { ...(next.curated || {}), featuredComfortTourIds: next.curated?.featuredComfortTourIds || ids };
   }
-  return next;
-}
-
-function mergeSection(defaults, override) {
-  const out = { ...defaults };
-  if (!override || typeof override !== 'object') return out;
-  for (const [k, v] of Object.entries(override)) {
-    if (v === undefined || v === null) continue;
-    if (typeof v === 'string' && v.trim() === '' && String(defaults[k] ?? '').trim() !== '') continue;
-    out[k] = v;
+  if (next.welcome?.titleHtml && !next.welcome.titleLine1) {
+    const html = next.welcome.titleHtml;
+    const parts = html.split(/<br\s*\/?>/i);
+    if (parts.length >= 3) {
+      next.welcome = {
+        ...next.welcome,
+        titleLine1: parts[0].replace(/<[^>]+>/g, '').trim(),
+        titleLine2: parts[1].replace(/<[^>]+>/g, '').trim(),
+        titleLine3Accent: (parts[2].match(/<span[^>]*class=["']accent["'][^>]*>([\s\S]*?)<\/span>/i)?.[1] || parts[2])
+          .replace(/<[^>]+>/g, '')
+          .trim(),
+      };
+    } else if (parts.length === 2) {
+      next.welcome = {
+        ...next.welcome,
+        titleLine1: parts[0].replace(/<[^>]+>/g, '').trim(),
+        titleLine2: parts[1].replace(/<[^>]+>/g, '').trim(),
+        titleLine3Accent: '',
+      };
+    }
   }
-  return out;
+  return next;
 }
 
 /** Full homepage payload for the public site and the dashboard editor. */
@@ -128,6 +141,10 @@ export function mergeHomeContent(cmsHome) {
   const out = {};
   for (const [key, defaults] of Object.entries(homePageDefaults)) {
     out[key] = mergeSection(defaults, src[key]);
+  }
+  if (out.welcome?.titleLine1) {
+    const { titleHtml: _h, ...rest } = out.welcome;
+    out.welcome = rest;
   }
   return out;
 }

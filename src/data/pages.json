@@ -1,95 +1,267 @@
 {
   "home": {
-    "faqSection": {
-      "eyebrow": "GOOD TO KNOW",
-      "title": "Questions travellers ask us"
+    "hero": {
+      "eyebrow": "TANZANIA, YOUR WAY",
+      "titleLine1": "Your Tanzania.",
+      "titleLine2": "Wildly personal.",
+      "text": "Extraordinary wildlife. Welcoming stays.\nThoughtfully planned around you.",
+      "image": "hero.webp",
+      "imageAlt": "Wildebeest and zebras on Tanzania’s plains",
+      "ctaPrimary": "Explore safaris",
+      "ctaPrimaryLink": "safaris",
+      "ctaSecondary": "Plan your trip",
+      "ctaSecondaryLink": "plan",
+      "bottomLeft": "Locally owned · Arusha, Tanzania",
+      "bottomRight": "Dream. Discover. Explore.",
+      "scrollLabel": "Discover Mambeu"
     },
-    "featuredComfortIds": [
-      302,
-      298,
-      291
-    ],
     "finder": {
+      "eyebrow": "FIND YOUR STARTING POINT",
+      "title": "Find your safari",
+      "styleLabel": "Comfort level",
       "durationLabel": "Duration",
       "interestLabel": "What interests you?",
-      "styleLabel": "Comfort level",
-      "title": "Find your safari"
+      "submitLabel": "Find my safari"
     },
-    "hero": {
-      "ctaPrimary": "Explore safaris",
-      "ctaSecondary": "Plan your trip",
-      "eyebrow": "TANZANIA, YOUR WAY",
-      "image": "hero.webp",
-      "text": "Extraordinary wildlife. Welcoming stays.\nThoughtfully planned around you.",
-      "titleLine1": "Your Tanzania.",
-      "titleLine2": "Wildly personal."
+    "welcome": {
+      "eyebrow": "WELCOME TO MAMBEU",
+      "titleLine1": "Big on adventure.",
+      "titleLine2": "Thoughtful about",
+      "titleLine3Accent": "everything else.",
+      "lead": "You don’t need the most expensive safari to have an extraordinary one.",
+      "body": "You need the right route, a knowledgeable guide and a welcoming place to end the day. From our home in Arusha, we bring these details together in journeys made around you.",
+      "linkText": "Meet the people behind your journey",
+      "linkPath": "about",
+      "point1Title": "Local roots",
+      "point1Text": "Locally owned in Tanzania",
+      "point2Title": "Your pace",
+      "point2Text": "Personalised routes & stays"
+    },
+    "curated": {
+      "eyebrow": "A FEW GOOD PLACES TO BEGIN",
+      "title": "Journeys with\nsomething more.",
+      "tabs": "Comfort,Luxury,Camping",
+      "collectionLinkText": "View the full collection",
+      "featuredComfortTourIds": "302,298,291"
+    },
+    "comfortSection": {
+      "eyebrow": "YOUR SAFARI. YOUR KIND OF STAY.",
+      "title": "Comfort is personal.\nLet’s find yours.",
+      "intro": "Midrange and comfort at our heart.\nLuxury when you want a little more."
     },
     "placesSection": {
       "eyebrow": "DESTINATIONS",
-      "title": "Places that stay with you."
+      "title": "Places that stay with you.",
+      "prevLabel": "Back",
+      "nextLabel": "Next",
+      "tailText": "Connect your favourites into one personal journey.",
+      "tailLinkText": "Explore all destinations"
+    },
+    "beyond": {
+      "eyebrow": "MAKE ROOM FOR A DIFFERENT KIND OF WILD",
+      "title": "Beyond the safari.",
+      "intro": "Your adventure doesn’t have to end\nwhen the game drive does.",
+      "card1Image": "zanzibar.webp",
+      "card1ImageAlt": "Zanzibar coastline and Indian Ocean",
+      "card1Link": "zanzibar",
+      "card1Eyebrow": "ISLAND TIME",
+      "card1Title": "Wildlife to\nwhite sands.",
+      "card1Text": "Unwind in Zanzibar.",
+      "card2Image": "mountain.webp",
+      "card2ImageAlt": "Kilimanjaro mountain camp",
+      "card2Link": "kilimanjaro",
+      "card2Eyebrow": "A HIGHER PERSPECTIVE",
+      "card2Title": "Take the\nhigher road.",
+      "card2Text": "Your Kilimanjaro adventure.",
+      "card3Image": "tour-296.webp",
+      "card3ImageAlt": "A cultural visit with local people in Tanzania",
+      "card3Link": "experiences",
+      "card3Eyebrow": "HUMAN CONNECTIONS",
+      "card3Title": "Meet another\nside of Tanzania.",
+      "card3Text": "Culture, stories and shared moments."
+    },
+    "localStory": {
+      "photo": "team.webp",
+      "photoAlt": "Mambeu guests beside the branded safari vehicle",
+      "photoCaption": "OUR HOME. YOUR ADVENTURE.",
+      "eyebrow": "THE PEOPLE MAKE THE DIFFERENCE",
+      "title": "Good safaris begin\nwith good people.",
+      "body1": "Mambeu is locally owned and operated. We share Tanzania through expertly guided journeys, personal attention and a commitment to responsible travel.",
+      "body2": "From your first ideas to the route, stays and special moments, we bring local knowledge to the details that matter.",
+      "buttonText": "Get to know Mambeu",
+      "buttonLink": "about"
+    },
+    "faqSection": {
+      "eyebrow": "GOOD TO KNOW",
+      "title": "Questions travellers ask us",
+      "linkText": "All planning questions",
+      "faqCount": "3"
     }
   },
   "about": {
     "head": {
       "label": "THE PEOPLE BEHIND YOUR JOURNEY",
-      "text": "Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys.",
-      "title": "Rooted in Tanzania.<br><span class=\"accent\">Made around you.</span>"
+      "titleLine1": "Rooted in Tanzania.",
+      "titleLine2": "Made around you.",
+      "text": "Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys."
     },
     "storyPhoto": "team.webp",
+    "storyPhotoAlt": "Mambeu guests and safari vehicle in Tanzania",
+    "storyPhotoCaption": "LOCAL ROOTS. PERSONAL JOURNEYS.",
+    "story": {
+      "eyebrow": "WHO WE ARE",
+      "titleLine1": "Local knowledge.",
+      "titleLine2": "Human connections.",
+      "paragraph1": "Founded by local Tanzanians, Mambeu brings a close connection to Tanzania’s landscapes, wildlife and communities. Our team plans bespoke journeys through the places we know and love.",
+      "paragraph2": "We welcome different budgets and travel styles. We help choose routes, stays and activities around your comfort, interests and time available.",
+      "paragraph3": "Responsible tourism is part of our approach: respecting wildlife, supporting local communities and making meaningful connections with the places you visit."
+    },
+    "valuesSection": {
+      "eyebrow": "WHAT GUIDES US",
+      "titleLine1": "A journey with care",
+      "titleLine2": "at its heart."
+    },
     "values": [
-      [
-        "01",
-        "Personal by design",
-        "Your dates, interests and comfort level shape the journey. We listen first, then help you connect the details."
-      ],
-      [
-        "02",
-        "Rooted in Tanzania",
-        "Local knowledge helps us choose routes, stays and experiences that work together."
-      ],
-      [
-        "03",
-        "Travel responsibly",
-        "Respect for nature and communities guides how we share Tanzania with our visitors."
-      ]
-    ]
+      {
+        "number": "01",
+        "title": "Personal by design",
+        "text": "Your dates, interests and comfort level shape the journey. We listen first, then help you connect the details."
+      },
+      {
+        "number": "02",
+        "title": "Rooted in Tanzania",
+        "text": "Local knowledge helps us choose routes, stays and experiences that work together."
+      },
+      {
+        "number": "03",
+        "title": "Travel responsibly",
+        "text": "Respect for nature and communities guides how we share Tanzania with our visitors."
+      }
+    ],
+    "mission": {
+      "eyebrow": "OUR MISSION",
+      "titleLine1": "Help every traveller",
+      "titleLine2": "find their Tanzania.",
+      "lead": "We create personalised travel experiences that showcase Tanzania’s natural beauty and cultural richness, with comfort, safety and local insight.",
+      "body": "Our vision is to grow through thoughtful service and responsible tourism, supporting local communities while sharing the country’s extraordinary places.",
+      "buttonText": "Meet your safari specialist",
+      "buttonLink": "plan"
+    }
   },
   "comfort": {
     "head": {
       "label": "HOW YOU STAY",
-      "text": "",
-      "title": "Comfort that fits your journey."
+      "titleLine1": "Comfort that fits your journey.",
+      "titleLine2": "",
+      "text": "Midrange and comfort are at the heart of our approach. Luxury and camping remain part of the possibilities. Choose how you want your journey to feel."
+    },
+    "comfortSection": {
+      "eyebrow": "YOUR SAFARI. YOUR KIND OF STAY.",
+      "titleLine1": "Comfort is personal.",
+      "titleLine2": "Let’s find yours.",
+      "introLine1": "Midrange and comfort at our heart.",
+      "introLine2": "Luxury when you want a little more."
+    },
+    "balanceSection": {
+      "eyebrow": "A THOUGHTFUL BALANCE",
+      "titleLine1": "Spend on the things",
+      "titleLine2": "you’ll remember.",
+      "lead": "Your budget influences accommodation, length of stay and optional experiences. We’ll help you decide where extra comfort makes a difference.",
+      "body": "The published journeys are starting points. When you enquire, we’ll suggest specific lodges and tented camps for your dates and confirm what is included before you book.",
+      "linkText": "Explore our camping journeys",
+      "linkPath": "safaris?style=Camping"
     }
   },
   "destinations": {
     "head": {
       "label": "WHERE WE TAKE YOU",
-      "text": "",
-      "title": "Discover Tanzania’s wild places."
-    }
+      "titleLine1": "Discover Tanzania’s wild places.",
+      "titleLine2": "",
+      "text": "Legendary wildlife parks, mountain landscapes and an Indian Ocean coast. Connect your favourite places into one personal journey."
+    },
+    "grid": {
+      "placeEyebrowLabel": "EXPLORE"
+    },
+    "extraTiles": [
+      {
+        "path": "kilimanjaro",
+        "title": "Kilimanjaro",
+        "photo": "mountain.webp",
+        "tag": "A higher perspective.",
+        "eyebrow": "KEEP EXPLORING"
+      },
+      {
+        "path": "zanzibar",
+        "title": "Zanzibar",
+        "photo": "zanzibar.webp",
+        "tag": "Slow down by the sea.",
+        "eyebrow": "KEEP EXPLORING"
+      }
+    ]
   },
   "experiences": {
     "head": {
       "label": "BEYOND THE GAME DRIVE",
-      "text": "",
-      "title": "Experiences to make it yours."
+      "titleLine1": "Experiences to make it yours.",
+      "titleLine2": "the beginning.",
+      "text": "Add experiences that mean something to you, from cultural connections to a different view of the plains."
+    },
+    "list": {
+      "buttonText": "Include this in my journey"
     }
   },
   "travel_guide": {
     "head": {
       "label": "PLAN WITH CONFIDENCE",
-      "text": "",
-      "title": "Travel guide & FAQs"
+      "titleLine1": "Travel guide & FAQs",
+      "titleLine2": "Clear answers.",
+      "text": "Practical starting points for your safari, mountain journey or Zanzibar escape."
+    },
+    "aside": {
+      "eyebrow": "YOUR LOCAL TEAM",
+      "title": "Still curious?",
+      "intro": "Let’s talk through your plans.",
+      "buttonText": "Ask a safari specialist",
+      "buttonPath": "plan"
     }
   },
   "plan": {
     "head": {
       "label": "START THE CONVERSATION",
-      "text": "Share a few details and we’ll help shape a personal quotation. You can send your message by WhatsApp or email when you’re ready.",
-      "title": "Let’s plan your safari."
+      "titleLine1": "Let’s plan your safari.",
+      "titleLine2": "",
+      "text": "Share a few details and we’ll help shape a personal quotation. You can send your message by WhatsApp or email when you’re ready."
+    },
+    "aside": {
+      "eyebrow": "TALK TO YOUR LOCAL TEAM",
+      "titleLine1": "No perfect plan",
+      "titleLine2": "needed.",
+      "intro": "Share what you know. We’ll help with the rest.",
+      "step1Title": "Share your ideas",
+      "step1Detail": "Your dates, interests and comfort.",
+      "step2Title": "Shape the journey",
+      "step2Detail": "A personal route and quotation.",
+      "step3Title": "Make it happen",
+      "step3Detail": "Confirm the details with our team."
+    },
+    "form": {
+      "eyebrow": "YOUR JOURNEY STARTS HERE",
+      "whatsappButton": "Prepare WhatsApp enquiry",
+      "emailButton": "Prepare email enquiry",
+      "fineprint": "Review your enquiry below, then send it through WhatsApp or your email app. Nothing is sent until you do.",
+      "previewTitle": "Your enquiry is ready.",
+      "previewIntro": "Review the details, then choose how to send your message to Mambeu.",
+      "whatsappOpen": "Open WhatsApp",
+      "emailOpen": "Open email",
+      "copyLabel": "Copy enquiry"
     }
   },
   "kilimanjaro": {
+    "label": "MOUNTAIN ADVENTURES",
+    "titleLine1": "Take the",
+    "titleLine2": "higher road.",
+    "text": "A Kilimanjaro adventure with personal preparation, local guiding and support along the way.",
+    "photo": "mountain.webp",
     "blocks": [
       [
         "Prepare well",
@@ -104,12 +276,22 @@
         "Add a wildlife safari or a Zanzibar stay to round off your adventure."
       ]
     ],
-    "label": "MOUNTAIN ADVENTURES",
-    "photo": "mountain.webp",
-    "text": "A Kilimanjaro adventure with personal preparation, local guiding and support along the way.",
-    "title": "Take the<br>higher road."
+    "splitSection": {
+      "eyebrow": "THE JOURNEY IS THE STORY",
+      "titleLine1": "More than",
+      "titleLine2": "a summit.",
+      "lead": "Mambeu’s mountain experiences bring expert guiding, equipment and preparation together with a personal approach.",
+      "body": "Tell us about your hiking background, preferred dates and available time. We’ll discuss suitable routes, support and preparation before providing your quotation.",
+      "buttonText": "Plan my mountain adventure",
+      "buttonInterest": "Kilimanjaro"
+    }
   },
   "zanzibar": {
+    "label": "SAFARI & ISLAND ESCAPES",
+    "titleLine1": "From wild plains",
+    "titleLine2": "to white sands.",
+    "text": "Pair your wildlife adventure with Zanzibar’s beaches, historic Stone Town and the Indian Ocean.",
+    "photo": "zanzibar.webp",
     "blocks": [
       [
         "Time by the sea",
@@ -124,10 +306,20 @@
         "Ask about snorkelling, diving and excursions for your travel dates."
       ]
     ],
-    "label": "SAFARI & ISLAND ESCAPES",
-    "photo": "zanzibar.webp",
-    "text": "Pair your wildlife adventure with Zanzibar’s beaches, historic Stone Town and the Indian Ocean.",
-    "title": "From wild plains<br>to white sands."
+    "splitSection": {
+      "eyebrow": "MAKE TIME TO SLOW DOWN",
+      "titleLine1": "Your island.",
+      "titleLine2": "Your pace.",
+      "lead": "Build a Zanzibar stay around your interests, from beach relaxation to cultural exploration and time on the water.",
+      "body": "Accommodation, flights, airport transfers and excursions can be discussed together so your safari and island stay connect smoothly.",
+      "buttonText": "Plan my island escape",
+      "buttonInterest": "Zanzibar"
+    },
+    "relatedSection": {
+      "title": "Safari from Zanzibar.",
+      "linkText": "Explore these journeys",
+      "linkPath": "safaris?q=Zanzibar"
+    }
   },
   "site_chrome": {
     "email": "info@mambeusafaris.com",
@@ -142,5 +334,123 @@
     "publicSiteUrl": "https://new-mambeu.schoolhub.space",
     "siteName": "Mambeu Tanzania Safaris",
     "whatsapp": "255796086799"
+  },
+  "safaris": {
+    "head": {
+      "label": "THE MAMBEU COLLECTION",
+      "titleLine1": "Find your",
+      "titleLine2": "kind of wild.",
+      "text": "22 starting points. Endless ways to make them yours. Explore our existing journeys, then tailor your route, dates and stays."
+    },
+    "catalogue": {
+      "asideHeading": "Shape your safari",
+      "searchLabel": "Search journeys",
+      "searchPlaceholder": "Park, wildlife or experience",
+      "styleLabel": "Comfort level",
+      "durationLabel": "Days to explore",
+      "sortLabel": "Arrange journeys",
+      "clearFilters": "Clear filters",
+      "helpHeading": "Something more personal?",
+      "helpText": "Let’s create a journey around your ideas.",
+      "helpButton": "Design my safari",
+      "resultSuffixSingular": "journey to explore",
+      "resultSuffixPlural": "journeys to explore",
+      "tailorLine": "Tailor-made around you",
+      "midrangeNotice": "These routes can be adapted with midrange accommodation. The published prices apply to the original itineraries; request a tailored quotation for a different comfort level.",
+      "emptyHeading": "A different starting point?",
+      "emptyText": "No journeys match these choices. Clear the filters or ask us for a personal itinerary."
+    }
+  },
+  "place_detail": {
+    "head": {
+      "label": "MEET TANZANIA"
+    },
+    "story": {
+      "eyebrow": "A PLACE TO REMEMBER",
+      "titleLine1": "A different view.",
+      "titleLine2": "A deeper connection."
+    },
+    "searchButton": "Explore journeys here",
+    "related": {
+      "heading": "Start with a journey.",
+      "planLinkText": "Plan a personal route"
+    },
+    "empty": {
+      "heading": "A journey made for you.",
+      "text": "Ask our local team to include this destination in a personal itinerary.",
+      "button": "Plan a journey here"
+    }
+  },
+  "journey_detail": {
+    "anchors": {
+      "overview": "Overview",
+      "itinerary": "Day by day",
+      "stays": "Accommodation",
+      "included": "Inclusions",
+      "enquire": "Your quotation"
+    },
+    "overview": {
+      "eyebrow": "THE JOURNEY AT A GLANCE",
+      "titleLine1": "Make every",
+      "titleLine2": "day count.",
+      "durationLabel": "Duration",
+      "durationSuffix": "days",
+      "styleLabel": "Published style",
+      "planningLabel": "Planning",
+      "planningValue": "Personalised"
+    },
+    "itinerary": {
+      "eyebrow": "YOUR TIME IN TANZANIA",
+      "title": "Day by day.",
+      "expandLabel": "Expand all days",
+      "collapseLabel": "Collapse all days",
+      "noItinerary": "Your safari specialist will provide a detailed itinerary with your personalised quotation.",
+      "dayPrefix": "DAY"
+    },
+    "stays": {
+      "eyebrow": "YOUR HOME ALONG THE WAY",
+      "title": "Where you’ll rest.",
+      "fallback": "Our team will suggest accommodation for your dates and preferred comfort level.",
+      "fineprint": "Stays are subject to availability. Your final quotation confirms accommodation and any requested changes.",
+      "askLink": "Ask about different accommodation"
+    },
+    "inclusions": {
+      "includedEyebrow": "WHAT’S IN YOUR JOURNEY",
+      "includedTitle": "Included",
+      "includedFallback": "Inclusions are confirmed in your personalised quotation.",
+      "excludedEyebrow": "PLAN FOR THESE SEPARATELY",
+      "excludedTitle": "Excluded",
+      "excludedFallback": "Exclusions and optional activities are set out in your quotation.",
+      "activitiesNote": "Activities and meals apply as specified in the itinerary. Optional experiences, upgrades and changes are quoted separately."
+    },
+    "quotation": {
+      "eyebrow": "LET’S MAKE IT YOURS",
+      "titleLine1": "Your journey.",
+      "titleLine2": "Your details.",
+      "groupLabel": "Number of travellers",
+      "priceUnit": "per person · USD",
+      "priceFineprint": "Published group-size price. Your dates, availability and requested changes are confirmed in a personalised quotation.",
+      "noTiers": "Request a quotation based on your dates, group size and preferred accommodation.",
+      "enquireButton": "Enquire about this journey",
+      "whatsappPrefix": "Hello Mambeu, I would like to discuss ",
+      "whatsappLink": "Talk to us on WhatsApp",
+      "noteHeading": "Love the route, want different stays?",
+      "noteText": "Ask us to tailor the journey to midrange, comfort or luxury accommodation."
+    },
+    "related": {
+      "heading": "Keep exploring.",
+      "linkText": "All safari journeys",
+      "linkPath": "safaris"
+    }
+  },
+  "not_found": {
+    "head": {
+      "label": "A DIFFERENT TRAIL",
+      "titleLine1": "Let’s find your way.",
+      "titleLine2": "",
+      "text": "This page isn’t here. Explore our safari collection or talk with the team."
+    },
+    "button": "Explore our safaris",
+    "buttonPath": "safaris"
   }
 }

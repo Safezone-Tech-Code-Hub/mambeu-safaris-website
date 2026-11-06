@@ -9,6 +9,12 @@
           Tour cards, place cards, comfort panels, and FAQ rows come from <strong>Content</strong> in the sidebar.
           Site header, footer, and green invite band: <strong>Header &amp; footer</strong>.
         </p>
+        <p v-else-if="pageKey === 'safaris' || pageKey === 'journey_detail'" class="hint">
+          Journey titles, photos, day-by-day and prices: <strong>Content → Safari tours</strong>.
+        </p>
+        <p v-else-if="pageKey === 'place_detail'" class="hint">
+          Per-park name, photo and copy: <strong>Content → Places</strong>.
+        </p>
       </div>
       <div class="flex gap-2">
         <Select v-model="status" :options="statusOptions" optionLabel="label" optionValue="value" />
@@ -50,6 +56,7 @@
           <HomeFaqPanel v-else-if="tab.panel === 'home-faq'" class="tab-panel-extra" />
           <ComfortLevelsPanel v-else-if="tab.panel === 'comfort-levels'" class="tab-panel-extra" />
           <ExperiencesPanel v-else-if="tab.panel === 'experiences-list'" class="tab-panel-extra" />
+          <ToursPanel v-else-if="tab.panel === 'tours-list'" class="tab-panel-extra" />
         </TabPanel>
       </TabView>
       <div v-else class="field-grid">
@@ -80,6 +87,7 @@ import HomePlacesPanel from '@/components/HomePlacesPanel.vue';
 import HomeFaqPanel from '@/components/HomeFaqPanel.vue';
 import ComfortLevelsPanel from '@/components/ComfortLevelsPanel.vue';
 import ExperiencesPanel from '@/components/ExperiencesPanel.vue';
+import ToursPanel from '@/components/ToursPanel.vue';
 import { getNested, pageEditorTabs, setNested } from '@/lib/pageEditorConfig';
 
 const props = defineProps({

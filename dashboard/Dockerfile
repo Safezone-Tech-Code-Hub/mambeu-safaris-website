@@ -3,11 +3,7 @@ WORKDIR /app/dashboard
 COPY dashboard/package.json dashboard/package-lock.json* ./
 RUN npm ci
 COPY dashboard/ .
-COPY src/content/homeDefaults.js /app/src/content/homeDefaults.js
-COPY src/content/aboutDefaults.js /app/src/content/aboutDefaults.js
-COPY src/content/comfortDefaults.js /app/src/content/comfortDefaults.js
-COPY src/content/destinationsDefaults.js /app/src/content/destinationsDefaults.js
-COPY src/content/experiencesDefaults.js /app/src/content/experiencesDefaults.js
+COPY src/content /app/src/content
 ARG VITE_POCKETBASE_URL=https://dashboard-mambeu.schoolhub.space
 ARG VITE_PUBLIC_SITE_URL=https://new-mambeu.schoolhub.space
 ENV VITE_POCKETBASE_URL=$VITE_POCKETBASE_URL

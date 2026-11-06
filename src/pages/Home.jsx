@@ -206,7 +206,13 @@ export default function Home() {
       <section className="welcome wrap">
         <div>
           <span className="eyebrow">{home.welcome.eyebrow}</span>
-          <h2 dangerouslySetInnerHTML={{ __html: home.welcome.titleHtml }} />
+          <h2>
+            {home.welcome.titleLine1}
+            <br />
+            {home.welcome.titleLine2}
+            <br />
+            <span className="accent">{home.welcome.titleLine3Accent}</span>
+          </h2>
         </div>
         <div className="welcome-copy">
           <p className="lead">{home.welcome.lead}</p>
