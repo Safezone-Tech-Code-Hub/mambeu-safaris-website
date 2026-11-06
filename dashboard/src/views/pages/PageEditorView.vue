@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import InputText from 'primevue/inputtext';
@@ -96,7 +96,7 @@ const props = defineProps({
 });
 
 const toast = useToast();
-const { loading, saving, content, status, error, load, save } = usePageContent(props.pageKey);
+const { loading, saving, content, status, error, save } = usePageContent(toRef(props, 'pageKey'));
 const rawJson = ref('');
 
 const tabs = computed(() => pageEditorTabs[props.pageKey] || []);
@@ -112,8 +112,6 @@ watch(
   },
   { deep: true },
 );
-
-onMounted(load);
 
 async function onSave() {
   if (!tabs.value.length) {

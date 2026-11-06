@@ -13,6 +13,11 @@
         <Select v-model="place.status" :options="['draft', 'published']" class="w-full" />
       </div>
       <div><label>Tagline</label><InputText v-model="payload.tag" class="w-full" /></div>
+      <div>
+        <label>Safari search keyword</label>
+        <InputText v-model="payload.q" class="w-full" />
+        <p class="hint">Used to find related journeys, for example Serengeti or Manyara.</p>
+      </div>
       <div class="col-span-2">
         <label>Photo</label>
         <MediaFilePicker v-model="payload.photo" />

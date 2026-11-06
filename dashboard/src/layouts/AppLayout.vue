@@ -20,7 +20,8 @@
         </div>
       </header>
       <main class="app-content">
-        <RouterView />
+        <!-- Remount on every path so page editors load that page’s content, not the previous one. -->
+        <RouterView :key="route.fullPath" />
       </main>
     </div>
     <Toast />
@@ -30,7 +31,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import PanelMenu from 'primevue/panelmenu';
 import Button from 'primevue/button';
 import Toast from 'primevue/toast';
@@ -40,6 +41,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useAuthStore } from '@/stores/auth';
 import { getPublicSiteUrl } from '@/lib/pb';
 
+const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 const toast = useToast();
