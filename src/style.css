@@ -440,6 +440,10 @@ html.is-panel-open{overflow:hidden}
 .plan-preview__body{margin:1.25rem 0 0;padding:1.25rem;border:1px solid color-mix(in srgb,var(--forest-display) 12%,transparent);background:var(--soft);white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 'DM Sans',Arial,sans-serif;color:var(--forest-display)}
 .plan-preview__actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
 .plan-preview__status{margin:.875rem 0 0;font-size:.875rem;color:var(--intro-muted)}
+.plan-preview__inbox{margin:.75rem 0 0;font-size:.875rem;line-height:1.5;color:var(--intro-muted)}
+.plan-preview__inbox--saving{color:var(--intro-muted)}
+.plan-preview__inbox--saved{color:#15803d;font-weight:500}
+.plan-preview__inbox--error{color:#b45309}
 .plan-aside{min-width:0}
 @media(min-width:1024px){.plan-aside{position:sticky;top:calc(var(--header-h) + 1rem)}}
 .plan-aside__title{margin:0;font-family:Outfit,Arial,sans-serif;font-size:clamp(1.75rem,2vw + .75rem,2.25rem);font-weight:600;line-height:1.15;letter-spacing:-.03em;color:var(--forest-display)}

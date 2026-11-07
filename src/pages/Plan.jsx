@@ -52,6 +52,8 @@ export default function Plan() {
   const [previewHidden, setPreviewHidden] = useState(true);
   const [enquiryText, setEnquiryText] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
+  /** '' | 'saving' | 'saved' | 'error' — PocketBase inbox after Prepare … */
+  const [inboxStatus, setInboxStatus] = useState('');
   const [whatsappHref, setWhatsappHref] = useState('https://wa.me/255796086799');
   const [emailHref, setEmailHref] = useState('mailto:info@mambeusafaris.com');
   const previewRef = useRef(null);
@@ -176,10 +178,13 @@ export default function Plan() {
     );
     setPreviewHidden(false);
     setCopyStatus('');
-    if (!filledHoneypot) {
-      submitEnquiry(values).catch(() => {
-        /* inbox is optional; WhatsApp/email remain primary */
-      });
+    if (filledHoneypot) {
+      setInboxStatus('');
+    } else {
+      setInboxStatus('saving');
+      submitEnquiry(values)
+        .then(() => setInboxStatus('saved'))
+        .catch(() => setInboxStatus('error'));
     }
     const channel = e.nativeEvent.submitter?.value || 'whatsapp';
     requestAnimationFrame(() => {
@@ -518,6 +523,19 @@ export default function Plan() {
                 <p className="plan-preview__text">
                   Review the details, then choose how to send your message to Mambeu.
                 </p>
+                {inboxStatus ? (
+                  <p
+                    className={`plan-preview__inbox plan-preview__inbox--${inboxStatus}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {inboxStatus === 'saving' && 'Saving a copy for our team…'}
+                    {inboxStatus === 'saved' &&
+                      'Saved to our inbox — our team can see your details in the dashboard.'}
+                    {inboxStatus === 'error' &&
+                      'We could not save to our inbox right now. You can still send your enquiry by WhatsApp or email below.'}
+                  </p>
+                ) : null}
                 <pre id="enquiry-text" className="plan-preview__body">
                   {enquiryText}
                 </pre>
