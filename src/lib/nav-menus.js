@@ -29,22 +29,13 @@ export const destNavPlaces = [
   },
 ];
 
-export const safariNavPlaces = [
-  {
-    title: 'Comfort',
-    text: 'Lodges and a softer pace.',
-    to: href('safaris?style=comfort'),
-  },
-  {
-    title: 'Luxury',
-    text: 'Finer camps and more space.',
-    to: href('safaris?style=luxury'),
-  },
-  {
-    title: 'Camping',
-    text: 'Closer to the bush.',
-    to: href('safaris?style=camping'),
-  },
+/** Plain text links in the Safaris dropdown / mobile accordion. */
+export const safariNavLinks = [
+  { title: 'All safari journeys', to: href('safaris') },
+  { title: 'Comfort safaris', to: href('safaris?style=comfort') },
+  { title: 'Luxury safaris', to: href('safaris?style=luxury') },
+  { title: 'Camping adventures', to: href('safaris?style=camping') },
+  { title: 'Compare comfort levels', to: href('comfort') },
 ];
 
 /** Right-hand photos in the Destinations mega — places, with matching images. */
@@ -63,24 +54,5 @@ export const destNavFeatured = [
     title: 'Zanzibar',
     to: href('zanzibar'),
     image: '/images/destinations/zanzibar.jpg',
-  },
-];
-
-/** Right-hand photos in the Safaris mega — experience names. */
-export const experienceNavFeatured = [
-  {
-    title: 'Family vacations',
-    to: `${href('experiences')}#family-safaris`,
-    image: '/images/experiences/family.jpg',
-  },
-  {
-    title: 'Romantic holidays',
-    to: `${href('experiences')}#romantic-bush-dinner`,
-    image: '/images/experiences/romantic.jpg',
-  },
-  {
-    title: 'Balloon safaris',
-    to: `${href('experiences')}#hot-air-balloon`,
-    image: '/images/experiences/balloon.jpg',
   },
 ];

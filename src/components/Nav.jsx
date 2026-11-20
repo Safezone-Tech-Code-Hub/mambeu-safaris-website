@@ -4,8 +4,7 @@ import { useFavourites } from '../FavouritesProvider.jsx';
 import {
   destNavFeatured,
   destNavPlaces,
-  experienceNavFeatured,
-  safariNavPlaces,
+  safariNavLinks,
 } from '../lib/nav-menus.js';
 import { planHref } from '../lib/plan-link.js';
 import { href, Img } from '../lib/utils.js';
@@ -20,8 +19,7 @@ const LINKS = [
     label: 'Safaris',
     matchPrefix: href('safaris'),
     parentIsLink: true,
-    mega: 'safaris',
-    children: safariNavPlaces,
+    children: safariNavLinks,
   },
   {
     to: href('destinations'),
@@ -290,6 +288,19 @@ export default function Nav() {
                       <span className="nav-links__active-mark" aria-hidden="true" />
                     )}
                   </Link>
+                  {!l.mega && dropOpen === l.label && (
+                    <div className="nav-drop">
+                      <ul className="nav-drop__list">
+                        {l.children.map((c) => (
+                          <li key={c.title}>
+                            <Link to={c.to} className="nav-drop__link">
+                              {c.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </li>
               ) : (
                 <li key={l.label} className="nav-links__item">
@@ -369,27 +380,14 @@ export default function Nav() {
           </div>
         </nav>
 
-        {dropOpen && openLink?.children && (
-          <div
-            className={openLink.mega === 'safaris' ? 'nav-mega nav-mega--compact' : 'nav-mega'}
-            onMouseEnter={keepOpen}
-            onMouseLeave={requestClose}
-          >
-            {openLink.mega === 'destinations' ? (
-              <MegaPanel
-                items={destNavPlaces}
-                featured={destNavFeatured}
-                footerTo={href('destinations')}
-                footerLabel="View all destinations"
-              />
-            ) : (
-              <MegaPanel
-                items={safariNavPlaces}
-                featured={experienceNavFeatured}
-                footerTo={href('safaris')}
-                footerLabel="View all safaris"
-              />
-            )}
+        {dropOpen && openLink?.mega === 'destinations' && (
+          <div className="nav-mega" onMouseEnter={keepOpen} onMouseLeave={requestClose}>
+            <MegaPanel
+              items={destNavPlaces}
+              featured={destNavFeatured}
+              footerTo={href('destinations')}
+              footerLabel="View all destinations"
+            />
           </div>
         )}
 
@@ -436,13 +434,6 @@ export default function Nav() {
                         <li>
                           <Link to={href('destinations')} className="nav-mobile__sublink">
                             View all destinations
-                          </Link>
-                        </li>
-                      ) : null}
-                      {l.mega === 'safaris' ? (
-                        <li>
-                          <Link to={href('safaris')} className="nav-mobile__sublink">
-                            View all safaris
                           </Link>
                         </li>
                       ) : null}
