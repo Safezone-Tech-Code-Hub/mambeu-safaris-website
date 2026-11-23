@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useFavourites } from '../FavouritesProvider.jsx';
-import {
-  destNavFeatured,
-  destNavPlaces,
-  safariNavLinks,
-} from '../lib/nav-menus.js';
+import { destNavLinks, safariNavLinks } from '../lib/nav-menus.js';
 import { planHref } from '../lib/plan-link.js';
 import { href, Img } from '../lib/utils.js';
 
@@ -26,8 +22,7 @@ const LINKS = [
     label: 'Destinations',
     matchPrefix: href('destinations'),
     parentIsLink: true,
-    mega: 'destinations',
-    children: destNavPlaces,
+    children: destNavLinks,
   },
   { to: href('experiences'), label: 'Experiences' },
   { to: href('about'), label: 'Our story' },
@@ -46,77 +41,6 @@ function motionDelay(ms) {
   return ms;
 }
 
-function PlaceIcon({ name }) {
-  const common = {
-    viewBox: '0 0 24 24',
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeWidth: '1.5',
-    strokeLinecap: 'round',
-    strokeLinejoin: 'round',
-    'aria-hidden': true,
-  };
-
-  if (name === 'Comfort') {
-    return (
-      <svg {...common}>
-        <path d="M4 11.5l8-5.5 8 5.5" />
-        <path d="M6 11v7h12v-7" />
-        <path d="M10 18v-4h4v4" />
-      </svg>
-    );
-  }
-
-  if (name === 'Luxury') {
-    return (
-      <svg {...common}>
-        <path d="M12 4.5l1.8 4.6 5 .4-3.8 3.2 1.2 4.8L12 15.4 7.8 17.5l1.2-4.8L5.2 9.5l5-.4L12 4.5z" />
-      </svg>
-    );
-  }
-
-  if (name === 'Camping') {
-    return (
-      <svg {...common}>
-        <path d="M4 18l8-12 8 12H4z" />
-        <path d="M12 6v12" />
-      </svg>
-    );
-  }
-
-  if (name === 'Kilimanjaro') {
-    return (
-      <svg {...common}>
-        <path d="M3 18l6.2-8.4 2.3 3.1 3.3-4.7L21 18H3z" />
-        <path d="M11.5 12.7l1.3-1.1 1.4 1.4" />
-      </svg>
-    );
-  }
-
-  if (name === 'Zanzibar') {
-    return (
-      <svg {...common}>
-        <path d="M3 14c1.6-1.2 3.2-1.2 4.8 0s3.2 1.2 4.8 0 3.2-1.2 4.8 0 3.2 1.2 4.8 0" />
-        <path d="M3 18c1.6-1.2 3.2-1.2 4.8 0s3.2 1.2 4.8 0 3.2-1.2 4.8 0 3.2 1.2 4.8 0" />
-        <path d="M12 6.5V11" />
-        <circle cx="12" cy="5.2" r="1.2" />
-      </svg>
-    );
-  }
-
-  const needle =
-    name === 'Southern circuit' ? 'M12 16.5V8.2' : name === 'Western circuit' ? 'M7.5 12h8.3' : 'M12 7.5v8.3';
-
-  return (
-    <svg {...common}>
-      <circle cx="12" cy="12" r="8.2" />
-      <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" />
-      <path d={needle} />
-      <path d="M12 4.2v1.4M12 18.4v1.4M4.2 12h1.4M18.4 12h1.4" />
-    </svg>
-  );
-}
-
 function NavChevron() {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" className="nav-links__chevron">
@@ -129,47 +53,6 @@ function NavChevron() {
         strokeLinejoin="round"
       />
     </svg>
-  );
-}
-
-function MegaPanel({ items, featured, footerTo, footerLabel }) {
-  return (
-    <div className="nav-mega__body">
-      <div className="nav-mega__grid">
-        <ul className="nav-mega__places">
-          {items.map((place) => (
-            <li key={place.title}>
-              <Link to={place.to} className="nav-mega__place">
-                <span className="nav-mega__icon">
-                  <PlaceIcon name={place.title} />
-                </span>
-                <span className="nav-mega__place-copy">
-                  <span className="nav-mega__place-title">{place.title}</span>
-                  <span className="nav-mega__place-text">{place.text}</span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <ul className="nav-mega__featured">
-          {featured.map((card) => (
-            <li key={card.title}>
-              <Link to={card.to} className="nav-mega__card">
-                <span className="nav-mega__card-media">
-                  <img src={card.image} alt="" className="nav-mega__card-img" />
-                </span>
-                <span className="nav-mega__card-label">{card.title}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="nav-mega__footer">
-        <Link to={footerTo} className="nav-mega__all">
-          {footerLabel}
-        </Link>
-      </div>
-    </div>
   );
 }
 
@@ -209,10 +92,6 @@ export default function Nav() {
     closeTimer.current = window.setTimeout(() => setDropOpen(null), motionDelay(CLOSE_MS));
   };
 
-  const keepOpen = () => {
-    window.clearTimeout(closeTimer.current);
-  };
-
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape') {
@@ -246,8 +125,6 @@ export default function Nav() {
     document.documentElement.classList.toggle('is-nav-open', menuOpen);
     return () => document.documentElement.classList.remove('is-nav-open');
   }, [menuOpen]);
-
-  const openLink = LINKS.find((l) => l.label === dropOpen);
 
   return (
     <>
@@ -288,7 +165,7 @@ export default function Nav() {
                       <span className="nav-links__active-mark" aria-hidden="true" />
                     )}
                   </Link>
-                  {!l.mega && dropOpen === l.label && (
+                  {dropOpen === l.label && (
                     <div className="nav-drop">
                       <ul className="nav-drop__list">
                         {l.children.map((c) => (
@@ -380,17 +257,6 @@ export default function Nav() {
           </div>
         </nav>
 
-        {dropOpen && openLink?.mega === 'destinations' && (
-          <div className="nav-mega" onMouseEnter={keepOpen} onMouseLeave={requestClose}>
-            <MegaPanel
-              items={destNavPlaces}
-              featured={destNavFeatured}
-              footerTo={href('destinations')}
-              footerLabel="View all destinations"
-            />
-          </div>
-        )}
-
         {menuOpen && (
           <div id="mobile-menu" className="nav-mobile">
             <ul className="nav-mobile__list">
@@ -430,13 +296,6 @@ export default function Nav() {
                           </Link>
                         </li>
                       ))}
-                      {l.mega === 'destinations' ? (
-                        <li>
-                          <Link to={href('destinations')} className="nav-mobile__sublink">
-                            View all destinations
-                          </Link>
-                        </li>
-                      ) : null}
                     </ul>
                   )}
                 </li>
