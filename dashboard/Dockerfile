@@ -3,7 +3,8 @@ WORKDIR /app/dashboard
 COPY dashboard/package.json dashboard/package-lock.json* ./
 RUN npm ci
 COPY dashboard/ .
-COPY src/content /app/src/content
+# Page content defaults (src/content) also import data lists from src/lib, so copy all of src.
+COPY src /app/src
 ARG VITE_POCKETBASE_URL=https://dashboard-mambeu.schoolhub.space
 ARG VITE_PUBLIC_SITE_URL=https://new-mambeu.schoolhub.space
 ENV VITE_POCKETBASE_URL=$VITE_POCKETBASE_URL
