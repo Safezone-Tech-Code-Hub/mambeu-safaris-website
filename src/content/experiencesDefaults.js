@@ -1,54 +1,124 @@
-/** Default Experiences page CMS payload — plain text only. */
+/**
+ * Experiences page content (schema 2). Defaults match what the redesigned page shows; the
+ * dashboard editor (dashboard/src/lib/pageEditor/experiences.js) edits these exact paths.
+ *
+ * The experience list lives here too, so the whole page is edited in one place. Items keep
+ * text-only fields so the dashboard can edit them: `status` is "published" or "draft",
+ * `featured` is "yes" or empty, and list fields (highlights, included, goodToKnow) are arrays
+ * of lines. `normalizeExperience` turns an item back into the shape the components use.
+ */
+import { experiences as catalog } from '../lib/experiences.js';
+import { lines, mergePage } from './schema.js';
 
-import { mergeScalar, mergeSection } from './mergeUtils.js';
+function toItem(e) {
+  return {
+    slug: e.slug,
+    status: e.published ? 'published' : 'draft',
+    featured: e.featured ? 'yes' : '',
+    category: e.category,
+    title: e.title,
+    summary: e.summary,
+    image: e.image,
+    imageAlt: e.imageAlt || '',
+    focal: e.focal || '',
+    location: e.location || '',
+    bestTime: e.bestTime || '',
+    duration: e.duration || '',
+    bestFor: e.bestFor || '',
+    highlights: [...(e.highlights || [])],
+    included: [...(e.included || [])],
+    goodToKnow: [...(e.goodToKnow || [])],
+  };
+}
 
 export const experiencesPageDefaults = {
   head: {
-    label: 'BEYOND THE GAME DRIVE',
-    titleLine1: 'A safari is only',
-    titleLine2: 'the beginning.',
-    text: 'Add experiences that mean something to you, from cultural connections to a different view of the plains.',
+    eyebrow: 'Beyond the game drive',
+    titleLine1: 'Experiences to make',
+    titleLine2: 'it yours.',
+    text: 'Add experiences that mean something to you, from short day tours to a hot air balloon safari.',
+    image: '/images/experiences-header.jpg',
   },
-  list: {
-    buttonText: 'Include this in my journey',
+  intro: {
+    eyebrow: 'How experiences work',
+    title: 'Start with the safari, then add what matters to you.',
+    text: 'Experiences are optional additions to any Mambeu safari, from family journeys to a hot-air balloon flight. Browse by type, open one to read the details, and choose it to start an enquiry.',
+  },
+  facts: [
+    { title: 'Optional add-ons', text: 'Added to any safari.' },
+    { title: 'Priced separately', text: 'Confirmed with your quote.' },
+    { title: 'Locally guided', text: 'By our own team and partners.' },
+  ],
+  filter: {
+    allLabel: 'All',
+    countSingular: 'experience',
+    countPlural: 'experiences',
+  },
+  card: {
+    detailsButton: 'See details',
+    planButton: 'Plan this experience',
+  },
+  panel: {
+    whereLabel: 'Where',
+    whenLabel: 'When',
+    durationLabel: 'Duration',
+    expectHeading: 'What to expect',
+    bestTimeLabel: 'Best time',
+    bestForLabel: 'Best for',
+    includedHeading: 'Usually included',
+    goodToKnowHeading: 'Good to know',
+    highlightsHeading: 'Highlights',
+  },
+  items: catalog
+    .slice()
+    .sort((a, b) => Number(b.published) - Number(a.published) || a.sortOrder - b.sortOrder)
+    .map(toItem),
+  closing: {
+    titleLine1: 'Not sure what fits?',
+    titleLine2: 'Tell us and we’ll suggest.',
+    text: 'Share who is travelling and what matters to you. We’ll shape the route around it.',
+    planButton: 'Plan my safari',
+    planLink: 'plan',
+    whatsappButton: 'Talk to us on WhatsApp',
   },
 };
 
-function parseLegacyTitle(raw) {
-  if (!raw || typeof raw !== 'string') return {};
-  if (!raw.includes('<')) {
-    return { titleLine1: raw.trim(), titleLine2: '' };
-  }
-  const brSplit = raw.split(/<br\s*\/?>/i);
-  if (brSplit.length >= 2) {
-    const line1 = brSplit[0].replace(/<[^>]+>/g, '').trim();
-    const line2 = brSplit.slice(1).join(' ').replace(/<[^>]+>/g, '').trim();
-    return { titleLine1: line1, titleLine2: line2 };
-  }
-  return { titleLine1: raw.replace(/<[^>]+>/g, '').trim(), titleLine2: '' };
+/** One CMS list item -> the experience shape used by the cards and side panel. */
+export function normalizeExperience(item, index = 0) {
+  const it = item && typeof item === 'object' ? item : {};
+  return {
+    slug: String(it.slug ?? '').trim() || `experience-${index + 1}`,
+    category: String(it.category ?? '').trim(),
+    title: it.title || '',
+    summary: it.summary || '',
+    image: it.image || '',
+    imageAlt: it.imageAlt || '',
+    focal: String(it.focal ?? '').trim() || undefined,
+    location: it.location || '',
+    bestTime: it.bestTime || '',
+    duration: it.duration || '',
+    bestFor: it.bestFor || '',
+    highlights: lines(it.highlights),
+    included: lines(it.included),
+    goodToKnow: lines(it.goodToKnow),
+    featured: /^(yes|true|1)$/i.test(String(it.featured ?? '').trim()),
+    published: String(it.status ?? 'published').trim().toLowerCase() !== 'draft',
+    sortOrder: index,
+  };
 }
 
-export function normalizeLegacyExperiences(src) {
-  const next = src && typeof src === 'object' ? { ...src } : {};
-  if (next.head?.title && !next.head.titleLine1) {
-    next.head = { ...next.head, ...parseLegacyTitle(next.head.title) };
-  }
-  return next;
+/** Published experiences in list order, ready for the page components. */
+export function publishedExperienceList(content) {
+  return (content?.items || [])
+    .map(normalizeExperience)
+    .filter((e) => e.published && e.title);
+}
+
+/** Saved content from the old dashboard: the redesigned page showed none of it. */
+function migrateV1() {
+  return {};
 }
 
 export function mergeExperiencesContent(cmsExperiences) {
-  const src = normalizeLegacyExperiences(cmsExperiences);
-  const out = {};
-  for (const [key, defaults] of Object.entries(experiencesPageDefaults)) {
-    if (typeof defaults !== 'object' || defaults === null) {
-      out[key] = mergeScalar(defaults, src[key]);
-      continue;
-    }
-    out[key] = mergeSection(defaults, src[key]);
-  }
-  if (out.head?.titleLine1) {
-    const { title: _t, ...headRest } = out.head;
-    out.head = headRest;
-  }
-  return out;
+  return mergePage(experiencesPageDefaults, cmsExperiences, migrateV1);
 }

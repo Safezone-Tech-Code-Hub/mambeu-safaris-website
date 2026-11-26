@@ -2,7 +2,7 @@
   <div class="places-panel">
     <div class="places-panel-header">
       <p class="hint">
-        Midrange, Comfort, and Luxury tab panels (photo, bullets, button text) are edited below. Same data appears on the homepage comfort block.
+        Midrange, Comfort and Luxury tab panels (tab subtitle, photo and caption, title, text, bullets, button) are edited in Library → Comfort levels.
       </p>
       <Button label="Open full editor" icon="pi pi-external-link" @click="router.push({ name: 'comfort-levels' })" />
     </div>

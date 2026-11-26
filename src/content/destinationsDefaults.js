@@ -1,95 +1,130 @@
-/** Default Destinations hub CMS payload — plain text only. */
+/**
+ * Destinations hub content (schema 2). Defaults match what /destinations/ shows; the
+ * dashboard editor (dashboard/src/lib/pageEditor/destinations.js) edits these exact paths.
+ *
+ * The park cards here are the hub's own copy. The individual park pages
+ * (/destinations/<slug>/) still come from Library → Places.
+ */
+import { destinations } from '../lib/destinations.js';
+import { mergePage } from './schema.js';
 
-import { mergeScalar, mergeSection } from './mergeUtils.js';
+/** Card fields the hub uses, taken from the static destination list. */
+function card(d) {
+  return {
+    name: d.name,
+    slug: d.slug,
+    kind: d.kind,
+    tagline: d.tagline,
+    description: d.description,
+    image: d.image,
+    position: d.position || '',
+    highlights: [...(d.highlights || [])],
+    bestTime: d.bestTime,
+    query: d.query,
+    link: d.href ? d.href.replace(/^\/|\/$/g, '') : '',
+  };
+}
+
+const parks = destinations.filter((d) => d.group === 'parks').map(card);
+const beyond = destinations.filter((d) => d.group === 'beyond').map(card);
+
+/** “Coming soon” cards in the southern and western sections (no park page yet). */
+function soon(slug, name, tagline, description, image, highlights) {
+  return {
+    name,
+    slug,
+    kind: 'Coming soon',
+    tagline,
+    description,
+    image,
+    position: '',
+    highlights,
+    bestTime: '',
+    query: '',
+    link: '',
+  };
+}
 
 export const destinationsPageDefaults = {
-  head: {
-    label: 'WHERE WE TAKE YOU',
-    titleLine1: 'Discover Tanzania’s wild places.',
-    titleLine2: '',
+  header: {
+    eyebrow: 'Where we take you',
+    titleLine1: 'Discover Tanzania’s',
+    titleLine2: 'wild places.',
     text: 'Legendary wildlife parks, mountain landscapes and an Indian Ocean coast. Connect your favourite places into one personal journey.',
+    image: '/images/destinations-header.jpg',
   },
-  grid: {
-    placeEyebrowLabel: 'EXPLORE',
+  labels: {
+    planLinkPrefix: 'Plan a trip to',
+    exploreLinkPrefix: 'Explore',
+    comingSoon: 'Coming soon',
+    journeySingular: 'journey',
+    journeyPlural: 'journeys',
+    tailorMade: 'Tailor-made',
   },
-  extraTiles: [
-    {
-      path: 'kilimanjaro',
-      title: 'Kilimanjaro',
-      photo: 'mountain.webp',
-      tag: 'A higher perspective.',
-      eyebrow: 'KEEP EXPLORING',
-    },
-    {
-      path: 'zanzibar',
-      title: 'Zanzibar',
-      photo: 'zanzibar.webp',
-      tag: 'Slow down by the sea.',
-      eyebrow: 'KEEP EXPLORING',
-    },
-  ],
+  northern: {
+    title: 'The northern circuit',
+    lede: 'Classic parks plus seasonal plains and the Rift Valley, easily combined in one journey.',
+    places: parks,
+  },
+  southern: {
+    title: 'The southern circuit',
+    lede: 'Quieter parks and longer days in the bush, further from the classic north. Tell us if you want to go south and we will shape the route.',
+    places: [
+      soon(
+        'ruaha',
+        'Ruaha',
+        'Baobabs, lions and a very big sky.',
+        'Southern Tanzania at its quietest. We shape these as tailor-made journeys.',
+        '/images/destinations/tarangire.jpg',
+        ['Remote bush', 'Big cats', 'Baobab country'],
+      ),
+      soon(
+        'nyerere',
+        'Nyerere',
+        'River, boats and open woodland.',
+        'Boat days and walking country, far from the northern circuit. Ask us to build it in.',
+        '/images/destinations/ndutu.jpg',
+        ['Boat safari', 'Walking', 'Fewer vehicles'],
+      ),
+    ],
+  },
+  western: {
+    title: 'The western circuit',
+    lede: 'Remote west Tanzania, for travellers who want more space and fewer vehicles. We plan these as tailor-made additions.',
+    places: [
+      soon(
+        'katavi',
+        'Katavi',
+        'Floodplains, hippo and almost no one else.',
+        'West Tanzania’s open floodplains. We plan these as private, tailor-made additions.',
+        '/images/destinations/lake-natron.jpg',
+        ['Floodplains', 'Remote camps', 'Space to breathe'],
+      ),
+      soon(
+        'mahale',
+        'Mahale',
+        'Forest, lake and a slower kind of wild.',
+        'Lakeshore forest on Tanganyika. A quiet finish after the game drives.',
+        '/images/destinations/lake-manyara.jpg',
+        ['Lakeshore forest', 'Chimpanzees', 'Tanganyika'],
+      ),
+    ],
+  },
+  beyond: {
+    title: 'Beyond the parks',
+    lede: 'Add a mountain or a coast to any safari.',
+    places: beyond,
+  },
 };
 
-function parseLegacyTitle(raw) {
-  if (!raw || typeof raw !== 'string') return {};
-  if (!raw.includes('<')) {
-    return { titleLine1: raw.trim(), titleLine2: '' };
-  }
-  const brSplit = raw.split(/<br\s*\/?>/i);
-  if (brSplit.length >= 2) {
-    const line1 = brSplit[0].replace(/<[^>]+>/g, '').trim();
-    const line2 = brSplit.slice(1).join(' ').replace(/<[^>]+>/g, '').trim();
-    return { titleLine1: line1, titleLine2: line2 };
-  }
-  return { titleLine1: raw.replace(/<[^>]+>/g, '').trim(), titleLine2: '' };
-}
-
-function normalizeExtraTile(item, index, defaults) {
-  const def = defaults[index] || { path: '', title: '', photo: '', tag: '', eyebrow: 'KEEP EXPLORING' };
-  if (Array.isArray(item)) {
-    return {
-      path: item[0] || def.path,
-      title: item[1] || def.title,
-      photo: item[2] || def.photo,
-      tag: item[3] || def.tag,
-      eyebrow: def.eyebrow,
-    };
-  }
-  if (item && typeof item === 'object') return mergeSection(def, item);
-  return { ...def };
-}
-
-function mergeExtraTiles(defaults, override) {
-  const base = defaults.map((d) => ({ ...d }));
-  if (!Array.isArray(override) || !override.length) return base;
-  return base.map((def, i) => normalizeExtraTile(override[i], i, defaults));
-}
-
-export function normalizeLegacyDestinations(src) {
-  const next = src && typeof src === 'object' ? { ...src } : {};
-  if (next.head?.title && !next.head.titleLine1) {
-    next.head = { ...next.head, ...parseLegacyTitle(next.head.title) };
-  }
-  return next;
+/**
+ * Content saved by the old dashboard (head, grid label, Kilimanjaro/Zanzibar tiles) was never
+ * shown on the redesigned hub, so none of it carries over.
+ */
+function migrateV1() {
+  return {};
 }
 
 export function mergeDestinationsContent(cmsDestinations) {
-  const src = normalizeLegacyDestinations(cmsDestinations);
-  const out = {};
-  for (const [key, defaults] of Object.entries(destinationsPageDefaults)) {
-    if (key === 'extraTiles') {
-      out.extraTiles = mergeExtraTiles(destinationsPageDefaults.extraTiles, src.extraTiles);
-      continue;
-    }
-    if (typeof defaults !== 'object' || defaults === null) {
-      out[key] = mergeScalar(defaults, src[key]);
-      continue;
-    }
-    out[key] = mergeSection(defaults, src[key]);
-  }
-  if (out.head?.titleLine1) {
-    const { title: _t, ...headRest } = out.head;
-    out.head = headRest;
-  }
-  return out;
+  return mergePage(destinationsPageDefaults, cmsDestinations, migrateV1);
 }

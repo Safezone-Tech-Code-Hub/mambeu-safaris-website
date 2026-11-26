@@ -2,43 +2,50 @@ import { Link } from 'react-router-dom';
 import ComfortSection from '../components/ComfortSection.jsx';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
-import { href } from '../lib/utils.js';
+import { cmsLink, isExternalLink } from '../content/schema.js';
 
 export default function Comfort() {
   const { pages } = useCms();
-  const head = pages.comfort?.head || {};
+  const { head, balanceSection: balance } = pages.comfort;
+  const linkTo = cmsLink(balance.linkPath, '/safaris/');
   return (
     <main id="main">
       <PageHead
-        label={head.label || 'YOUR KIND OF STAY'}
-        title={head.title || 'Adventure outside.<br><span class="accent">Comfort within.</span>'}
-        text={
-          head.text ||
-          'Midrange and comfort are at the heart of our approach. Luxury and camping remain part of the possibilities. Choose how you want your journey to feel.'
-        }
+        label={head.label}
+        titleLine1={head.titleLine1}
+        titleLine2={head.titleLine2}
+        text={head.text}
+        photo={head.photo}
+        photoAlt={head.photoAlt}
       />
       <ComfortSection />
       <section className="wrap split-story">
         <div>
-          <span className="eyebrow">A THOUGHTFUL BALANCE</span>
+          <span className="eyebrow">{balance.eyebrow}</span>
           <h2>
-            Spend on the things
-            <br />
-            you’ll remember.
+            {balance.titleLine1}
+            {balance.titleLine2 ? (
+              <>
+                <br />
+                {balance.titleLine2}
+              </>
+            ) : null}
           </h2>
         </div>
         <div>
-          <p className="lead">
-            Your budget influences accommodation, length of stay and optional experiences. We’ll help you
-            decide where extra comfort makes a difference.
-          </p>
-          <p>
-            The published journeys are starting points. When you enquire, we’ll suggest specific lodges
-            and tented camps for your dates and confirm what is included before you book.
-          </p>
-          <Link to={href('safaris?style=camping')} className="text-link">
-            Explore our camping journeys
-          </Link>
+          <p className="lead">{balance.lead}</p>
+          <p>{balance.body}</p>
+          {balance.linkText ? (
+            isExternalLink(linkTo) ? (
+              <a href={linkTo} className="text-link">
+                {balance.linkText}
+              </a>
+            ) : (
+              <Link to={linkTo} className="text-link">
+                {balance.linkText}
+              </Link>
+            )
+          ) : null}
         </div>
       </section>
     </main>

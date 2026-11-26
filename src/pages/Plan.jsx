@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PageHeader from '../components/PageHeader.jsx';
 import { useCms } from '../CmsProvider.jsx';
-import { planPageDefaults } from '../data/plan-page-defaults.js';
 import { siteChrome } from '../lib/cms.js';
 import { submitEnquiry } from '../lib/enquiry.js';
 import { experiences as experienceCatalog } from '../lib/experiences.js';
@@ -14,36 +13,54 @@ import {
   searchParamsWithoutInterest,
 } from '../lib/plan-prefill.js';
 
-function mergePlan(cms) {
-  const next = cms && typeof cms === 'object' ? cms : {};
-  const head = next.head || {};
-  const form = { ...planPageDefaults.form, ...(next.form || {}) };
-  return {
-    ...planPageDefaults,
-    ...next,
-    hero: {
-      ...planPageDefaults.hero,
-      ...(head.label ? { eyebrow: head.label } : {}),
-      ...(head.text ? { text: head.text } : {}),
-      ...(next.hero || {}),
-    },
-    form: {
-      ...form,
-      groups: { ...planPageDefaults.form.groups, ...(form.groups || {}) },
-      placeholders: {
-        ...planPageDefaults.form.placeholders,
-        ...(form.placeholders || {}),
-      },
-      hints: { ...planPageDefaults.form.hints, ...(form.hints || {}) },
-    },
-    aside: { ...planPageDefaults.aside, ...(next.aside || {}) },
-  };
+/**
+ * Values sent with an enquiry and matched by plan links (?style=Luxury, destination
+ * Kilimanjaro, …). The visible labels come from the CMS (form.*Options), paired by position.
+ */
+const PLAN_OPTION_VALUES = {
+  days: ['Not sure yet', '2–4 days', '5–6 days', '7–9 days', '10+ days'],
+  style: ['Comfort', 'Midrange', 'Luxury', 'Camping', 'Please advise me'],
+  interest: [
+    'Wildlife safari',
+    'Safari and beach',
+    'Kilimanjaro',
+    'Zanzibar',
+    'Family',
+    'Romantic',
+    'Balloon',
+    'Cultural experiences',
+  ],
+};
+
+/** @param {{ name: keyof typeof PLAN_OPTION_VALUES; labels: string[] }} props */
+function PlanOptions({ name, labels }) {
+  return PLAN_OPTION_VALUES[name].map((value, i) => (
+    <option key={value} value={value}>
+      {String(labels?.[i] ?? '').trim() || value}
+    </option>
+  ));
+}
+
+/** @param {{ children: import('react').ReactNode; htmlFor: string; required?: boolean }} props */
+function PlanLabel({ children, htmlFor, required = false }) {
+  return (
+    <label className="plan-label" htmlFor={htmlFor}>
+      {children}
+      {required ? (
+        <span className="plan-req" aria-hidden="true">
+          {' '}
+          *
+        </span>
+      ) : null}
+    </label>
+  );
 }
 
 export default function Plan() {
   const { pages, tours } = useCms();
   const contact = siteChrome(pages);
-  const plan = mergePlan(pages.plan);
+  const plan = pages.plan;
+  const { form, preview, aside } = plan;
   const [searchParams, setSearchParams] = useSearchParams();
   const formRef = useRef(null);
   const messageRef = useRef(null);
@@ -54,8 +71,8 @@ export default function Plan() {
   const [copyStatus, setCopyStatus] = useState('');
   /** '' | 'saving' | 'saved' | 'error' — PocketBase inbox after Prepare … */
   const [inboxStatus, setInboxStatus] = useState('');
-  const [whatsappHref, setWhatsappHref] = useState('https://wa.me/255796086799');
-  const [emailHref, setEmailHref] = useState('mailto:info@mambeusafaris.com');
+  const [whatsappHref, setWhatsappHref] = useState(`https://wa.me/${contact.whatsapp}`);
+  const [emailHref, setEmailHref] = useState(`mailto:${contact.email}`);
   const previewRef = useRef(null);
   const phoneTel = contact.phoneE164 || contact.whatsapp;
 
@@ -130,7 +147,7 @@ export default function Plan() {
   };
 
   const buildMessage = (values) =>
-    'Hello Mambeu Safaris, I would like to plan a journey.\n\n' +
+    `${form.messageIntro}\n\n` +
     Object.entries(values)
       .filter(([k, v]) => k !== 'website' && String(v).trim())
       .map(
@@ -197,7 +214,7 @@ export default function Plan() {
     try {
       if (!navigator.clipboard?.writeText) throw new Error();
       await navigator.clipboard.writeText(enquiryText);
-      setCopyStatus('Enquiry copied.');
+      setCopyStatus(preview.copied);
     } catch {
       const pre = document.getElementById('enquiry-text');
       if (pre) {
@@ -207,7 +224,7 @@ export default function Plan() {
         selection.removeAllRanges();
         selection.addRange(range);
       }
-      setCopyStatus('Message selected. Copy it using your device’s copy command.');
+      setCopyStatus(preview.copyFallback);
     }
   };
 
@@ -216,28 +233,28 @@ export default function Plan() {
       <PageHeader
         id="plan-heading"
         compact
-        eyebrow={plan.hero.eyebrow}
+        eyebrow={plan.head.label}
         title={
           <>
-            {plan.hero.titleLine1}
+            {plan.head.titleLine1}
             <br />
-            <span className="page-header__quiet">{plan.hero.titleLine2}</span>
+            <span className="page-header__quiet">{plan.head.titleLine2}</span>
           </>
         }
-        description={plan.hero.text}
+        description={plan.head.text}
       />
 
       <section className="plan-body" aria-labelledby="plan-form-title">
         <div className="plan-container plan-body__grid">
           <div className="plan-card">
             <h2 id="plan-form-title" className="plan-card__title">
-              {plan.form.title}
+              {form.title}
             </h2>
-            <p className="plan-card__note">{plan.form.requiredNote}</p>
+            <p className="plan-card__note">{form.requiredNote}</p>
 
             {interests.length > 0 ? (
-              <div className="plan-chips-block" role="region" aria-label={plan.form.chipsTitle}>
-                <p className="plan-chips-block__title">{plan.form.chipsTitle}</p>
+              <div className="plan-chips-block" role="region" aria-label={form.chipsTitle}>
+                <p className="plan-chips-block__title">{form.chipsTitle}</p>
                 <ul className="plan-chips">
                   {interests.map((item) => (
                     <li key={`${item.kind}-${item.slug}`}>
@@ -281,17 +298,13 @@ export default function Plan() {
 
               <div role="group" aria-labelledby="plan-g-you" className="plan-group">
                 <h3 id="plan-g-you" className="plan-group__title">
-                  {plan.form.groups.you}
+                  {form.groupYou}
                 </h3>
                 <div className="plan-grid">
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="name">
-                      Your name
-                      <span className="plan-req" aria-hidden="true">
-                        {' '}
-                        *
-                      </span>
-                    </label>
+                    <PlanLabel htmlFor="name" required>
+                      {form.labels.name}
+                    </PlanLabel>
                     <input
                       className="plan-input"
                       id="name"
@@ -299,17 +312,13 @@ export default function Plan() {
                       autoComplete="name"
                       required
                       maxLength={120}
-                      placeholder={plan.form.placeholders.name}
+                      placeholder={form.placeholders.name}
                     />
                   </div>
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="email">
-                      Email address
-                      <span className="plan-req" aria-hidden="true">
-                        {' '}
-                        *
-                      </span>
-                    </label>
+                    <PlanLabel htmlFor="email" required>
+                      {form.labels.email}
+                    </PlanLabel>
                     <input
                       className="plan-input"
                       id="email"
@@ -318,13 +327,13 @@ export default function Plan() {
                       autoComplete="email"
                       required
                       maxLength={200}
-                      placeholder={plan.form.placeholders.email}
+                      placeholder={form.placeholders.email}
                     />
                   </div>
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="phone">
-                      Phone / WhatsApp
-                    </label>
+                    <PlanLabel htmlFor="phone">
+                      {form.labels.phone}
+                    </PlanLabel>
                     <input
                       className="plan-input"
                       id="phone"
@@ -332,26 +341,26 @@ export default function Plan() {
                       type="tel"
                       autoComplete="tel"
                       maxLength={50}
-                      placeholder={plan.form.placeholders.phone}
-                      aria-describedby={plan.form.hints.phone ? 'plan-hint-phone' : undefined}
+                      placeholder={form.placeholders.phone}
+                      aria-describedby={form.hints.phone ? 'plan-hint-phone' : undefined}
                     />
-                    {plan.form.hints.phone ? (
+                    {form.hints.phone ? (
                       <p className="plan-hint" id="plan-hint-phone">
-                        {plan.form.hints.phone}
+                        {form.hints.phone}
                       </p>
                     ) : null}
                   </div>
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="country">
-                      Country of residence
-                    </label>
+                    <PlanLabel htmlFor="country">
+                      {form.labels.country}
+                    </PlanLabel>
                     <input
                       className="plan-input"
                       id="country"
                       name="country"
                       autoComplete="country-name"
                       maxLength={100}
-                      placeholder={plan.form.placeholders.country}
+                      placeholder={form.placeholders.country}
                     />
                   </div>
                 </div>
@@ -359,34 +368,30 @@ export default function Plan() {
 
               <div role="group" aria-labelledby="plan-g-trip" className="plan-group">
                 <h3 id="plan-g-trip" className="plan-group__title">
-                  {plan.form.groups.trip}
+                  {form.groupTrip}
                 </h3>
                 <div className="plan-grid">
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="date">
-                      Preferred arrival date
-                    </label>
+                    <PlanLabel htmlFor="date">
+                      {form.labels.date}
+                    </PlanLabel>
                     <input
                       className="plan-input"
                       id="date"
                       name="date"
                       type="date"
-                      aria-describedby={plan.form.hints.date ? 'plan-hint-date' : undefined}
+                      aria-describedby={form.hints.date ? 'plan-hint-date' : undefined}
                     />
-                    {plan.form.hints.date ? (
+                    {form.hints.date ? (
                       <p className="plan-hint" id="plan-hint-date">
-                        {plan.form.hints.date}
+                        {form.hints.date}
                       </p>
                     ) : null}
                   </div>
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="guests">
-                      Number of travellers
-                      <span className="plan-req" aria-hidden="true">
-                        {' '}
-                        *
-                      </span>
-                    </label>
+                    <PlanLabel htmlFor="guests" required>
+                      {form.labels.guests}
+                    </PlanLabel>
                     <input
                       className="plan-input"
                       id="guests"
@@ -399,37 +404,29 @@ export default function Plan() {
                     />
                   </div>
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="days">
-                      Trip length
-                    </label>
+                    <PlanLabel htmlFor="days">
+                      {form.labels.days}
+                    </PlanLabel>
                     <select
                       className="plan-select"
                       id="days"
                       name="days"
                       defaultValue="Not sure yet"
                     >
-                      <option value="Not sure yet">Not sure yet</option>
-                      <option value="2–4 days">2 to 4 days</option>
-                      <option value="5–6 days">5 to 6 days</option>
-                      <option value="7–9 days">7 to 9 days</option>
-                      <option value="10+ days">10+ days</option>
+                      <PlanOptions name="days" labels={form.daysOptions} />
                     </select>
                   </div>
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="plan-style">
-                      Safari style
-                    </label>
+                    <PlanLabel htmlFor="plan-style">
+                      {form.labels.style}
+                    </PlanLabel>
                     <select
                       className="plan-select"
                       id="plan-style"
                       name="style"
                       defaultValue="Comfort"
                     >
-                      <option>Comfort</option>
-                      <option>Midrange</option>
-                      <option>Luxury</option>
-                      <option>Camping</option>
-                      <option>Please advise me</option>
+                      <PlanOptions name="style" labels={form.styleOptions} />
                     </select>
                   </div>
                 </div>
@@ -437,45 +434,38 @@ export default function Plan() {
 
               <div role="group" aria-labelledby="plan-g-interests" className="plan-group">
                 <h3 id="plan-g-interests" className="plan-group__title">
-                  {plan.form.groups.interests}
+                  {form.groupInterests}
                 </h3>
                 <div className="plan-grid">
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="interest">
-                      Main interest
-                    </label>
+                    <PlanLabel htmlFor="interest">
+                      {form.labels.interest}
+                    </PlanLabel>
                     <select
                       className="plan-select"
                       id="interest"
                       name="interest"
                       defaultValue="Wildlife safari"
                     >
-                      <option>Wildlife safari</option>
-                      <option>Safari and beach</option>
-                      <option>Kilimanjaro</option>
-                      <option>Zanzibar</option>
-                      <option>Family</option>
-                      <option>Romantic</option>
-                      <option>Balloon</option>
-                      <option>Cultural experiences</option>
+                      <PlanOptions name="interest" labels={form.interestOptions} />
                     </select>
                   </div>
                   <div className="plan-field">
-                    <label className="plan-label" htmlFor="journey">
-                      A journey you like (optional)
-                    </label>
+                    <PlanLabel htmlFor="journey">
+                      {form.labels.journey}
+                    </PlanLabel>
                     <input
                       className="plan-input"
                       id="journey"
                       name="journey"
                       maxLength={200}
-                      placeholder={plan.form.placeholders.journey}
+                      placeholder={form.placeholders.journey}
                     />
                   </div>
                   <div className="plan-field plan-field--full">
-                    <label className="plan-label" htmlFor="message">
-                      Tell us a little more
-                    </label>
+                    <PlanLabel htmlFor="message">
+                      {form.labels.message}
+                    </PlanLabel>
                     <textarea
                       className="plan-textarea"
                       id="message"
@@ -483,7 +473,7 @@ export default function Plan() {
                       ref={messageRef}
                       rows={4}
                       maxLength={3000}
-                      placeholder={plan.form.placeholders.message}
+                      placeholder={form.placeholders.message}
                     />
                   </div>
                 </div>
@@ -496,7 +486,7 @@ export default function Plan() {
                   name="channel"
                   value="whatsapp"
                 >
-                  Prepare WhatsApp enquiry
+                  {form.whatsappButton}
                 </button>
                 <button
                   className="plan-btn plan-btn--secondary"
@@ -504,12 +494,12 @@ export default function Plan() {
                   name="channel"
                   value="email"
                 >
-                  Prepare email enquiry
+                  {form.emailButton}
                 </button>
               </div>
               <p className="plan-submit-note">
-                {plan.form.submitNote}
-                {plan.form.replyTime ? ` We usually reply within ${plan.form.replyTime}.` : ''}
+                {form.submitNote}
+                {form.replyTime ? ` We usually reply within ${form.replyTime}.` : ''}
               </p>
 
               <div
@@ -519,21 +509,17 @@ export default function Plan() {
                 hidden={previewHidden}
                 aria-live="polite"
               >
-                <h3 className="plan-preview__title">Your enquiry is ready.</h3>
-                <p className="plan-preview__text">
-                  Review the details, then choose how to send your message to Mambeu.
-                </p>
+                <h3 className="plan-preview__title">{preview.title}</h3>
+                <p className="plan-preview__text">{preview.text}</p>
                 {inboxStatus ? (
                   <p
                     className={`plan-preview__inbox plan-preview__inbox--${inboxStatus}`}
                     role="status"
                     aria-live="polite"
                   >
-                    {inboxStatus === 'saving' && 'Saving a copy for our team…'}
-                    {inboxStatus === 'saved' &&
-                      'Saved to our inbox — our team can see your details in the dashboard.'}
-                    {inboxStatus === 'error' &&
-                      'We could not save to our inbox right now. You can still send your enquiry by WhatsApp or email below.'}
+                    {inboxStatus === 'saving' && preview.inboxSaving}
+                    {inboxStatus === 'saved' && preview.inboxSaved}
+                    {inboxStatus === 'error' && preview.inboxError}
                   </p>
                 ) : null}
                 <pre id="enquiry-text" className="plan-preview__body">
@@ -547,10 +533,10 @@ export default function Plan() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Open WhatsApp
+                    {preview.whatsappOpen}
                   </a>
                   <a id="send-email" className="plan-btn plan-btn--secondary" href={emailHref}>
-                    Open email
+                    {preview.emailOpen}
                   </a>
                   <button
                     className="plan-btn plan-btn--text"
@@ -558,7 +544,7 @@ export default function Plan() {
                     id="copy-enquiry"
                     onClick={onCopy}
                   >
-                    Copy enquiry
+                    {preview.copyLabel}
                   </button>
                 </div>
                 <p id="copy-status" className="plan-preview__status" role="status">
@@ -569,13 +555,13 @@ export default function Plan() {
           </div>
 
           <aside className="plan-aside" aria-label="Help planning your safari">
-            <h2 className="plan-aside__title">{plan.aside.title}</h2>
-            <p className="plan-aside__text">{plan.aside.text}</p>
+            <h2 className="plan-aside__title">{aside.title}</h2>
+            <p className="plan-aside__text">{aside.text}</p>
 
-            <p className="plan-aside__label">{plan.aside.talkLabel}</p>
+            <p className="plan-aside__label">{aside.talkLabel}</p>
             <ul className="plan-talk" role="list">
               <li>
-                <span className="plan-talk__label">WhatsApp</span>
+                <span className="plan-talk__label">{aside.whatsappLabel}</span>
                 <a
                   className="plan-talk__link"
                   href={`https://wa.me/${contact.whatsapp}`}
@@ -587,25 +573,25 @@ export default function Plan() {
                 </a>
               </li>
               <li>
-                <span className="plan-talk__label">Email</span>
+                <span className="plan-talk__label">{aside.emailLabel}</span>
                 <a className="plan-talk__link" href={`mailto:${contact.email}`}>
                   {contact.email}
                 </a>
               </li>
               <li>
-                <span className="plan-talk__label">Phone</span>
+                <span className="plan-talk__label">{aside.phoneLabel}</span>
                 <a className="plan-talk__link" href={`tel:+${phoneTel}`}>
                   {contact.phone}
                 </a>
               </li>
               <li>
-                <span className="plan-talk__label">Office</span>
+                <span className="plan-talk__label">{aside.officeLabel}</span>
                 <span className="plan-talk__value">
                   {contact.officeLocation}
                   {contact.officeHours ? (
                     <>
                       <br />
-                      {contact.officeHours} EAT
+                      {contact.officeHours} {aside.hoursSuffix}
                     </>
                   ) : null}
                 </span>

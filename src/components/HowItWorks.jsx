@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { planHref } from '../lib/plan-link.js';
+import { useCms } from '../CmsProvider.jsx';
+import { cmsLink } from '../content/schema.js';
+import { resolveImageSrc } from '../lib/utils.js';
 
 /** @typedef {{
  *   title: string;
@@ -11,31 +13,6 @@ import { planHref } from '../lib/plan-link.js';
  * }} HowItWorksStep */
 
 /** @typedef {'done' | 'active' | 'upcoming'} StepMarkerState */
-
-/** Edit copy and images here. */
-const STEPS = /** @type {HowItWorksStep[]} */ ([
-  {
-    title: 'Tell us the shape of your trip',
-    body: 'Share your dates, group size and the parks you care about. Two minutes is enough, and we confirm what we understood.',
-    image: '/images/how/step-1.jpg',
-    alt: 'Hot air balloon over the Serengeti at sunrise',
-    imagePosition: 'center 45%',
-  },
-  {
-    title: 'Receive a quoted route',
-    body: 'We build a route around your pace, with named lodges and camps, and quote it in full. Nothing is hidden in add-ons.',
-    image: '/images/how/step-2.jpg',
-    alt: 'Wildebeest and zebra on open grassland',
-    imagePosition: 'center 60%',
-  },
-  {
-    title: 'Confirm, and we handle the rest',
-    body: 'Once you are happy, we secure the lodges, book the guide, and send your final itinerary and booking references.',
-    image: '/images/how/step-3.jpg',
-    alt: 'Zebras crossing open savanna seen from above',
-    imagePosition: 'center 40%',
-  },
-]);
 
 function readStickyTop() {
   if (typeof window === 'undefined') return 64;
@@ -74,12 +51,15 @@ function StepMarker({ index, state }) {
 }
 
 export default function HowItWorks() {
+  const { pages } = useCms();
+  const copy = pages.home.howItWorks;
+  const steps = (copy.steps || []).filter((s) => s && String(s.title ?? '').trim());
   const wrapperRef = useRef(/** @type {HTMLElement | null} */ (null));
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
   const [stickyTop, setStickyTop] = useState(readStickyTop);
   const [pin, setPin] = useState(false);
-  const n = STEPS.length;
+  const n = steps.length;
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)');
@@ -164,10 +144,10 @@ export default function HowItWorks() {
       >
         <div className="how-it-works__stage-inner">
           <div className="how-it-works__photos">
-            {STEPS.map((s, i) => (
+            {steps.map((s, i) => (
               <img
-                key={s.image}
-                src={s.image}
+                key={i}
+                src={resolveImageSrc(s.image)}
                 alt={i === active ? s.alt : ''}
                 aria-hidden={i !== active}
                 loading={i === 0 ? 'eager' : 'lazy'}
@@ -185,7 +165,7 @@ export default function HowItWorks() {
 
           <div className="how-it-works__panel">
             <div className="how-it-works__panel-top">
-              <p className="how-it-works__eyebrow">How it works</p>
+              <p className="how-it-works__eyebrow">{copy.eyebrow}</p>
               {pin ? (
                 <p aria-hidden="true" className="how-it-works__counter">
                   Step {active + 1} of {n}
@@ -194,11 +174,11 @@ export default function HowItWorks() {
             </div>
 
             <h2 id="how-it-works-heading" className="how-it-works__heading">
-              From first message to a confirmed route.
+              {copy.title}
             </h2>
 
             <p className="how-it-works__intro how-it-works__intro--mobile">
-              You get a quoted route and named lodges before you pay anything.
+              {copy.mobileIntro}
             </p>
 
             {pin ? (
@@ -211,7 +191,7 @@ export default function HowItWorks() {
             ) : null}
 
             <ol className="how-it-works__list">
-              {STEPS.map((s, i) => {
+              {steps.map((s, i) => {
                 const isActive = pin ? i === active : true;
                 const state = /** @type {StepMarkerState} */ (
                   pin
@@ -224,7 +204,7 @@ export default function HowItWorks() {
                 );
                 return (
                   <li
-                    key={s.title}
+                    key={i}
                     aria-current={pin && isActive ? 'step' : undefined}
                     className={
                       isActive
@@ -286,8 +266,8 @@ export default function HowItWorks() {
               })}
             </ol>
 
-            <Link to={planHref()} className="how-it-works__cta button orange">
-              Start with your dates
+            <Link to={cmsLink(copy.ctaLink, '/plan/')} className="how-it-works__cta button orange">
+              {copy.ctaText}
             </Link>
           </div>
         </div>

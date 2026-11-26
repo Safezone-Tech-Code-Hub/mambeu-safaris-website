@@ -1,18 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import JourneyCard from './JourneyCard.jsx';
+import { useCms } from '../CmsProvider.jsx';
+import { cmsLink } from '../content/schema.js';
+import { fill } from '../content/safarisDefaults.js';
 import { INTERESTS, LENGTHS } from '../lib/finder-options.js';
-import { planHref } from '../lib/plan-link.js';
-import { href } from '../lib/utils.js';
 import { tiers } from '../lib/journeys.js';
 
 const PAGE = 9;
 
-const SORTS = [
-  { value: 'recommended', label: 'Recommended' },
-  { value: 'shortest', label: 'Shortest first' },
-  { value: 'longest', label: 'Longest first' },
-];
+/** Park filter: `value` is the word searched for in journey titles and routes. */
 const PARKS = [
   { value: 'all', label: 'Any park' },
   { value: 'Serengeti', label: 'Serengeti' },
@@ -169,6 +166,14 @@ function Select({ id, label, value, onChange, options }) {
 
 export default function SafarisBrowser({ journeys }) {
   const [params, setSearchParams] = useSearchParams();
+  const { pages } = useCms();
+  const copy = pages.safaris.browser;
+  const planTo = cmsLink(copy.planLink, '/plan/');
+  const sorts = [
+    { value: 'recommended', label: copy.sortRecommended },
+    { value: 'shortest', label: copy.sortShortest },
+    { value: 'longest', label: copy.sortLongest },
+  ];
 
   const style = (params.get('style') ?? 'all').toLowerCase();
   const interest = params.get('interest') ?? 'all';
@@ -194,11 +199,12 @@ export default function SafarisBrowser({ journeys }) {
   };
 
   const parkOptions = useMemo(() => {
+    const list = PARKS.map((p) => (p.value === 'all' ? { ...p, label: copy.anyPark } : p));
     if (park !== 'all' && !PARKS.some((p) => p.value === park)) {
-      return [...PARKS, { value: park, label: park }];
+      return [...list, { value: park, label: park }];
     }
-    return PARKS;
-  }, [park]);
+    return list;
+  }, [park, copy.anyPark]);
 
   const results = useMemo(() => {
     const needle = park === 'all' ? '' : park.toLowerCase();
@@ -265,7 +271,7 @@ export default function SafarisBrowser({ journeys }) {
                 onClick={() => setParam('style', t, 'all')}
                 className={active ? 'safaris-tab safaris-tab--active' : 'safaris-tab'}
               >
-                {t === 'all' ? 'All' : t}
+                {t === 'all' ? copy.allTab : t}
                 <span className={active ? 'safaris-tab__count safaris-tab__count--active' : 'safaris-tab__count'}>
                   {count(t)}
                 </span>
@@ -283,7 +289,7 @@ export default function SafarisBrowser({ journeys }) {
             className="safaris-bar__toggle"
           >
             <span>
-              Filters
+              {copy.filtersLabel}
               {chips.length > 0 ? ` (${chips.length})` : ''}
             </span>
             <span aria-hidden="true">{filtersOpen ? '−' : '+'}</span>
@@ -295,30 +301,30 @@ export default function SafarisBrowser({ journeys }) {
           >
             <Select
               id="safari-park"
-              label="Park"
+              label={copy.parkLabel}
               value={park}
               options={parkOptions}
               onChange={(v) => setParam('q', v, 'all')}
             />
             <Select
               id="safari-interest"
-              label="Interest"
+              label={copy.interestLabel}
               value={interest}
               options={INTERESTS}
               onChange={(v) => setParam('interest', v, 'all')}
             />
             <Select
               id="safari-length"
-              label="Length"
+              label={copy.lengthLabel}
               value={length}
               options={LENGTHS}
               onChange={(v) => setParam('length', v, 'any')}
             />
             <Select
               id="safari-sort"
-              label="Sort"
+              label={copy.sortLabel}
               value={sort}
-              options={SORTS}
+              options={sorts}
               onChange={(v) => setParam('sort', v, 'recommended')}
             />
           </div>
@@ -331,7 +337,7 @@ export default function SafarisBrowser({ journeys }) {
       <div className="safaris-results__inner">
         <div className="safaris-status">
           <p className="safaris-status__count" aria-live="polite">
-            Showing {Math.min(shown, results.length)} of {results.length} journeys
+            {fill(copy.countText, { shown: Math.min(shown, results.length), total: results.length })}
           </p>
           {chips.map((c) => (
             <button
@@ -347,7 +353,7 @@ export default function SafarisBrowser({ journeys }) {
           ))}
           {chips.length > 0 ? (
             <button type="button" onClick={clearAll} className="safaris-clear">
-              Clear all
+              {copy.clearAll}
             </button>
           ) : null}
         </div>
@@ -362,23 +368,21 @@ export default function SafarisBrowser({ journeys }) {
             {results.length > shown ? (
               <div className="safaris-more">
                 <button type="button" onClick={() => setShown((s) => s + PAGE)} className="safaris-more__btn">
-                  Show more journeys
+                  {copy.showMore}
                 </button>
               </div>
             ) : null}
           </>
         ) : (
           <div className="safaris-empty">
-            <p className="safaris-empty__title">No journeys match those filters.</p>
-            <p className="safaris-empty__text">
-              Try removing a filter, or tell us what you have in mind and we will build it.
-            </p>
+            <p className="safaris-empty__title">{copy.emptyTitle}</p>
+            <p className="safaris-empty__text">{copy.emptyText}</p>
             <div className="safaris-empty__actions">
               <button type="button" onClick={clearAll} className="safaris-more__btn">
-                Clear all
+                {copy.clearAll}
               </button>
-              <Link to={planHref()} className="safaris-plan">
-                Plan my safari
+              <Link to={planTo} className="safaris-plan">
+                {copy.planButton}
               </Link>
             </div>
           </div>
@@ -386,13 +390,11 @@ export default function SafarisBrowser({ journeys }) {
 
         <div className="safaris-close">
           <div>
-            <p className="safaris-close__title">Nothing quite right?</p>
-            <p className="safaris-close__text">
-              Tell us what you have in mind and we will build the route around it.
-            </p>
+            <p className="safaris-close__title">{copy.closeTitle}</p>
+            <p className="safaris-close__text">{copy.closeText}</p>
           </div>
-          <Link to={planHref()} className="safaris-plan">
-            Plan my safari
+          <Link to={planTo} className="safaris-plan">
+            {copy.planButton}
           </Link>
         </div>
       </div>

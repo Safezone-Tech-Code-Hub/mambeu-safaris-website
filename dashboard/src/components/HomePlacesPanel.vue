@@ -2,7 +2,8 @@
   <div class="places-panel">
     <div class="places-panel-header">
       <p class="hint">
-        Park cards (photo, name, subtitle) for the destinations hub and homepage slider. Order follows <strong>sort order</strong>.
+        Each park’s own page (/destinations/&lt;slug&gt;/): name, photo, text and facts. The Destinations hub cards
+        and the homepage slider are edited on those pages in <strong>Pages</strong>.
       </p>
       <Button label="Add destination" icon="pi pi-plus" :loading="creating" @click="createPlace" />
     </div>

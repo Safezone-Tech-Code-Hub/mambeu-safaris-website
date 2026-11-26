@@ -4,45 +4,8 @@ import PageHeader from '../components/PageHeader.jsx';
 import Principles from '../components/Principles.jsx';
 import Reveal from '../components/Reveal.jsx';
 import { useCms } from '../CmsProvider.jsx';
-import { aboutPageDefaults } from '../data/about-page-defaults.js';
-
-function mergeAbout(cms) {
-  const next = cms && typeof cms === 'object' ? cms : {};
-  const who = { ...aboutPageDefaults.who, ...(next.who || {}) };
-  const principles = { ...aboutPageDefaults.principles, ...(next.principles || {}) };
-  const why = { ...aboutPageDefaults.why, ...(next.why || {}) };
-  const mv = { ...aboutPageDefaults.missionVision, ...(next.missionVision || {}) };
-  return {
-    ...aboutPageDefaults,
-    ...next,
-    hero: { ...aboutPageDefaults.hero, ...(next.hero || {}) },
-    who: {
-      ...who,
-      paragraphs:
-        Array.isArray(who.paragraphs) && who.paragraphs.length
-          ? who.paragraphs
-          : aboutPageDefaults.who.paragraphs,
-      image: { ...aboutPageDefaults.who.image, ...(who.image || {}) },
-    },
-    proof: { ...aboutPageDefaults.proof, ...(next.proof || {}) },
-    principles: {
-      ...principles,
-      items:
-        Array.isArray(principles.items) && principles.items.length
-          ? principles.items
-          : aboutPageDefaults.principles.items,
-    },
-    missionVision: {
-      mission: { ...aboutPageDefaults.missionVision.mission, ...(mv.mission || {}) },
-      vision: { ...aboutPageDefaults.missionVision.vision, ...(mv.vision || {}) },
-    },
-    why: {
-      ...why,
-      items:
-        Array.isArray(why.items) && why.items.length ? why.items : aboutPageDefaults.why.items,
-    },
-  };
-}
+import { cmsLink, isExternalLink } from '../content/schema.js';
+import { resolveImageSrc } from '../lib/utils.js';
 
 function WhyIcon({ name }) {
   const common = {
@@ -55,7 +18,7 @@ function WhyIcon({ name }) {
     'aria-hidden': true,
   };
 
-  if (name === 'Local expertise') {
+  if (name === 'person') {
     return (
       <svg {...common}>
         <circle cx="12" cy="7.5" r="2.25" />
@@ -64,7 +27,7 @@ function WhyIcon({ name }) {
     );
   }
 
-  if (name === 'Sustainable') {
+  if (name === 'leaf') {
     return (
       <svg {...common}>
         <path d="M12 20V10" />
@@ -73,7 +36,7 @@ function WhyIcon({ name }) {
     );
   }
 
-  if (name === 'Cultural exchange') {
+  if (name === 'people') {
     return (
       <svg {...common}>
         <circle cx="8" cy="8" r="2" />
@@ -94,23 +57,24 @@ function WhyIcon({ name }) {
 
 export default function About() {
   const { pages } = useCms();
-  const a = mergeAbout(pages.about);
+  const a = pages.about;
+  const whyItems = (a.why.items || []).filter((it) => it && String(it.title ?? '').trim());
 
   return (
     <main id="main" className="about">
       <PageHeader
         id="about-heading"
-        eyebrow={a.hero.eyebrow}
+        eyebrow={a.head.label}
         title={
           <>
-            {a.hero.titleLine1}
+            {a.head.titleLine1}
             <br />
-            <span className="page-header__quiet">{a.hero.titleLine2}</span>
+            <span className="page-header__quiet">{a.head.titleLine2}</span>
           </>
         }
-        description={a.hero.text}
-        image={a.hero.image}
-        imagePosition={a.hero.imagePosition}
+        description={a.head.text}
+        image={a.head.image ? resolveImageSrc(a.head.image) : ''}
+        imagePosition={a.head.imagePosition}
       />
 
       <AboutIntro />
@@ -119,7 +83,7 @@ export default function About() {
         <Reveal className="about-container about-proof__inner">
           {a.proof.logo ? (
             <img
-              src={a.proof.logo}
+              src={resolveImageSrc(a.proof.logo)}
               alt={a.proof.logoAlt || 'SafariBookings'}
               className="about-proof__logo"
               width="225"
@@ -130,15 +94,25 @@ export default function About() {
             <p className="about-proof__label">{a.proof.label}</p>
             <p className="about-proof__text">{a.proof.text}</p>
           </div>
-          <a
-            className="about-button"
-            href={a.proof.href}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View our profile
-            <span className="xp-sr-only"> on SafariBookings (opens in a new tab)</span>
-          </a>
+          {a.proof.href ? (
+            isExternalLink(a.proof.href) ? (
+              <a
+                className="about-button"
+                href={a.proof.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {a.proof.buttonText}
+                <span className="xp-sr-only">
+                  {`${a.proof.logoAlt ? ` on ${a.proof.logoAlt}` : ''} (opens in a new tab)`}
+                </span>
+              </a>
+            ) : (
+              <a className="about-button" href={cmsLink(a.proof.href)}>
+                {a.proof.buttonText}
+              </a>
+            )
+          ) : null}
         </Reveal>
       </div>
 
@@ -146,8 +120,8 @@ export default function About() {
 
       <section className="about-mv" aria-label="Mission and vision">
         <Reveal stagger className="about-container about-mv__grid">
-          {[a.missionVision.mission, a.missionVision.vision].map((b) => (
-            <div key={b.label} className="about-mv__block">
+          {[a.mission, a.vision].map((b, i) => (
+            <div key={i} className="about-mv__block">
               <p className="about-eyebrow">{b.label}</p>
               <p className="about-mv__text">{b.text}</p>
             </div>
@@ -165,10 +139,10 @@ export default function About() {
             <p className="about-why__intro">{a.why.text}</p>
           </Reveal>
           <Reveal as="ul" stagger className="about-why__list">
-            {a.why.items.map((it) => (
-              <li key={it.title} className="about-why__item">
+            {whyItems.map((it, i) => (
+              <li key={i} className="about-why__item">
                 <span className="about-why__icon">
-                  <WhyIcon name={it.title} />
+                  <WhyIcon name={it.icon} />
                 </span>
                 <h3 className="about-why__title">{it.title}</h3>
                 <p className="about-body">{it.text}</p>

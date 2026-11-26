@@ -7,8 +7,8 @@
         <h1>{{ title }}</h1>
         <p class="hint">Changes here update the public page after you publish the website.</p>
         <p v-if="pageKey === 'home'" class="hint">
-          Tour cards, place cards, comfort panels, and FAQ rows come from <strong>Content</strong> in the sidebar.
-          Site header, footer, and green invite band: <strong>Header &amp; footer</strong>.
+          Journey cards come from <strong>Library → Safari tours</strong>. The green invite band at the bottom:
+          <strong>Header &amp; footer</strong>.
         </p>
         <p v-else-if="pageKey === 'safaris' || pageKey === 'journey_detail'" class="hint">
           Journey titles, photos, day-by-day and prices: <strong>Content → Safari tours</strong>.
@@ -26,32 +26,15 @@
       <div class="page-card">
       <TabView v-if="tabs.length">
         <TabPanel v-for="tab in tabs" :key="tab.label" :header="tab.label">
+          <p v-if="tab.hint" class="hint tab-hint">{{ tab.hint }}</p>
           <div v-if="tab.fields?.length" class="field-grid">
-            <div v-for="field in tab.fields" :key="field.key">
-              <label>{{ field.label }}</label>
-              <p v-if="field.hint && field.type !== 'image' && field.type !== 'images'" class="hint">{{ field.hint }}</p>
-              <MediaFilePicker
-                v-if="field.type === 'image' || field.type === 'images'"
-                :multiple="field.type === 'images'"
-                :hint="field.hint"
-                :modelValue="getNested(content, field.path)"
-                @update:modelValue="(v) => setNested(content, field.path, v)"
-              />
-              <Textarea
-                v-else-if="field.long"
-                :modelValue="getNested(content, field.path)"
-                @update:modelValue="(v) => setNested(content, field.path, v)"
-                rows="4"
-                class="w-full"
-                autoResize
-              />
-              <InputText
-                v-else
-                :modelValue="getNested(content, field.path)"
-                @update:modelValue="(v) => setNested(content, field.path, v)"
-                class="w-full"
-              />
-            </div>
+            <FieldInput
+              v-for="field in tab.fields"
+              :key="field.key"
+              :field="field"
+              :modelValue="getNested(content, field.path)"
+              @update:modelValue="(v) => setNested(content, field.path, v)"
+            />
           </div>
           <HomePlacesPanel v-if="tab.panel === 'home-places'" class="tab-panel-extra" />
           <HomeFaqPanel v-else-if="tab.panel === 'home-faq'" class="tab-panel-extra" />
@@ -76,7 +59,6 @@
 import { computed, ref, toRef, watch } from 'vue';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
@@ -84,13 +66,13 @@ import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
 import { usePageContent } from '@/composables/usePageContent';
-import MediaFilePicker from '@/components/MediaFilePicker.vue';
+import FieldInput from '@/components/FieldInput.vue';
 import HomePlacesPanel from '@/components/HomePlacesPanel.vue';
 import HomeFaqPanel from '@/components/HomeFaqPanel.vue';
 import ComfortLevelsPanel from '@/components/ComfortLevelsPanel.vue';
 import ExperiencesPanel from '@/components/ExperiencesPanel.vue';
 import ToursPanel from '@/components/ToursPanel.vue';
-import { getNested, pageEditorTabs, setNested } from '@/lib/pageEditorConfig';
+import { getNested, pageEditorTabs, setNested } from '@/lib/pageEditor';
 
 const props = defineProps({
   pageKey: { type: String, required: true },
@@ -136,6 +118,9 @@ async function onSave() {
 label {
   display: block;
   margin-bottom: 0.35rem;
+}
+.tab-hint {
+  margin: 0 0 1rem;
 }
 .tab-panel-extra {
   margin-top: 1.5rem;

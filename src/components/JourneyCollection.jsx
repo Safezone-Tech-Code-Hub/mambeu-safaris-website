@@ -10,20 +10,24 @@ import SectionHeader from './SectionHeader.jsx';
 /** @typedef {'Comfort' | 'Luxury' | 'Camping'} SafariTier */
 
 const TIERS = /** @type {SafariTier[]} */ (['Comfort', 'Luxury', 'Camping']);
-const DEFAULT_FEATURED_COMFORT_IDS = [302, 298, 291, 293, 294, 64];
 
 export default function JourneyCollection() {
   const { tours, pages } = useCms();
-  const featuredComfortIds =
-    pages?.home?.featuredComfortIds?.length > 0
-      ? pages.home.featuredComfortIds
-      : DEFAULT_FEATURED_COMFORT_IDS;
+  const copy = pages.home.journeys;
+  const featuredComfortIds = useMemo(
+    () =>
+      String(copy.featuredComfortTourIds ?? '')
+        .split(/[\s,]+/)
+        .map((id) => Number(id))
+        .filter((id) => Number.isFinite(id) && id > 0),
+    [copy.featuredComfortTourIds],
+  );
   const [active, setActive] = useState(/** @type {SafariTier} */ ('Comfort'));
 
   const visible = useMemo(() => {
     if (active === 'Comfort') {
       return featuredComfortIds
-        .map((id) => tours.find((t) => t.id === id))
+        .map((id) => tours.find((t) => Number(t.id) === id))
         .filter(Boolean);
     }
     return tours.filter((t) => t.style === active).slice(0, 6);
@@ -36,10 +40,11 @@ export default function JourneyCollection() {
         <SectionHeader
           variant="split"
           id="journeys-heading"
-          eyebrow="A few good places to begin"
+          eyebrow={copy.eyebrow}
           title={
             <>
-              Journeys with <span className="section-header__quiet">something more.</span>
+              {copy.titleLine1}{' '}
+              <span className="section-header__quiet">{copy.titleLine2}</span>
             </>
           }
           aside={
@@ -69,7 +74,7 @@ export default function JourneyCollection() {
                 })}
               </div>
               <Link to={href('safaris')} className="journey-collection__collection-link">
-                View the full collection
+                {copy.collectionLinkText}
               </Link>
             </div>
           }
@@ -84,7 +89,7 @@ export default function JourneyCollection() {
           </Reveal>
         ) : (
           <p className="journey-collection__empty">
-            No journeys in this style yet. Check back soon.
+            {copy.emptyText}
           </p>
         )}
       </div>

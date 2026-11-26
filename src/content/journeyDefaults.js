@@ -1,6 +1,11 @@
-import { mergeSection } from './mergeUtils.js';
+import { mergePage } from './schema.js';
 
+/** Journey page template (schema 2). Tour-specific text and photos come from Library → Safari tours. */
 export const journeyDetailDefaults = {
+  hero: {
+    breadcrumbPrefix: 'Safari collection',
+    eyebrowSuffix: 'TAILOR-MADE JOURNEY',
+  },
   anchors: {
     overview: 'Overview',
     itinerary: 'Day by day',
@@ -26,6 +31,8 @@ export const journeyDetailDefaults = {
     noItinerary:
       'Your safari specialist will provide a detailed itinerary with your personalised quotation.',
     dayPrefix: 'DAY',
+    stayLabel: 'Stay',
+    mealsLabel: 'Meals & drinks',
   },
   stays: {
     eyebrow: 'YOUR HOME ALONG THE WAY',
@@ -34,6 +41,7 @@ export const journeyDetailDefaults = {
     fineprint:
       'Stays are subject to availability. Your final quotation confirms accommodation and any requested changes.',
     askLink: 'Ask about different accommodation',
+    dayPrefix: 'Day',
   },
   inclusions: {
     includedEyebrow: 'WHAT’S IN YOUR JOURNEY',
@@ -67,11 +75,9 @@ export const journeyDetailDefaults = {
   },
 };
 
+/** The old template fields mean the same thing on the redesigned page, so saved values carry over. */
+const migrateV1 = (old) => old;
+
 export function mergeJourneyDetailContent(cms) {
-  const src = cms && typeof cms === 'object' ? cms : {};
-  const out = {};
-  for (const [key, defaults] of Object.entries(journeyDetailDefaults)) {
-    out[key] = mergeSection(defaults, src[key]);
-  }
-  return out;
+  return mergePage(journeyDetailDefaults, cms, migrateV1);
 }

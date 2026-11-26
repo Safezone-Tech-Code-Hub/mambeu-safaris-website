@@ -1,6 +1,20 @@
 import { Img } from '../lib/utils.js';
 
-export default function PageHead({ label, title, titleLine1, titleLine2, text, photo = '' }) {
+/**
+ * Inner-page header. Pass titleLine1/titleLine2 (plain text); the older `title` string
+ * (may contain HTML) is still accepted. `accentLine2={false}` keeps line 2 in the
+ * heading colour instead of the accent colour.
+ */
+export default function PageHead({
+  label,
+  title,
+  titleLine1,
+  titleLine2,
+  text,
+  photo = '',
+  photoAlt = 'Tanzania safari scenery',
+  accentLine2 = true,
+}) {
   const titleHasHtml = typeof title === 'string' && title.includes('<');
   const usePlainLines = String(titleLine1 ?? '').trim() !== '';
   return (
@@ -13,7 +27,7 @@ export default function PageHead({ label, title, titleLine1, titleLine2, text, p
             {titleLine2 ? (
               <>
                 <br />
-                <span className="accent">{titleLine2}</span>
+                {accentLine2 ? <span className="accent">{titleLine2}</span> : titleLine2}
               </>
             ) : null}
           </h1>
@@ -24,7 +38,9 @@ export default function PageHead({ label, title, titleLine1, titleLine2, text, p
         )}
         <p>{text}</p>
       </div>
-      {photo ? <Img src={photo} alt="Tanzania safari scenery" className="intro-image" priority /> : null}
+      {photo ? (
+        <Img src={photo} alt={photoAlt || 'Tanzania safari scenery'} className="intro-image" priority />
+      ) : null}
     </section>
   );
 }

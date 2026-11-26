@@ -1,35 +1,21 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCms } from '../CmsProvider.jsx';
+import { cmsLink } from '../content/schema.js';
 import { planHref } from '../lib/plan-link.js';
-import { href } from '../lib/utils.js';
 import Reveal from './Reveal.jsx';
 import SectionHeader from './SectionHeader.jsx';
 
-/** @typedef {{ q: string; a: string }} FaqEntry */
-
-// Check these answers are true for Mambeu before launch.
-const ITEMS = /** @type {FaqEntry[]} */ ([
-  {
-    q: 'Can I change a published itinerary?',
-    a: 'Yes. Published journeys are starting points. Tell us what you would like to change, such as the pace, the parks or the lodges, and we will rebuild the route and quote it in full before you commit.',
-  },
-  {
-    q: 'What is the difference between Comfort, Luxury and Camping?',
-    a: 'Comfort safaris use handpicked lodges and tented camps and balance a rewarding route with welcoming stays. Luxury raises the level of the stays and experiences. Camping keeps things simple and close to the wild. Tell us your dates and we will compare specific stays for you.',
-  },
-  {
-    q: 'Can I combine a safari with Zanzibar?',
-    a: 'Yes. Zanzibar can be added to the end of a safari, and so can a Kilimanjaro climb or a cultural visit. Tell us your dates and we will quote it together as one journey.',
-  },
-]);
-
 export default function Faq() {
+  const { pages } = useCms();
+  const copy = pages.home.faq;
+  const items = (copy.items || []).filter((i) => i && String(i.q ?? '').trim());
   const [open, setOpen] = useState(/** @type {number | null} */ (0));
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: ITEMS.map((i) => ({
+    mainEntity: items.map((i) => ({
       '@type': 'Question',
       name: i.q,
       acceptedAnswer: { '@type': 'Answer', text: i.a },
@@ -49,19 +35,19 @@ export default function Faq() {
             <SectionHeader
               variant="inline"
               id="faq-heading"
-              eyebrow="A little help before you go"
+              eyebrow={copy.eyebrow}
               title={
                 <>
-                  Good questions.{' '}
-                  <span className="section-header__quiet">Personal answers.</span>
+                  {copy.titleLine1}{' '}
+                  <span className="section-header__quiet">{copy.titleLine2}</span>
                 </>
               }
             />
 
             <div className="home-faq__fallback">
-              <p>Can’t find your answer? Tell us what you are wondering and we will reply personally.</p>
+              <p>{copy.fallbackText}</p>
               <Link to={planHref()} className="home-faq__ask">
-                Ask us a question
+                {copy.askButton}
               </Link>
             </div>
           </Reveal>
@@ -69,10 +55,10 @@ export default function Faq() {
 
         <div className="home-faq__list-wrap">
           <Reveal as="ul" stagger className="home-faq__list">
-            {ITEMS.map((item, i) => {
+            {items.map((item, i) => {
               const isOpen = open === i;
               return (
-                <li key={item.q} className="home-faq__item">
+                <li key={i} className="home-faq__item">
                   <h3 className="home-faq__q">
                     <button
                       type="button"
@@ -117,8 +103,8 @@ export default function Faq() {
           </Reveal>
 
           <p className="home-faq__more">
-            <Link to={href('travel-guide')} className="home-faq__more-link">
-              All planning questions
+            <Link to={cmsLink(copy.moreLinkPath, '/travel-guide/')} className="home-faq__more-link">
+              {copy.moreLinkText}
             </Link>
           </p>
         </div>

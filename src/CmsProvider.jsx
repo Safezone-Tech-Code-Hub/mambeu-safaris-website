@@ -3,8 +3,9 @@ import { fetchCatalog, staticCatalog } from './lib/cms.js';
 
 const CmsContext = createContext({ ...staticCatalog, live: false });
 
-export function CmsProvider({ children }) {
-  const [catalog, setCatalog] = useState(staticCatalog);
+/** `initial` lets tests and server renders start from a fetched catalog. */
+export function CmsProvider({ children, initial }) {
+  const [catalog, setCatalog] = useState(initial || staticCatalog);
 
   useEffect(() => {
     let ignore = false;

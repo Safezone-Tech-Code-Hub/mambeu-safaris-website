@@ -1,57 +1,49 @@
 <template>
   <div v-if="loading" class="editor-loading"><ProgressSpinner /></div>
   <template v-else>
-    <div class="page-header">
-      <div>
-        <h1>Header &amp; footer</h1>
-        <p class="hint">Contact details and footer invitation text shown across the site.</p>
+    <div class="page-editor-root">
+      <div class="page-header">
+        <div>
+          <h1>Header &amp; footer</h1>
+          <p class="hint">Contact details, the footer and the final invite band, shown across the site.</p>
+        </div>
+        <Button label="Save" icon="pi pi-save" :loading="saving" @click="onSave" />
       </div>
-      <Button label="Save" icon="pi pi-save" :loading="saving" @click="onSave" />
-    </div>
-    <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
-    <div class="page-card field-grid two">
-      <div>
-        <label>Email</label>
-        <InputText v-model="content.email" class="w-full" />
-      </div>
-      <div>
-        <label>Phone display</label>
-        <InputText v-model="content.phone" class="w-full" />
-      </div>
-      <div>
-        <label>WhatsApp number (digits only)</label>
-        <InputText v-model="content.whatsapp" class="w-full" />
-      </div>
-      <div>
-        <label>Office location</label>
-        <InputText v-model="content.officeLocation" class="w-full" />
-      </div>
-      <div class="col-span-2">
-        <label>Final invite title</label>
-        <Textarea v-model="content.finalInviteTitle" rows="2" class="w-full" autoResize />
-      </div>
-      <div class="col-span-2">
-        <label>Final invite text</label>
-        <Textarea v-model="content.finalInviteText" rows="3" class="w-full" autoResize />
+      <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
+      <div class="page-card">
+        <TabView>
+          <TabPanel v-for="tab in tabs" :key="tab.label" :header="tab.label">
+            <p v-if="tab.hint" class="hint tab-hint">{{ tab.hint }}</p>
+            <div class="field-grid">
+              <FieldInput
+                v-for="field in tab.fields"
+                :key="field.key"
+                :field="field"
+                :modelValue="getNested(content, field.path)"
+                @update:modelValue="(v) => setNested(content, field.path, v)"
+              />
+            </div>
+          </TabPanel>
+        </TabView>
       </div>
     </div>
   </template>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import InputText from 'primevue/inputtext';
-import Textarea from 'primevue/textarea';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
 import { usePageContent } from '@/composables/usePageContent';
+import FieldInput from '@/components/FieldInput.vue';
+import { getNested, setNested } from '@/lib/pageEditor/fields';
+import tabs from '@/lib/pageEditor/site-chrome';
 
 const toast = useToast();
-const { loading, saving, content, error, load, save } = usePageContent('site_chrome');
-
-onMounted(load);
+const { loading, saving, content, error, save } = usePageContent('site_chrome');
 
 async function onSave() {
   const ok = await save();
@@ -60,15 +52,7 @@ async function onSave() {
 </script>
 
 <style scoped>
-.w-full {
-  width: 100%;
-}
-label {
-  font-weight: 600;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-.col-span-2 {
-  grid-column: 1 / -1;
+.tab-hint {
+  margin: 0 0 1rem;
 }
 </style>

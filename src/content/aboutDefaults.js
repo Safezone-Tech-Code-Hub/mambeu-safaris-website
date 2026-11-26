@@ -1,117 +1,124 @@
-/** Default About page CMS payload — plain text only (no HTML in the dashboard). */
-
-import { mergeScalar, mergeSection } from './mergeUtils.js';
+/**
+ * About / Our story page content (schema 2). Defaults match what the redesigned page shows;
+ * the dashboard editor (dashboard/src/lib/pageEditor/about.js) edits these exact paths.
+ */
+import { mergePage } from './schema.js';
 
 export const aboutPageDefaults = {
   head: {
-    label: 'THE PEOPLE BEHIND YOUR JOURNEY',
-    titleLine1: 'Rooted in Tanzania.',
-    titleLine2: 'Made around you.',
-    text: 'Mambeu Safaris is locally owned and based in Arusha, sharing the country we call home through personal wildlife, mountain, cultural and beach journeys.',
+    label: 'Our story',
+    titleLine1: 'We plan safaris',
+    titleLine2: 'from Arusha.',
+    text: 'A locally owned operator in Arusha. We plan the route, the stays and the days on the ground with you.',
+    image: '/images/intro/arusha.jpg',
+    imagePosition: 'center 22%',
   },
-  storyPhoto: 'team.webp',
-  storyPhotoAlt: 'Mambeu guests and safari vehicle in Tanzania',
-  storyPhotoCaption: 'LOCAL ROOTS. PERSONAL JOURNEYS.',
-  story: {
-    eyebrow: 'WHO WE ARE',
-    titleLine1: 'Local knowledge.',
-    titleLine2: 'Human connections.',
-    paragraph1:
-      'Founded by local Tanzanians, Mambeu brings a close connection to Tanzania’s landscapes, wildlife and communities. Our team plans bespoke journeys through the places we know and love.',
-    paragraph2:
-      'We welcome different budgets and travel styles. We help choose routes, stays and activities around your comfort, interests and time available.',
-    paragraph3:
-      'Responsible tourism is part of our approach: respecting wildlife, supporting local communities and making meaningful connections with the places you visit.',
+  intro: {
+    eyebrow: 'Who we are',
+    titleLine1: 'More than a',
+    titleLine2: 'tour company.',
+    lead: 'Founded by local Tanzanians with a lifelong connection to this land, Mambeu Safaris is more than a tour company. We are storytellers, conservationists and your trusted partners in adventure.',
+    paragraphs: [
+      'Based in Arusha, we specialise in custom-made safari experiences that reveal the soul of Tanzania. Our guides are not only experts in wildlife tracking. They grew up listening to stories of the Serengeti, learned traditional tracking methods from their elders, and developed an intuitive understanding of animal behaviour that cannot be taught from books.',
+      'We work directly with local communities, so your journey supports conservation efforts and provides sustainable livelihoods. From the moment you arrive, you will feel the difference of travelling with operators who truly call this place home.',
+    ],
+    pillars: [
+      {
+        title: 'Storytellers',
+        text: 'Guides who grew up with the stories of the Serengeti.',
+        icon: 'book',
+      },
+      {
+        title: 'Conservationists',
+        text: 'Journeys that support conservation and local livelihoods.',
+        icon: 'tree',
+      },
+      {
+        title: 'Partners',
+        text: 'Your route and pace, shaped with people who call this place home.',
+        icon: 'people',
+      },
+    ],
+    photo: '/images/people/guests.jpg',
+    photoAlt: 'Two guests standing beside a Mambeu safari vehicle in the bush',
+    photoFocal: '50% 45%',
+    caption: 'Guests on safari with Mambeu',
   },
-  valuesSection: {
-    eyebrow: 'WHAT GUIDES US',
-    titleLine1: 'A journey with care',
-    titleLine2: 'at its heart.',
+  proof: {
+    label: 'Find us on SafariBookings',
+    text: 'View our profile and verified traveller reviews.',
+    buttonText: 'View our profile',
+    href: 'https://www.safaribookings.com/p7544',
+    logo: '/images/safaribookings.png',
+    logoAlt: 'SafariBookings',
   },
-  values: [
-    {
-      number: '01',
-      title: 'Personal by design',
-      text: 'Your dates, interests and comfort level shape the journey. We listen first, then help you connect the details.',
-    },
-    {
-      number: '02',
-      title: 'Rooted in Tanzania',
-      text: 'Local knowledge helps us choose routes, stays and experiences that work together.',
-    },
-    {
-      number: '03',
-      title: 'Travel responsibly',
-      text: 'Respect for nature and communities guides how we share Tanzania with our visitors.',
-    },
-  ],
+  principles: {
+    eyebrow: 'How we work',
+    titleLine1: 'What you can',
+    titleLine2: 'count on',
+    items: [
+      {
+        title: 'We know it first-hand',
+        text: "We only recommend what we've seen ourselves. Our team lives in Africa, so we hear about changes early and can work them into your plan at short notice.",
+        tag: 'Tested by our team',
+        icon: 'pin',
+      },
+      {
+        title: "We're close by",
+        text: 'We meet you in person before you go to talk through the itinerary and last questions. If something serious comes up, someone is available around the clock.',
+        tag: 'Available during your trip',
+        icon: 'chat',
+      },
+      {
+        title: 'We take responsibility',
+        text: "We don't look away from the problems Africa faces. We try to be part of the solution, with new ideas for tackling them.",
+        tag: 'Local solutions',
+        icon: 'sprout',
+      },
+    ],
+  },
   mission: {
-    eyebrow: 'OUR MISSION',
-    titleLine1: 'Help every traveller',
-    titleLine2: 'find their Tanzania.',
-    lead: 'We create personalised travel experiences that showcase Tanzania’s natural beauty and cultural richness, with comfort, safety and local insight.',
-    body: 'Our vision is to grow through thoughtful service and responsible tourism, supporting local communities while sharing the country’s extraordinary places.',
-    buttonText: 'Meet your safari specialist',
-    buttonLink: 'plan',
+    label: 'Our mission',
+    text: 'To provide exceptional, personalised travel experiences that show the diverse beauty and cultural richness of Tanzania. Whether you want a budget-friendly adventure or a luxurious escape, we deliver high-quality service with comfort, safety and real local insight, so you leave with memories that last a lifetime.',
+  },
+  vision: {
+    label: 'Our vision',
+    text: 'To be the leading local tour operator in Tanzania, known for excellence and a deep understanding of the country’s landscapes and cultures. We aim to set the standard for sustainable, responsible tourism, deepen appreciation of Tanzania’s natural and cultural heritage, and support local communities.',
+  },
+  why: {
+    eyebrow: 'Why book with us',
+    title: 'Genuine experiences, guided from the inside',
+    text: 'Choose Mambeu for an adventure that is authentic, sustainable and beautiful, with a team that knows this country from the inside.',
+    items: [
+      {
+        title: 'Authentic',
+        text: 'Immerse yourself in Tanzania’s culture, wildlife and natural wonders with an unfiltered, real-world perspective.',
+        icon: 'landscape',
+      },
+      {
+        title: 'Local expertise',
+        text: 'Our local guides share insider knowledge, hidden gems and the stories that make a place memorable.',
+        icon: 'person',
+      },
+      {
+        title: 'Sustainable',
+        text: 'Your trip is planned to benefit local communities and the environment.',
+        icon: 'leaf',
+      },
+      {
+        title: 'Cultural exchange',
+        text: 'Thoughtful accommodation is paired with immersive cultural exchanges.',
+        icon: 'people',
+      },
+    ],
   },
 };
 
-function parseLegacyHeadTitle(html) {
-  if (!html || typeof html !== 'string' || !html.includes('<')) return {};
-  const brSplit = html.split(/<br\s*\/?>/i);
-  if (brSplit.length >= 2) {
-    const line1 = brSplit[0].replace(/<[^>]+>/g, '').trim();
-    const line2 = brSplit.slice(1).join(' ').replace(/<[^>]+>/g, '').trim();
-    return { titleLine1: line1, titleLine2: line2 };
-  }
-  return { titleLine1: html.replace(/<[^>]+>/g, '').trim(), titleLine2: '' };
-}
-
-function normalizeValueItem(item, index, defaults) {
-  const def = defaults[index] || { number: String(index + 1).padStart(2, '0'), title: '', text: '' };
-  if (Array.isArray(item)) {
-    return {
-      number: item[0] || def.number,
-      title: item[1] || def.title,
-      text: item[2] || def.text,
-    };
-  }
-  if (item && typeof item === 'object') return mergeSection(def, item);
-  return { ...def };
-}
-
-export function normalizeLegacyAbout(src) {
-  const next = src && typeof src === 'object' ? { ...src } : {};
-  if (next.head?.title && !next.head.titleLine1) {
-    const parsed = parseLegacyHeadTitle(next.head.title);
-    next.head = { ...next.head, ...parsed };
-  }
-  return next;
-}
-
-function mergeValues(defaults, override) {
-  const base = defaults.map((d) => ({ ...d }));
-  if (!Array.isArray(override) || !override.length) return base;
-  return base.map((def, i) => normalizeValueItem(override[i], i, defaults));
+/** Nothing from the old About editor reached the redesigned page, so nothing is carried over. */
+function migrateV1() {
+  return {};
 }
 
 export function mergeAboutContent(cmsAbout) {
-  const src = normalizeLegacyAbout(cmsAbout);
-  const out = {};
-  for (const [key, defaults] of Object.entries(aboutPageDefaults)) {
-    if (key === 'values') {
-      out.values = mergeValues(aboutPageDefaults.values, src.values);
-      continue;
-    }
-    if (typeof defaults !== 'object' || defaults === null) {
-      out[key] = mergeScalar(defaults, src[key]);
-      continue;
-    }
-    out[key] = mergeSection(defaults, src[key]);
-  }
-  if (out.head?.titleLine1) {
-    const { title: _legacyTitle, ...headRest } = out.head;
-    out.head = headRest;
-  }
-  return out;
+  return mergePage(aboutPageDefaults, cmsAbout, migrateV1);
 }

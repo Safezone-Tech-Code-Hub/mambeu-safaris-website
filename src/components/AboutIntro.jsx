@@ -1,4 +1,6 @@
-import { aboutIntro as a } from '../lib/about.js';
+import { useCms } from '../CmsProvider.jsx';
+import { lines } from '../content/schema.js';
+import { resolveImageSrc } from '../lib/utils.js';
 import Reveal from './Reveal.jsx';
 
 function PillarIcon({ name }) {
@@ -12,7 +14,7 @@ function PillarIcon({ name }) {
     'aria-hidden': true,
   };
 
-  if (name === 'Conservationists') {
+  if (name === 'tree') {
     return (
       <svg {...common}>
         <path d="M12 21v-7" />
@@ -22,7 +24,7 @@ function PillarIcon({ name }) {
     );
   }
 
-  if (name === 'Partners') {
+  if (name === 'people') {
     return (
       <svg {...common}>
         <circle cx="8" cy="8" r="2" />
@@ -43,8 +45,10 @@ function PillarIcon({ name }) {
 }
 
 export default function AboutIntro() {
-  const photoSrc = a.image;
-  const photoIsPublic = String(photoSrc).startsWith('/');
+  const { pages } = useCms();
+  const a = pages.about.intro;
+  const paragraphs = lines(a.paragraphs);
+  const pillars = (a.pillars || []).filter((p) => p && String(p.title ?? '').trim());
 
   return (
     <section className="about-intro" aria-labelledby="about-who-heading">
@@ -52,21 +56,21 @@ export default function AboutIntro() {
         <Reveal className="about-intro__copy">
           <p className="about-intro__eyebrow">{a.eyebrow}</p>
           <h2 id="about-who-heading" className="about-intro__title">
-            {a.title} <span className="about-intro__accent">{a.titleAccent}</span>
+            {a.titleLine1} <span className="about-intro__accent">{a.titleLine2}</span>
           </h2>
           <p className="about-intro__lead">{a.lead}</p>
           <div className="about-intro__body">
-            {a.body.map((p) => (
-              <p key={p}>{p}</p>
+            {paragraphs.map((p, i) => (
+              <p key={i}>{p}</p>
             ))}
           </div>
 
-          {Array.isArray(a.pillars) && a.pillars.length > 0 ? (
+          {pillars.length > 0 ? (
             <ul className="about-intro__pillars">
-              {a.pillars.map((p) => (
-                <li key={p.title} className="about-intro__pillar">
+              {pillars.map((p, i) => (
+                <li key={i} className="about-intro__pillar">
                   <span className="about-intro__icon">
-                    <PillarIcon name={p.title} />
+                    <PillarIcon name={p.icon} />
                   </span>
                   <h3 className="about-intro__pillar-title">{p.title}</h3>
                   <p className="about-intro__pillar-text">{p.text}</p>
@@ -74,26 +78,15 @@ export default function AboutIntro() {
               ))}
             </ul>
           ) : null}
-
-          {Array.isArray(a.stats) && a.stats.length > 0 ? (
-            <dl className="about-intro__stats">
-              {a.stats.map((s) => (
-                <div key={s.label} className="about-intro__stat">
-                  <dt className="about-intro__stat-label">{s.label}</dt>
-                  <dd className="about-intro__stat-value">{s.value}</dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
         </Reveal>
 
         <figure className="about-intro__figure">
           <Reveal variant="fade" className="about-intro__photo">
             <img
-              src={photoIsPublic ? photoSrc : `/assets/${photoSrc}`}
-              alt={a.imageAlt}
+              src={resolveImageSrc(a.photo)}
+              alt={a.photoAlt}
               className="about-intro__img"
-              style={{ objectPosition: a.focal || '50% 50%' }}
+              style={{ objectPosition: a.photoFocal || '50% 50%' }}
               decoding="async"
             />
           </Reveal>

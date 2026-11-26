@@ -5,10 +5,11 @@ import { CmsProvider } from './CmsProvider.jsx';
 import { FavouritesProvider } from './FavouritesProvider.jsx';
 import { getPageMeta } from './meta.js';
 
-export function render(url) {
+/** `catalog` (optional) renders with fetched CMS content instead of the built-in files. */
+export function render(url, catalog) {
   const html = renderToString(
     <StaticRouter location={url}>
-      <CmsProvider>
+      <CmsProvider initial={catalog}>
         <FavouritesProvider>
           <App />
         </FavouritesProvider>

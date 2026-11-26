@@ -1,26 +1,42 @@
 import { Link } from 'react-router-dom';
 import { useCms } from '../CmsProvider.jsx';
 import { siteChrome } from '../lib/cms.js';
-import { planHref } from '../lib/plan-link.js';
+import { cmsLink, isExternalLink } from '../content/schema.js';
 import { href, Img } from '../lib/utils.js';
 
-const TANZANIA = [
-  { to: href('safaris'), label: 'Safari collection' },
-  { to: href('comfort'), label: 'Comfort levels' },
-  { to: href('kilimanjaro'), label: 'Kilimanjaro' },
-  { to: href('zanzibar'), label: 'Zanzibar' },
-  { to: href('destinations'), label: 'Destinations' },
-  { to: href('favourites'), label: 'Saved journeys' },
-];
+/** Router Link for site paths, plain anchor (new tab) for external links. */
+function FooterLink({ link, children, className }) {
+  if (isExternalLink(link)) {
+    return (
+      <a href={link} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link to={cmsLink(link)} className={className}>
+      {children}
+    </Link>
+  );
+}
 
-const KNOW = [
-  { to: href('about'), label: 'Our story' },
-  { to: href('experiences'), label: 'Experiences' },
-  { to: href('travel-guide'), label: 'Planning & FAQs' },
-  { to: planHref(), label: 'Plan your safari' },
-];
-
-const TERMS_HREF = 'https://mambeusafaris.com/terms-conditions/';
+function LinkColumn({ title, items }) {
+  const list = (Array.isArray(items) ? items : []).filter((i) => i && String(i.label ?? '').trim());
+  return (
+    <nav aria-label={title}>
+      <ColumnTitle>{title}</ColumnTitle>
+      <ul className="site-footer__list">
+        {list.map((item, i) => (
+          <li key={i}>
+            <FooterLink link={item.link} className="site-footer__link">
+              {item.label}
+            </FooterLink>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
 
 function ColumnTitle({ children }) {
   return <h3 className="site-footer__title">{children}</h3>;
@@ -45,10 +61,8 @@ export default function Footer() {
                 />
               </Link>
 
-              <p className="site-footer__tagline">Local roots. Personal journeys.</p>
-              <p className="site-footer__lede">
-                Wildlife, mountains and coast, thoughtfully brought together.
-              </p>
+              <p className="site-footer__tagline">{c.footerHeadline}</p>
+              <p className="site-footer__lede">{c.footerLede}</p>
 
               <a
                 href={`https://wa.me/${c.whatsapp}`}
@@ -56,41 +70,18 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="site-footer__whatsapp"
               >
-                Talk to us on WhatsApp
+                {c.footerWhatsappText}
                 <span className="site-footer__sr-only"> (opens in a new tab)</span>
               </a>
             </div>
 
             <div className="site-footer__links">
-              <nav aria-label="Your Tanzania">
-                <ColumnTitle>Your Tanzania</ColumnTitle>
-                <ul className="site-footer__list">
-                  {TANZANIA.map((item) => (
-                    <li key={item.label}>
-                      <Link to={item.to} className="site-footer__link">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-
-              <nav aria-label="Get to know us">
-                <ColumnTitle>Get to know us</ColumnTitle>
-                <ul className="site-footer__list">
-                  {KNOW.map((item) => (
-                    <li key={item.label}>
-                      <Link to={item.to} className="site-footer__link">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+              <LinkColumn title={c.footerColumn1Title} items={c.footerColumn1Links} />
+              <LinkColumn title={c.footerColumn2Title} items={c.footerColumn2Links} />
             </div>
 
             <div className="site-footer__contact">
-              <ColumnTitle>Your local team</ColumnTitle>
+              <ColumnTitle>{c.footerContactTitle}</ColumnTitle>
               <dl className="site-footer__dl">
                 <div>
                   <dt>Email</dt>
@@ -121,16 +112,18 @@ export default function Footer() {
           </div>
 
           <div className="site-footer__base">
-            <p>© {year} Mambeu Safaris</p>
+            <p>
+              © {year} {c.footerCopyright}
+            </p>
             <ul className="site-footer__legal">
               <li>
                 <a
-                  href={TERMS_HREF}
+                  href={c.termsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="site-footer__base-link"
                 >
-                  Booking terms
+                  {c.termsText}
                   <span className="site-footer__sr-only"> (opens in a new tab)</span>
                 </a>
               </li>

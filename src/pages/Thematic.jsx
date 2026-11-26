@@ -2,88 +2,65 @@ import { Link } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
 import PageHead from '../components/PageHead.jsx';
 import { useCms } from '../CmsProvider.jsx';
+import { cmsLink } from '../content/schema.js';
 import { planHref } from '../lib/plan-link.js';
-import { href } from '../lib/utils.js';
 
-const fallback = {
-  kilimanjaro: {
-    label: 'MOUNTAIN ADVENTURES',
-    title: 'Take the<br>higher road.',
-    text: 'A Kilimanjaro adventure with personal preparation, local guiding and support along the way.',
-    photo: 'mountain.webp',
-    blocks: [
-      ['Prepare well', 'Share your hiking experience, fitness and questions with our team.'],
-      ['Choose your route', 'Discuss route options, duration, equipment and preparation before confirming your climb.'],
-      ['Keep exploring', 'Add a wildlife safari or a Zanzibar stay to round off your adventure.'],
-    ],
-  },
-  zanzibar: {
-    label: 'SAFARI & ISLAND ESCAPES',
-    title: 'From wild plains<br>to white sands.',
-    text: 'Pair your wildlife adventure with Zanzibar’s beaches, historic Stone Town and the Indian Ocean.',
-    photo: 'zanzibar.webp',
-    blocks: [
-      ['Time by the sea', 'Unhurried days, warm waters and accommodation matched to your comfort level.'],
-      ['Culture & history', 'Explore Stone Town, local flavours and the island’s spice heritage.'],
-      ['Ocean experiences', 'Ask about snorkelling, diving and excursions for your travel dates.'],
-    ],
-  },
-};
+/** Which journeys count as related. Kept in code: it searches the tour data, not page copy. */
+function relatedFor(type, tours) {
+  if (type === 'kilimanjaro') return tours.filter((t) => /kilimanjaro|kili/i.test(JSON.stringify(t)));
+  return tours.filter((t) => String(t.title || '').includes('Zanzibar'));
+}
 
 export default function Thematic({ type }) {
   const { tours, pages } = useCms();
-  const mountain = type === 'kilimanjaro';
-  const copy = { ...fallback[type], ...(pages[type] || {}) };
-  const blocks = copy.blocks?.length ? copy.blocks : fallback[type].blocks;
-  const relatedTours = mountain
-    ? tours.filter((t) => /kilimanjaro|kili/i.test(JSON.stringify(t)))
-    : tours.filter((t) => String(t.title || '').includes('Zanzibar'));
+  const copy = pages[type];
+  const split = copy.splitSection;
+  const related = copy.relatedSection;
+  const blocks = (copy.blocks || []).filter((b) => b && String(b.title ?? '').trim());
+  const relatedTours = relatedFor(type, tours);
 
   return (
     <main id="main">
       <PageHead
         label={copy.label}
-        title={copy.title}
+        titleLine1={copy.titleLine1}
+        titleLine2={copy.titleLine2}
+        accentLine2={false}
         text={copy.text}
         photo={copy.photo}
+        photoAlt={copy.photoAlt}
       />
       <section className="wrap split-story">
         <div>
-          <span className="eyebrow">
-            {mountain ? 'THE JOURNEY IS THE STORY' : 'MAKE TIME TO SLOW DOWN'}
-          </span>
-          <h2
-            dangerouslySetInnerHTML={{
-              __html: mountain ? 'More than<br>a summit.' : 'Your island.<br>Your pace.',
-            }}
-          />
+          <span className="eyebrow">{split.eyebrow}</span>
+          <h2>
+            {split.titleLine1}
+            {split.titleLine2 ? (
+              <>
+                <br />
+                {split.titleLine2}
+              </>
+            ) : null}
+          </h2>
         </div>
         <div>
-          <p className="lead">
-            {mountain
-              ? 'Mambeu’s mountain experiences bring expert guiding, equipment and preparation together with a personal approach.'
-              : 'Build a Zanzibar stay around your interests, from beach relaxation to cultural exploration and time on the water.'}
-          </p>
-          <p>
-            {mountain
-              ? 'Tell us about your hiking background, preferred dates and available time. We’ll discuss suitable routes, support and preparation before providing your quotation.'
-              : 'Accommodation, flights, airport transfers and excursions can be discussed together so your safari and island stay connect smoothly.'}
-          </p>
+          <p className="lead">{split.lead}</p>
+          <p>{split.body}</p>
           <Link
             className="button orange"
-            to={planHref({ destination: mountain ? 'kilimanjaro' : 'zanzibar' })}
+            to={planHref({ destination: split.planDestination || undefined })}
           >
-            Plan my {mountain ? 'mountain adventure' : 'island escape'}
+            {split.buttonText}
           </Link>
         </div>
       </section>
       <section className="values">
         <div className="wrap values-grid">
           {blocks.map((b, i) => (
-            <article key={b[0]}>
-              <span>0{i + 1}</span>
-              <h3>{b[0]}</h3>
-              <p>{b[1]}</p>
+            <article key={i}>
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              <h3>{b.title}</h3>
+              <p>{b.text}</p>
             </article>
           ))}
         </div>
@@ -91,12 +68,9 @@ export default function Thematic({ type }) {
       {relatedTours.length ? (
         <section className="wrap related">
           <div className="section-heading">
-            <h2>{mountain ? 'Related journeys.' : 'Safari from Zanzibar.'}</h2>
-            <Link
-              to={href(mountain ? 'safaris?q=Kilimanjaro' : 'safaris?q=Zanzibar')}
-              className="text-link"
-            >
-              Explore these journeys
+            <h2>{related.title}</h2>
+            <Link to={cmsLink(related.linkPath, '/safaris/')} className="text-link">
+              {related.linkText}
             </Link>
           </div>
           <ul className="related-grid">

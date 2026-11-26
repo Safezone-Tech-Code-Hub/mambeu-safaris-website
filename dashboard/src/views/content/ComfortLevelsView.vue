@@ -1,6 +1,6 @@
 <template>
   <div class="page-header"><h1>Comfort levels</h1></div>
-  <p class="hint page-hint">Plain text only — line breaks in titles are two separate fields. Bullets: one point per line.</p>
+  <p class="hint page-hint">The Midrange / Comfort / Luxury tabs on the Comfort page. Plain text only — line breaks in titles are two separate fields. Bullets: one point per line.</p>
   <Card v-for="row in rows" :key="row.id" class="mb-3">
     <template #title>{{ row.title }}</template>
     <template #content>
@@ -34,7 +34,7 @@ import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import MediaFilePicker from '@/components/MediaFilePicker.vue';
-import { COLLECTIONS, getListWithSort, pb } from '@/lib/pb';
+import { COLLECTIONS, describePbError, getListWithSort, pb } from '@/lib/pb';
 
 const toast = useToast();
 const rows = ref([]);
@@ -83,9 +83,13 @@ onMounted(async () => {
 async function save(row) {
   const payload = { ...payloads[row.id], bullets: textToBullets(bulletText[row.id]) };
   delete payload.title;
-  await pb.collection(COLLECTIONS.comfortLevels).update(row.id, { payload });
-  payloads[row.id] = payload;
-  toast.add({ severity: 'success', summary: `${row.title} saved`, life: 2000 });
+  try {
+    await pb.collection(COLLECTIONS.comfortLevels).update(row.id, { payload });
+    payloads[row.id] = payload;
+    toast.add({ severity: 'success', summary: `${row.title} saved`, life: 2000 });
+  } catch (e) {
+    toast.add({ severity: 'error', summary: describePbError(e, `Could not save ${row.title}.`), life: 5000 });
+  }
 }
 </script>
 

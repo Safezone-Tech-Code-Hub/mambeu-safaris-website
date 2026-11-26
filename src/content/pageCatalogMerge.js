@@ -8,6 +8,7 @@ import { mergeNotFoundContent } from './notFoundDefaults.js';
 import { mergePlaceDetailContent } from './placeDefaults.js';
 import { mergePlanContent } from './planDefaults.js';
 import { mergeSafarisContent } from './safarisDefaults.js';
+import { mergeSiteChrome } from './siteChromeDefaults.js';
 import { mergeThematicContent } from './thematicDefaults.js';
 import { mergeTravelGuideContent } from './travelGuideDefaults.js';
 
@@ -27,5 +28,6 @@ export function mergePageCatalog(pages) {
   p.place_detail = mergePlaceDetailContent(p.place_detail);
   p.journey_detail = mergeJourneyDetailContent(p.journey_detail);
   p.not_found = mergeNotFoundContent(p.not_found);
+  p.site_chrome = mergeSiteChrome(p.site_chrome);
   return p;
 }

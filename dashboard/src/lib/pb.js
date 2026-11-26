@@ -79,5 +79,9 @@ export function describePbError(error, fallback = 'Something went wrong.') {
     });
     if (parts.length) return parts.join(' ');
   }
+  // PocketBase answers a request its API rules reject with a bare message and no field errors.
+  if (status === 403 || (status === 400 && /failed to (create|update|delete) record/i.test(message))) {
+    return `${message} PocketBase refused this for your account. Check this collection's API rules allow signed-in staff (on the VPS: npm run ensure:pb-collections).`;
+  }
   return message || fallback;
 }

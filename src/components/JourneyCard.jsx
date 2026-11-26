@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useCms } from '../CmsProvider.jsx';
 import { useFavourites } from '../FavouritesProvider.jsx';
 import { href } from '../lib/utils.js';
 import { toJourney } from '../lib/journeys.js';
@@ -15,10 +16,12 @@ const clean = (s) => String(s || '').replace(/\s*(\.{3}|…)\s*$/, '').trim();
 export default function JourneyCard({ journey, t, priority = false }) {
   const j = journey || (t ? toJourney(t) : null);
   const { has, toggle } = useFavourites();
+  const { pages } = useCms();
+  const copy = pages.safaris.cards;
   if (!j) return null;
 
   const saved = has(j.id);
-  const priceValue = j.pricing === 'tailored' ? 'Tailored quotation' : 'By group size';
+  const priceValue = j.pricing === 'tailored' ? copy.pricingTailored : copy.pricingByGroup;
 
   return (
     <li className="journey-card">
@@ -57,19 +60,19 @@ export default function JourneyCard({ journey, t, priority = false }) {
 
         <dl className="journey-card__meta">
           <div>
-            <dt>Duration</dt>
+            <dt>{copy.durationLabel}</dt>
             <dd>
-              {j.days} {j.days === 1 ? 'day' : 'days'}
+              {j.days} {j.days === 1 ? copy.dayUnit : copy.daysUnit}
             </dd>
           </div>
           <div>
-            <dt>Pricing</dt>
+            <dt>{copy.pricingLabel}</dt>
             <dd>{priceValue}</dd>
           </div>
         </dl>
 
         <Link to={href(j.path)} className="journey-card__link">
-          View more
+          {copy.viewMore}
           <span aria-hidden="true" className="journey-card__arrow">
             →
           </span>

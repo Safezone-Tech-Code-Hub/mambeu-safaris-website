@@ -1,4 +1,8 @@
-import { mergeSection, parseLegacyHeadTitle, stripLegacyHeadTitle } from './mergeUtils.js';
+/**
+ * Travel guide page content (schema 2). The FAQ list itself comes from Library → FAQ items.
+ * Dashboard editor: dashboard/src/lib/pageEditor/travel-guide.js.
+ */
+import { carry, mergePage } from './schema.js';
 
 export const travelGuidePageDefaults = {
   head: {
@@ -16,20 +20,11 @@ export const travelGuidePageDefaults = {
   },
 };
 
-export function normalizeLegacyTravelGuide(src) {
-  const next = src && typeof src === 'object' ? { ...src } : {};
-  if (next.head?.title && !next.head.titleLine1) {
-    next.head = { ...next.head, ...parseLegacyHeadTitle(next.head.title) };
-  }
-  return next;
+/** The old editor's eyebrow and intro text were already shown on the page; keep them. */
+function migrateV1(old) {
+  return carry(old, ['head.label', 'head.text']);
 }
 
 export function mergeTravelGuideContent(cms) {
-  const src = normalizeLegacyTravelGuide(cms);
-  const out = {};
-  for (const [key, defaults] of Object.entries(travelGuidePageDefaults)) {
-    out[key] = mergeSection(defaults, src[key]);
-  }
-  if (out.head?.titleLine1) out.head = stripLegacyHeadTitle(out.head);
-  return out;
+  return mergePage(travelGuidePageDefaults, cms, migrateV1);
 }

@@ -1,47 +1,62 @@
-import { mergeSection, parseLegacyHeadTitle, stripLegacyHeadTitle } from './mergeUtils.js';
+/**
+ * Safari collection page content (schema 2). Defaults match what /safaris/ shows; the
+ * dashboard editor (dashboard/src/lib/pageEditor/safaris.js) edits these exact paths.
+ * `cards` holds the labels on every journey card across the site.
+ */
+import { mergePage } from './schema.js';
 
 export const safarisPageDefaults = {
   head: {
-    label: 'THE MAMBEU COLLECTION',
+    label: 'The Mambeu collection',
     titleLine1: 'Find your',
     titleLine2: 'kind of wild.',
-    text: '22 starting points. Endless ways to make them yours. Explore our existing journeys, then tailor your route, dates and stays.',
+    text: '{count} starting points. Explore our existing journeys, then tailor your route, dates and stays.',
+    photo: '/images/safaris-header.jpg',
   },
-  catalogue: {
-    asideHeading: 'Shape your safari',
-    searchLabel: 'Search journeys',
-    searchPlaceholder: 'Park, wildlife or experience',
-    styleLabel: 'Comfort level',
-    durationLabel: 'Days to explore',
-    sortLabel: 'Arrange journeys',
-    clearFilters: 'Clear filters',
-    helpHeading: 'Something more personal?',
-    helpText: 'Let’s create a journey around your ideas.',
-    helpButton: 'Design my safari',
-    resultSuffixSingular: 'journey to explore',
-    resultSuffixPlural: 'journeys to explore',
-    tailorLine: 'Tailor-made around you',
-    midrangeNotice:
-      'These routes can be adapted with midrange accommodation. The published prices apply to the original itineraries; request a tailored quotation for a different comfort level.',
-    emptyHeading: 'A different starting point?',
-    emptyText: 'No journeys match these choices. Clear the filters or ask us for a personal itinerary.',
+  browser: {
+    allTab: 'All',
+    filtersLabel: 'Filters',
+    parkLabel: 'Park',
+    anyPark: 'Any park',
+    interestLabel: 'Interest',
+    lengthLabel: 'Length',
+    sortLabel: 'Sort',
+    sortRecommended: 'Recommended',
+    sortShortest: 'Shortest first',
+    sortLongest: 'Longest first',
+    countText: 'Showing {shown} of {total} journeys',
+    clearAll: 'Clear all',
+    showMore: 'Show more journeys',
+    emptyTitle: 'No journeys match those filters.',
+    emptyText: 'Try removing a filter, or tell us what you have in mind and we will build it.',
+    closeTitle: 'Nothing quite right?',
+    closeText: 'Tell us what you have in mind and we will build the route around it.',
+    planButton: 'Plan my safari',
+    planLink: 'plan',
+  },
+  cards: {
+    durationLabel: 'Duration',
+    dayUnit: 'day',
+    daysUnit: 'days',
+    pricingLabel: 'Pricing',
+    pricingByGroup: 'By group size',
+    pricingTailored: 'Tailored quotation',
+    viewMore: 'View more',
   },
 };
 
-export function normalizeLegacySafaris(src) {
-  const next = src && typeof src === 'object' ? { ...src } : {};
-  if (next.head?.title && !next.head.titleLine1) {
-    next.head = { ...next.head, ...parseLegacyHeadTitle(next.head.title) };
-  }
-  return next;
+/** Nothing saved by the old dashboard reached the redesigned page, so nothing carries over. */
+function migrateV1() {
+  return {};
 }
 
 export function mergeSafarisContent(cms) {
-  const src = normalizeLegacySafaris(cms);
-  const out = {};
-  for (const [key, defaults] of Object.entries(safarisPageDefaults)) {
-    out[key] = mergeSection(defaults, src[key]);
-  }
-  if (out.head?.titleLine1) out.head = stripLegacyHeadTitle(out.head);
-  return out;
+  return mergePage(safarisPageDefaults, cms, migrateV1);
+}
+
+/** Replace {name} tokens, e.g. fill('{count} journeys', { count: 3 }). */
+export function fill(template, values) {
+  return String(template ?? '').replace(/\{(\w+)\}/g, (m, key) =>
+    values[key] !== undefined ? String(values[key]) : m,
+  );
 }

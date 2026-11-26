@@ -1,24 +1,19 @@
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCms } from '../CmsProvider.jsx';
+import { normalizeLevelsMap } from '../content/levelDefaults.js';
 import { levels as staticLevels } from '../data/levels.js';
 import { planHref } from '../lib/plan-link.js';
 import { Img } from '../lib/utils.js';
 
-function imageNote(style) {
-  if (style === 'Comfort') return 'A little space to take it all in';
-  if (style === 'Luxury') return 'Special experiences, by arrangement';
-  return 'Time to unwind between game drives';
-}
-
-function tabSubtitle(style) {
-  if (style === 'Comfort') return 'The perfect balance';
-  if (style === 'Midrange') return 'Thoughtful value';
-  return 'Elevated experiences';
-}
-
-/** @param {{ style?: string; levels: Record<string, Record<string, unknown>> }} props */
-function StylePanel({ style = 'Comfort', levels }) {
+/**
+ * @param {{
+ *   style?: string;
+ *   levels: Record<string, Record<string, unknown>>;
+ *   eyebrowSuffix: string;
+ * }} props
+ */
+function StylePanel({ style = 'Comfort', levels, eyebrowSuffix }) {
   const s = levels[style];
   if (!s) return null;
   return (
@@ -27,21 +22,29 @@ function StylePanel({ style = 'Comfort', levels }) {
         <div className="comfort-section__photo">
           <Img src={s.image} alt={s.alt} />
         </div>
-        <figcaption className="comfort-section__caption">{imageNote(style)}</figcaption>
+        {s.imageNote ? (
+          <figcaption className="comfort-section__caption">{s.imageNote}</figcaption>
+        ) : null}
       </figure>
       <div className="comfort-section__copy">
         <p className="comfort-section__panel-eyebrow">
-          {s.number} / {style.toUpperCase()} SAFARIS
+          {s.number} / {style.toUpperCase()}
+          {eyebrowSuffix ? ` ${eyebrowSuffix}` : ''}
         </p>
-        <h3
-          className="comfort-section__panel-title"
-          dangerouslySetInnerHTML={{ __html: s.title }}
-        />
+        <h3 className="comfort-section__panel-title">
+          {s.titleLine1}
+          {s.titleLine2 ? (
+            <>
+              <br />
+              {s.titleLine2}
+            </>
+          ) : null}
+        </h3>
         <p className="comfort-section__panel-lead">{s.sub}</p>
         <p className="comfort-section__panel-body">{s.body}</p>
         <ul className="comfort-section__list">
-          {(s.bullets || []).map((b) => (
-            <li key={b}>{b}</li>
+          {(s.bullets || []).map((b, i) => (
+            <li key={i}>{b}</li>
           ))}
         </ul>
         <Link className="comfort-section__cta button" to={planHref({ style })}>
@@ -54,11 +57,13 @@ function StylePanel({ style = 'Comfort', levels }) {
 }
 
 export default function ComfortSection() {
-  const { levels: liveLevels } = useCms();
-  const levels = Object.keys(liveLevels || {}).length ? liveLevels : staticLevels;
+  const { levels: liveLevels, pages } = useCms();
+  const copy = pages.comfort.comfortSection;
+  const levels = Object.keys(liveLevels || {}).length ? liveLevels : normalizeLevelsMap(staticLevels);
   const styleKeys = Object.keys(levels);
-  const [activeStyle, setActiveStyle] = useState('Comfort');
-  const [tabId, setTabId] = useState('tab-Comfort');
+  const firstTab = styleKeys.includes(copy.defaultTab) ? copy.defaultTab : styleKeys[0];
+  const [activeStyle, setActiveStyle] = useState(firstTab);
+  const [tabId, setTabId] = useState(`tab-${firstTab}`);
 
   const switchStyle = useCallback((style, id) => {
     setActiveStyle(style);
@@ -84,17 +89,25 @@ export default function ComfortSection() {
       <div className="comfort-section__inner">
         <header className="comfort-section__header">
           <div className="comfort-section__intro">
-            <p className="comfort-section__eyebrow">Your safari. Your kind of stay.</p>
+            <p className="comfort-section__eyebrow">{copy.eyebrow}</p>
             <h2 id="comfort-heading" className="comfort-section__heading">
-              Comfort is personal.
-              <br />
-              Let’s find yours.
+              {copy.titleLine1}
+              {copy.titleLine2 ? (
+                <>
+                  <br />
+                  {copy.titleLine2}
+                </>
+              ) : null}
             </h2>
           </div>
           <p className="comfort-section__lede">
-            Midrange and comfort at our heart.
-            <br />
-            Luxury when you want a little more.
+            {copy.introLine1}
+            {copy.introLine2 ? (
+              <>
+                <br />
+                {copy.introLine2}
+              </>
+            ) : null}
           </p>
         </header>
 
@@ -120,7 +133,7 @@ export default function ComfortSection() {
                 onKeyDown={(e) => onKeyDown(e, i)}
               >
                 <span className="comfort-section__tab-label">{s}</span>
-                <span className="comfort-section__tab-hint">{tabSubtitle(s)}</span>
+                <span className="comfort-section__tab-hint">{levels[s]?.tabSubtitle}</span>
               </button>
             );
           })}
@@ -132,7 +145,7 @@ export default function ComfortSection() {
           role="tabpanel"
           aria-labelledby={tabId}
         >
-          <StylePanel style={activeStyle} levels={levels} />
+          <StylePanel style={activeStyle} levels={levels} eyebrowSuffix={copy.panelEyebrowSuffix} />
         </div>
       </div>
     </section>

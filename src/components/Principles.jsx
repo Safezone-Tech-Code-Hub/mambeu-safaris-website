@@ -1,4 +1,4 @@
-import { principles, principlesIntro as i } from '../lib/principles.js';
+import { useCms } from '../CmsProvider.jsx';
 import Reveal from './Reveal.jsx';
 
 const ICONS = {
@@ -24,7 +24,9 @@ const ICONS = {
 };
 
 export default function Principles() {
-  const items = [...principles].sort((a, b) => a.sortOrder - b.sortOrder);
+  const { pages } = useCms();
+  const i = pages.about.principles;
+  const items = (i.items || []).filter((p) => p && String(p.title ?? '').trim());
 
   return (
     <section className="principles" aria-labelledby="about-principles-heading">
@@ -32,13 +34,13 @@ export default function Principles() {
         <Reveal>
           <p className="principles__eyebrow">{i.eyebrow}</p>
           <h2 id="about-principles-heading" className="principles__title">
-            {i.title} {i.accent}
+            {i.titleLine1} {i.titleLine2}
           </h2>
         </Reveal>
 
         <Reveal as="ol" stagger className="principles__list">
-          {items.map((p) => (
-            <li key={p.title} className="principles__item">
+          {items.map((p, n) => (
+            <li key={n} className="principles__item">
               <div className="principles__top">
                 <span className="principles__icon">
                   <svg
@@ -50,7 +52,7 @@ export default function Principles() {
                     strokeLinejoin="round"
                     aria-hidden="true"
                   >
-                    {ICONS[p.icon]}
+                    {ICONS[p.icon] || ICONS.pin}
                   </svg>
                 </span>
               </div>

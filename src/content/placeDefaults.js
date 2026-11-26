@@ -1,6 +1,10 @@
-import { mergeSection, parseLegacyHeadTitle, stripLegacyHeadTitle } from './mergeUtils.js';
+/**
+ * Park page template content (schema 2) for /destinations/<slug>/. These are the words around
+ * each park; the park itself (name, photo, text, facts) comes from Library → Places.
+ * Use {name} anywhere to insert the park's name.
+ */
+import { mergePage } from './schema.js';
 
-/** Copy for destination place template (/destinations/:slug/) — not per-place; places use Content → Places. */
 export const placeDetailDefaults = {
   head: {
     label: 'MEET TANZANIA',
@@ -13,24 +17,28 @@ export const placeDetailDefaults = {
   searchButton: 'Explore journeys here',
   related: {
     heading: 'Start with a journey.',
-    planLinkText: 'Plan a personal route',
+    planLinkText: 'Plan a trip to {name}',
   },
   empty: {
     heading: 'A journey made for you.',
     text: 'Ask our local team to include this destination in a personal itinerary.',
-    button: 'Plan a journey here',
+    button: 'Plan a trip to {name}',
   },
 };
 
+/**
+ * The old dashboard saved this template, but the page never read it, so nothing carries
+ * over. (Its plan-link texts also differed from what the page showed.)
+ */
+function migrateV1() {
+  return {};
+}
+
 export function mergePlaceDetailContent(cms) {
-  const src = cms && typeof cms === 'object' ? { ...cms } : {};
-  if (src.head?.title && !src.head.titleLine1) {
-    src.head = { ...src.head, ...parseLegacyHeadTitle(src.head.title) };
-  }
-  const out = {};
-  for (const [key, defaults] of Object.entries(placeDetailDefaults)) {
-    out[key] = mergeSection(defaults, src[key]);
-  }
-  if (out.head?.titleLine1) out.head = stripLegacyHeadTitle(out.head);
-  return out;
+  return mergePage(placeDetailDefaults, cms, migrateV1);
+}
+
+/** Replace {name} with the park name. */
+export function withPlaceName(text, name) {
+  return String(text ?? '').replace(/\{name\}/g, name ?? '');
 }

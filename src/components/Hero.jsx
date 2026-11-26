@@ -1,20 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCms } from '../CmsProvider.jsx';
-import { homePageDefaults } from '../data/home-page-defaults.js';
+import { cmsLink } from '../content/schema.js';
 import { INTERESTS, LENGTHS, STYLES } from '../lib/finder-options.js';
-import { planHref } from '../lib/plan-link.js';
 import { useSlideshow } from '../lib/useSlideshow.js';
 import { href, Img } from '../lib/utils.js';
 import FinderSelect from './FinderSelect.jsx';
-
-/** Full-size WebP assets in /public/assets (largest, hero-grade). */
-const HERO_SLIDES = [
-  { src: 'hero.webp', alt: 'Wildebeest and zebras on the Serengeti plains' },
-  { src: 'zebras.webp', alt: 'Zebras grazing on the savannah' },
-  { src: 'lion.webp', alt: 'Lion on the Tanzanian savannah' },
-  { src: 'tour-298.webp', alt: 'Wildlife in the Ngorongoro Crater' },
-  { src: 'tour-302.webp', alt: 'Safari landscape in northern Tanzania' },
-];
 
 /**
  * @param {{ label: string; name: string; id: string; options: { value: string; label: string }[] }} props
@@ -45,14 +35,10 @@ function HeroField({ label, name, id, options }) {
 export default function Hero() {
   const navigate = useNavigate();
   const { pages } = useCms();
-  const hero = { ...homePageDefaults.hero, ...(pages.home?.hero || {}) };
-  const finder = { ...homePageDefaults.finder, ...(pages.home?.finder || {}) };
-  const slides = hero.slides?.length ? hero.slides : HERO_SLIDES;
+  const hero = pages.home.hero;
+  const finder = pages.home.finder;
+  const slides = (hero.slides || []).filter((s) => String(s?.image ?? '').trim());
   const { index, prev } = useSlideshow(slides.length);
-
-  const titleLine1 = homePageDefaults.hero.titleLine1 || 'Wildlife safaris';
-  const titleLine2 = homePageDefaults.hero.titleLine2 ?? 'across northern Tanzania.';
-  const subline = hero.text || 'Routes and lodges quoted before you commit.';
 
   const onFinderSubmit = (e) => {
     e.preventDefault();
@@ -80,9 +66,9 @@ export default function Hero() {
               const leaving = i === prev && !active;
               const state = active ? 'is-active' : leaving ? 'is-leaving' : '';
               return (
-                <div key={slide.src} className={`home-hero__slide ${state}`.trim()}>
+                <div key={`${slide.image}-${i}`} className={`home-hero__slide ${state}`.trim()}>
                   <Img
-                    src={slide.src}
+                    src={slide.image}
                     alt=""
                     priority={i === 0}
                     className="home-hero__photo"
@@ -98,16 +84,16 @@ export default function Hero() {
         <div className="home-hero__copy-wrap">
           <p className="home-hero__eyebrow">{hero.eyebrow}</p>
           <h1 id="hero-heading" className="home-hero__title">
-            <span className="home-hero__title-line">{titleLine1}</span>
-            {titleLine2 ? (
+            <span className="home-hero__title-line">{hero.titleLine1}</span>
+            {hero.titleLine2 ? (
               <span className="home-hero__title-line home-hero__title-line--quiet">
-                {titleLine2}
+                {hero.titleLine2}
               </span>
             ) : null}
           </h1>
-          <p className="home-hero__subline">{subline}</p>
-          <Link to={planHref()} className="home-hero__cta">
-            {hero.ctaLabel || 'Plan my safari'}
+          <p className="home-hero__subline">{hero.text}</p>
+          <Link to={cmsLink(hero.ctaLink, '/plan/')} className="home-hero__cta">
+            {hero.ctaLabel}
           </Link>
         </div>
       </div>
@@ -122,29 +108,29 @@ export default function Hero() {
           onSubmit={onFinderSubmit}
         >
           <p className="home-hero__finder-eyebrow">
-            {finder.eyebrow || 'Find your starting point'}
+            {finder.eyebrow}
           </p>
           <div className="home-hero__finder-grid">
             <HeroField
               id="find-interest"
-              label={finder.interestLabel || 'Main interest'}
+              label={finder.interestLabel}
               name="interest"
               options={INTERESTS}
             />
             <HeroField
               id="find-style"
-              label={finder.styleLabel || 'Safari style'}
+              label={finder.styleLabel}
               name="style"
               options={STYLES}
             />
             <HeroField
               id="find-length"
-              label={finder.durationLabel || 'Trip length'}
+              label={finder.durationLabel}
               name="length"
               options={LENGTHS}
             />
             <button type="submit" className="home-hero__finder-submit">
-              Show safaris
+              {finder.submitLabel}
             </button>
           </div>
         </form>

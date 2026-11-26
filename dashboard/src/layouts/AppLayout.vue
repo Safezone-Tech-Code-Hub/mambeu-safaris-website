@@ -163,7 +163,6 @@ const navPages = [
 const navCollections = [
   { label: 'Safari tours', to: 'tours' },
   { label: 'Places', to: 'places' },
-  { label: 'Experiences', to: 'experiences' },
   { label: 'Comfort levels', to: 'comfort-levels' },
   { label: 'FAQ items', to: 'faq' },
 ];

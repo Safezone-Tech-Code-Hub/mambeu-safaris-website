@@ -1,5 +1,7 @@
 import toursStatic from '../data/tours.json';
+import pagesSynced from '../data/pages.json';
 import { mergePageCatalog } from '../content/pageCatalogMerge.js';
+import { mergeSiteChrome } from '../content/siteChromeDefaults.js';
 import { experiences as experiencesStatic } from '../data/experiences.js';
 import { faqItems } from '../data/faq.js';
 import { levels as levelsStatic } from '../data/levels.js';
@@ -15,7 +17,8 @@ export const staticCatalog = {
   experiences: experiencesStatic,
   levels: normalizeLevelsMap(levelsStatic),
   faq: faqItems(),
-  pages: mergePageCatalog({}),
+  // Published page content pulled from PocketBase at build time (scripts/sync-content-from-pb.mjs).
+  pages: mergePageCatalog(pagesSynced),
 };
 
 async function listPublished(name, { sort = true } = {}) {
@@ -94,19 +97,7 @@ export async function fetchCatalog() {
   };
 }
 
-const chromeFallback = {
-  email: 'info@mambeusafaris.com',
-  phone: '+255 796 086 799',
-  phoneE164: '255796086799',
-  whatsapp: '255796086799',
-  officeLocation: 'Arusha, Tanzania',
-  officeHours: '08:00–19:30',
-  footerTagline: 'Dream · Discover · Explore',
-  finalInviteEyebrow: 'TELL US WHAT YOU’RE DREAMING OF',
-  finalInviteTitle: 'Your next chapter\nstarts in Tanzania.',
-  finalInviteText: 'A few ideas are all we need. Let’s shape a journey that feels like you.',
-};
-
+/** Contact details, footer and final invite band (Header & footer in the dashboard). */
 export function siteChrome(pages) {
-  return { ...chromeFallback, ...(pages?.site_chrome || {}) };
+  return mergeSiteChrome(pages?.site_chrome);
 }

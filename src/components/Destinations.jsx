@@ -2,80 +2,26 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { planHref } from '../lib/plan-link.js';
 import { useDestinationsIntro } from '../lib/useDestinationsIntro.js';
-import { href } from '../lib/utils.js';
+import { useCms } from '../CmsProvider.jsx';
+import { cmsLink } from '../content/schema.js';
+import { href, resolveImageSrc } from '../lib/utils.js';
 import Reveal from './Reveal.jsx';
 import SectionHeader from './SectionHeader.jsx';
 
 const INTERVAL_MS = 7000;
-
-/** @typedef {{
- *   slug: string;
- *   name: string;
- *   tagline: string;
- *   image: string;
- *   objectPosition?: string;
- *   href?: string;
- * }} DestinationPlace */
-
-/** Edit names, taglines and images here. */
-const PLACES = /** @type {DestinationPlace[]} */ ([
-  {
-    slug: 'serengeti',
-    name: 'Serengeti',
-    tagline: 'The plains go on. The moments stay.',
-    image: '/images/destinations/serengeti.jpg',
-    objectPosition: 'center 60%',
-  },
-  {
-    slug: 'ngorongoro',
-    name: 'Ngorongoro',
-    tagline: 'A whole world inside a crater.',
-    image: '/images/destinations/ngorongoro.jpg',
-  },
-  {
-    slug: 'tarangire',
-    name: 'Tarangire',
-    tagline: 'Elephants. Baobabs. Room to roam.',
-    image: '/images/destinations/tarangire.jpg',
-  },
-  {
-    slug: 'lake-manyara',
-    name: 'Lake Manyara',
-    tagline: 'Forest meets the Rift Valley.',
-    image: '/images/destinations/lake-manyara.jpg',
-  },
-  {
-    slug: 'ndutu',
-    name: 'Ndutu',
-    tagline: 'Calving season on the southern plains.',
-    image: '/images/destinations/ndutu.jpg',
-    objectPosition: 'center 40%',
-  },
-  {
-    slug: 'lake-natron',
-    name: 'Lake Natron',
-    tagline: 'Flamingos, salt and a very big sky.',
-    image: '/images/destinations/lake-natron.jpg',
-  },
-  {
-    slug: 'kilimanjaro',
-    name: 'Kilimanjaro',
-    tagline: 'A higher perspective.',
-    image: '/images/destinations/kilimanjaro.jpg',
-    href: '/kilimanjaro/',
-  },
-]);
-
-const TOTAL = PLACES.length;
 
 function pad(n) {
   return String(n).padStart(2, '0');
 }
 
 export default function Destinations() {
+  const { pages } = useCms();
+  const copy = pages.home.destinations;
+  const places = (copy.places || []).filter((p) => p && String(p.name ?? '').trim());
+  const total = places.length;
   const sectionRef = useRef(null);
-  const last = PLACES.length - 1;
-  const { ref: listRef, phase, vars } = useDestinationsIntro(PLACES.length);
+  const last = places.length - 1;
+  const { ref: listRef, phase, vars } = useDestinationsIntro(places.length);
   const introDone = phase === 'done';
   const [active, setActive] = useState(0);
   const shownActive = phase === 'idle' || phase === 'rising' ? -1 : active;
@@ -114,7 +60,7 @@ export default function Destinations() {
 
   const onTickAnimationEnd = () => {
     if (reduced || !running) return;
-    setActive((a) => (a + 1) % TOTAL);
+    setActive((a) => (a + 1) % total);
   };
 
   return (
@@ -124,20 +70,24 @@ export default function Destinations() {
         <SectionHeader
           variant="stacked"
           id="destinations-heading"
-          eyebrow="Meet the places that make Tanzania"
+          eyebrow={copy.eyebrow}
           title={
             <>
-              Seven landscapes.
-              <br />
-              <span className="section-header__quiet">Countless possibilities.</span>
+              {copy.titleLine1}
+              {copy.titleLine2 ? (
+                <>
+                  <br />
+                  <span className="section-header__quiet">{copy.titleLine2}</span>
+                </>
+              ) : null}
             </>
           }
-          description="Each one is a different kind of safari. Open one to see where it could take you."
+          description={copy.description}
           aside={
             <div className="destinations__head-controls">
               <p className="destinations__head-hint">
-                <span className="destinations__head-hint-desktop">Hover a landscape</span>
-                <span className="destinations__head-hint-touch">Tap a landscape</span>
+                <span className="destinations__head-hint-desktop">{copy.hintDesktop}</span>
+                <span className="destinations__head-hint-touch">{copy.hintTouch}</span>
               </p>
               {introDone && !reduced && (
                 <button
@@ -174,12 +124,12 @@ export default function Destinations() {
             }
           }}
         >
-          {PLACES.map((p, i) => {
+          {places.map((p, i) => {
             const isActive = i === shownActive;
 
             return (
               <li
-                key={p.slug}
+                key={`${p.slug || p.name}-${i}`}
                 className={
                   isActive
                     ? 'destinations__panel destinations__panel--active'
@@ -195,7 +145,7 @@ export default function Destinations() {
                 }}
               >
                 <img
-                  src={p.image}
+                  src={resolveImageSrc(p.image)}
                   alt=""
                   className="destinations__photo"
                   style={p.objectPosition ? { objectPosition: p.objectPosition } : undefined}
@@ -225,7 +175,7 @@ export default function Destinations() {
                   <div className="destinations__detail-top">
                     <div className="destinations__detail-meta">
                       <div className="destinations__ticks" aria-hidden="true">
-                        {PLACES.map((_, t) => {
+                        {places.map((_, t) => {
                           const isCurrent = t === shownActive;
                           return (
                             <span
@@ -262,10 +212,10 @@ export default function Destinations() {
                       <p className="destinations__detail-counter">
                         <span className="destinations__detail-counter-current">{pad(i + 1)}</span>
                         {' / '}
-                        {pad(TOTAL)}
+                        {pad(total)}
                       </p>
                     </div>
-                    <span className="destinations__detail-tag">Tanzania</span>
+                    <span className="destinations__detail-tag">{copy.tag}</span>
                   </div>
 
                   <div className="destinations__detail-bottom">
@@ -273,20 +223,24 @@ export default function Destinations() {
                     <p className="destinations__detail-tagline">{p.tagline}</p>
                     <div className="destinations__detail-rule">
                       <Link
-                        to={p.href ?? href(`destinations/${p.slug}`)}
+                        to={
+                          String(p.link ?? '').trim()
+                            ? cmsLink(p.link)
+                            : href(p.slug ? `destinations/${p.slug}` : 'destinations')
+                        }
                         tabIndex={isActive ? 0 : -1}
                         className="destinations__detail-cta"
                       >
-                        See journeys
+                        {copy.journeysLinkText}
                         <span className="destinations__sr-only"> in {p.name}</span>
                         <span aria-hidden="true">→</span>
                       </Link>
                       <Link
-                        to={planHref({ destination: p.slug })}
+                        to={planHref({ destination: p.slug || undefined })}
                         tabIndex={isActive ? 0 : -1}
                         className="destinations__detail-plan"
                       >
-                        Plan a trip to {p.name}
+                        {copy.planLinkPrefix} {p.name}
                       </Link>
                     </div>
                   </div>
@@ -298,10 +252,10 @@ export default function Destinations() {
 
         <div className="destinations__footer">
           <p className="destinations__footer-lede">
-            Connect your favourites into one personal journey.
+            {copy.footerText}
           </p>
-          <Link to={href('destinations')} className="destinations__footer-link">
-            Explore all destinations
+          <Link to={cmsLink(copy.footerLinkPath, '/destinations/')} className="destinations__footer-link">
+            {copy.footerLinkText}
           </Link>
         </div>
       </div>

@@ -92,6 +92,7 @@ export function resolveImageSrc(src) {
   const raw = String(src ?? '').trim();
   if (!raw) return '/assets/hero.webp';
   if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith('/')) return raw;
   const name = raw.split('/').pop() || 'hero.webp';
   return `/assets/${name}`;
 }

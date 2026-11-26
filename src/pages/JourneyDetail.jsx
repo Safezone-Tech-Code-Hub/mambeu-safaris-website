@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import JourneyCard from '../components/JourneyCard.jsx';
 import Reveal from '../components/Reveal.jsx';
 import { useCms } from '../CmsProvider.jsx';
+import { cmsLink } from '../content/schema.js';
 import { siteChrome } from '../lib/cms.js';
 import { planHref, urlKey } from '../lib/plan-link.js';
 import { esc, href, itineraryRoute, money, Img } from '../lib/utils.js';
@@ -13,6 +14,7 @@ export default function JourneyDetail({ tourPath }) {
   const path = tourPath || params.tourPath;
   const { tours, pages } = useCms();
   const contact = siteChrome(pages);
+  const copy = pages.journey_detail;
   const t = tours.find((x) => x.path === path);
   const [tierIndex, setTierIndex] = useState(0);
   const [daysExpanded, setDaysExpanded] = useState(false);
@@ -36,7 +38,6 @@ export default function JourneyDetail({ tourPath }) {
 
   const tiers = t.pricingTiers || [];
   const activeTier = tiers.length ? tiers[tierIndex] : null;
-  const imageFile = String(t.image || 'hero.webp').split('/').pop();
   const related = tours.filter((x) => x.id !== t.id && x.style === t.style).slice(0, 3);
   const stays = (t.itinerary || []).filter(
     (d) => d.accommodation && !/no accom|end of tour/i.test(d.accommodation),
@@ -45,13 +46,13 @@ export default function JourneyDetail({ tourPath }) {
   return (
     <main id="main">
       <section className="journey-hero">
-        <Img src={imageFile} alt={t.title} priority />
+        <Img src={t.image || 'hero.webp'} alt={t.title} priority />
         <div className="wrap">
           <Link to={href('safaris')} className="breadcrumb">
-            Safari collection / {t.style}
+            {copy.hero.breadcrumbPrefix} / {t.style}
           </Link>
           <span className="eyebrow">
-            {t.duration} · TAILOR-MADE JOURNEY
+            {t.duration} · {copy.hero.eyebrowSuffix}
           </span>
           <h1>{t.title}</h1>
           <p>{itineraryRoute(t)}</p>
@@ -60,36 +61,38 @@ export default function JourneyDetail({ tourPath }) {
 
       <nav className="journey-anchor-nav" aria-label="Journey sections">
         <div className="wrap">
-          <a href="#overview">Overview</a>
-          <a href="#itinerary">Day by day</a>
-          <a href="#stays">Accommodation</a>
-          <a href="#included">Inclusions</a>
-          <a href="#enquire">Your quotation</a>
+          <a href="#overview">{copy.anchors.overview}</a>
+          <a href="#itinerary">{copy.anchors.itinerary}</a>
+          <a href="#stays">{copy.anchors.stays}</a>
+          <a href="#included">{copy.anchors.included}</a>
+          <a href="#enquire">{copy.anchors.enquire}</a>
         </div>
       </nav>
 
       <section className="wrap journey-layout">
         <article>
           <Reveal as="div" id="overview" className="journey-section">
-            <span className="eyebrow">THE JOURNEY AT A GLANCE</span>
+            <span className="eyebrow">{copy.overview.eyebrow}</span>
             <h2>
-              Make every
+              {copy.overview.titleLine1}
               <br />
-              day count.
+              {copy.overview.titleLine2}
             </h2>
             <p className="lead">{t.fullDescription || t.description}</p>
             <div className="journey-facts">
               <div>
-                <span>Duration</span>
-                <b>{t.days} days</b>
+                <span>{copy.overview.durationLabel}</span>
+                <b>
+                  {t.days} {copy.overview.durationSuffix}
+                </b>
               </div>
               <div>
-                <span>Published style</span>
+                <span>{copy.overview.styleLabel}</span>
                 <b>{t.style}</b>
               </div>
               <div>
-                <span>Planning</span>
-                <b>Personalised</b>
+                <span>{copy.overview.planningLabel}</span>
+                <b>{copy.overview.planningValue}</b>
               </div>
             </div>
             {t.highlights.length ? (
@@ -104,8 +107,8 @@ export default function JourneyDetail({ tourPath }) {
           <Reveal as="div" className="journey-section" id="itinerary">
             <div className="section-heading">
               <div>
-                <span className="eyebrow">YOUR TIME IN TANZANIA</span>
-                <h2>Day by day.</h2>
+                <span className="eyebrow">{copy.itinerary.eyebrow}</span>
+                <h2>{copy.itinerary.title}</h2>
               </div>
               {t.itinerary.length ? (
                 <button
@@ -121,7 +124,7 @@ export default function JourneyDetail({ tourPath }) {
                     });
                   }}
                 >
-                  {daysExpanded ? 'Collapse all days' : 'Expand all days'}
+                  {daysExpanded ? copy.itinerary.collapseLabel : copy.itinerary.expandLabel}
                 </button>
               ) : null}
             </div>
@@ -137,7 +140,9 @@ export default function JourneyDetail({ tourPath }) {
                       {String(d.day || i + 1).padStart(2, '0')}
                     </span>
                     <span>
-                      <small>DAY {d.day || i + 1}</small>
+                      <small>
+                        {copy.itinerary.dayPrefix} {d.day || i + 1}
+                      </small>
                       <b>{d.title}</b>
                     </span>
                     <span className="day-icon" aria-hidden="true"></span>
@@ -152,12 +157,12 @@ export default function JourneyDetail({ tourPath }) {
                       <div className="day-stay">
                         {d.accommodation ? (
                           <p>
-                            <b>Stay</b> {d.accommodation}
+                            <b>{copy.itinerary.stayLabel}</b> {d.accommodation}
                           </p>
                         ) : null}
                         {d.meals ? (
                           <p>
-                            <b>Meals & drinks</b> {d.meals}
+                            <b>{copy.itinerary.mealsLabel}</b> {d.meals}
                           </p>
                         ) : null}
                       </div>
@@ -166,46 +171,40 @@ export default function JourneyDetail({ tourPath }) {
                 </details>
               ))
             ) : (
-              <p>
-                Your safari specialist will provide a detailed itinerary with your personalised
-                quotation.
-              </p>
+              <p>{copy.itinerary.noItinerary}</p>
             )}
           </Reveal>
 
           <Reveal as="div" className="journey-section" id="stays">
-            <span className="eyebrow">YOUR HOME ALONG THE WAY</span>
-            <h2>Where you’ll rest.</h2>
+            <span className="eyebrow">{copy.stays.eyebrow}</span>
+            <h2>{copy.stays.title}</h2>
             <div className="stay-list">
               {stays.length ? (
                 stays.map((d) => (
                   <div key={d.day}>
-                    <span>Day {d.day}</span>
+                    <span>
+                      {copy.stays.dayPrefix} {d.day}
+                    </span>
                     <b>{d.accommodation}</b>
                   </div>
                 ))
               ) : (
-                <p>
-                  Our team will suggest accommodation for your dates and preferred comfort level.
-                </p>
+                <p>{copy.stays.fallback}</p>
               )}
             </div>
-            <p className="fineprint">
-              Stays are subject to availability. Your final quotation confirms accommodation and any
-              requested changes.
-            </p>
+            <p className="fineprint">{copy.stays.fineprint}</p>
             <Link
               className="text-link"
               to={planHref({ journey: urlKey(t) })}
             >
-              Ask about different accommodation
+              {copy.stays.askLink}
             </Link>
           </Reveal>
 
           <Reveal as="div" className="journey-section inclusions" id="included">
             <div>
-              <span className="eyebrow">WHAT’S IN YOUR JOURNEY</span>
-              <h3>Included</h3>
+              <span className="eyebrow">{copy.inclusions.includedEyebrow}</span>
+              <h3>{copy.inclusions.includedTitle}</h3>
               {t.included.length ? (
                 <ul>
                   {t.included
@@ -215,12 +214,12 @@ export default function JourneyDetail({ tourPath }) {
                     ))}
                 </ul>
               ) : (
-                <p>Inclusions are confirmed in your personalised quotation.</p>
+                <p>{copy.inclusions.includedFallback}</p>
               )}
             </div>
             <div>
-              <span className="eyebrow">PLAN FOR THESE SEPARATELY</span>
-              <h3>Excluded</h3>
+              <span className="eyebrow">{copy.inclusions.excludedEyebrow}</span>
+              <h3>{copy.inclusions.excludedTitle}</h3>
               {t.excluded.length ? (
                 <ul>
                   {t.excluded
@@ -230,26 +229,23 @@ export default function JourneyDetail({ tourPath }) {
                     ))}
                 </ul>
               ) : (
-                <p>Exclusions and optional activities are set out in your quotation.</p>
+                <p>{copy.inclusions.excludedFallback}</p>
               )}
             </div>
           </Reveal>
-          <p className="fineprint">
-            Activities and meals apply as specified in the itinerary. Optional experiences, upgrades
-            and changes are quoted separately.
-          </p>
+          <p className="fineprint">{copy.inclusions.activitiesNote}</p>
         </article>
 
         <aside className="quotation" id="enquire">
-          <span className="eyebrow">LET’S MAKE IT YOURS</span>
+          <span className="eyebrow">{copy.quotation.eyebrow}</span>
           <h3>
-            Your journey.
+            {copy.quotation.titleLine1}
             <br />
-            Your details.
+            {copy.quotation.titleLine2}
           </h3>
           {tiers.length ? (
             <>
-              <label htmlFor="group-size">Number of travellers</label>
+              <label htmlFor="group-size">{copy.quotation.groupLabel}</label>
               <select
                 id="group-size"
                 value={tierIndex}
@@ -264,36 +260,31 @@ export default function JourneyDetail({ tourPath }) {
               <p className="quoted-price" id="journey-price">
                 {money(activeTier.price)}
               </p>
-              <span className="price-unit">per person · USD</span>
-              <p className="fineprint">
-                Published group-size price. Your dates, availability and requested changes are
-                confirmed in a personalised quotation.
-              </p>
+              <span className="price-unit">{copy.quotation.priceUnit}</span>
+              <p className="fineprint">{copy.quotation.priceFineprint}</p>
             </>
           ) : (
-            <p>
-              Request a quotation based on your dates, group size and preferred accommodation.
-            </p>
+            <p>{copy.quotation.noTiers}</p>
           )}
           <Link
             className="button orange"
             to={planHref({ journey: urlKey(t) })}
           >
-            Enquire about this journey
+            {copy.quotation.enquireButton}
           </Link>
           <a
             className="whatsapp-link"
             href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-              'Hello Mambeu, I would like to discuss ' + t.title,
+              copy.quotation.whatsappPrefix + t.title,
             )}`}
             target="_blank"
             rel="noopener"
           >
-            Talk to us on WhatsApp
+            {copy.quotation.whatsappLink}
           </a>
           <div className="quotation-note">
-            <b>Love the route, want different stays?</b>
-            <p>Ask us to tailor the journey to midrange, comfort or luxury accommodation.</p>
+            <b>{copy.quotation.noteHeading}</b>
+            <p>{copy.quotation.noteText}</p>
           </div>
         </aside>
       </section>
@@ -301,9 +292,9 @@ export default function JourneyDetail({ tourPath }) {
       <section className="wrap related">
         <Reveal>
           <div className="section-heading">
-            <h2>Keep exploring.</h2>
-            <Link to={href('safaris')} className="text-link">
-              All safari journeys
+            <h2>{copy.related.heading}</h2>
+            <Link to={cmsLink(copy.related.linkPath, href('safaris'))} className="text-link">
+              {copy.related.linkText}
             </Link>
           </div>
         </Reveal>

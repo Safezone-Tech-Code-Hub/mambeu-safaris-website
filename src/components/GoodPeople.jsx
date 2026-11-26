@@ -1,27 +1,26 @@
 import { Link } from 'react-router-dom';
-import { planHref } from '../lib/plan-link.js';
-import { href } from '../lib/utils.js';
+import { useCms } from '../CmsProvider.jsx';
+import { cmsLink } from '../content/schema.js';
+import { resolveImageSrc } from '../lib/utils.js';
 import Reveal from './Reveal.jsx';
 import SectionHeader from './SectionHeader.jsx';
 
 export default function GoodPeople() {
+  const { pages } = useCms();
+  const copy = pages.home.people;
   return (
     <section className="good-people" aria-labelledby="good-people-heading">
       <div className="good-people__container">
         <div className="good-people__grid">
           <figure className="good-people__figure">
             <Reveal variant="image" className="good-people__photo">
-              <img
-                src="/images/people/guests.jpg"
-                alt="Two guests standing beside a Mambeu safari vehicle on a dusty road, with open savannah and a blue sky behind them"
-                decoding="async"
-              />
+              <img src={resolveImageSrc(copy.photo)} alt={copy.photoAlt} decoding="async" />
               <div className="good-people__photo-overlay" aria-hidden="true" />
             </Reveal>
             <figcaption className="good-people__caption">
-              <span>Guests on safari with Mambeu</span>
+              <span>{copy.caption}</span>
               <span className="good-people__caption-aside" aria-hidden="true">
-                Our home. Your adventure.
+                {copy.captionAside}
               </span>
             </figcaption>
           </figure>
@@ -30,14 +29,14 @@ export default function GoodPeople() {
             <SectionHeader
               variant="inline"
               id="good-people-heading"
-              eyebrow="The people make the difference"
+              eyebrow={copy.eyebrow}
               title={
                 <>
-                  Good safaris begin with{' '}
-                  <span className="section-header__quiet">good people.</span>
+                  {copy.titleLine1}{' '}
+                  <span className="section-header__quiet">{copy.titleLine2}</span>
                 </>
               }
-              description="Mambeu is locally owned and operated in Arusha. We share Tanzania through expertly guided journeys, personal attention and a commitment to responsible travel."
+              description={copy.text}
             />
 
             {/* Add a real guest quote here when you have one:
@@ -48,11 +47,11 @@ export default function GoodPeople() {
             */}
 
             <div className="good-people__actions">
-              <Link to={planHref()} className="good-people__cta">
-                Plan my safari
+              <Link to={cmsLink(copy.buttonLink, '/plan/')} className="good-people__cta">
+                {copy.buttonText}
               </Link>
-              <Link to={href('about')} className="good-people__text-link">
-                Get to know Mambeu
+              <Link to={cmsLink(copy.linkPath, '/about/')} className="good-people__text-link">
+                {copy.linkText}
               </Link>
             </div>
           </Reveal>

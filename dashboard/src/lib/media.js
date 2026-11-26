@@ -11,9 +11,10 @@ export function previewUrlForValue(value) {
   const v = String(value || '').trim();
   if (!v) return '';
   if (/^https?:\/\//i.test(v)) return v;
-  const base = (import.meta.env.VITE_PUBLIC_SITE_URL || '').replace(/\/$/, '');
+  const base = (import.meta.env.VITE_PUBLIC_SITE_URL || 'https://new-mambeu.schoolhub.space').replace(/\/$/, '');
+  if (v.startsWith('/')) return `${base}${v}`;
   const name = v.split('/').pop();
-  if (base && name) return `${base}/assets/${name}`;
+  if (name) return `${base}/assets/${name}`;
   return '';
 }
 
