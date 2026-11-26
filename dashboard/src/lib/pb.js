@@ -58,6 +58,12 @@ export function describePbError(error, fallback = 'Something went wrong.') {
   if (details && message) return `${message} (${details})`;
   if (details) return String(details);
 
+  // PocketBase answers "not found" when the record exists but its API rules reject this session,
+  // which is what an expired or rejected sign-in looks like.
+  if (status === 404 && /requested resource wasn't found/i.test(message)) {
+    return 'PocketBase did not accept this for your session. Sign out and sign in again, then retry. If it keeps happening, check the collection’s API rules allow signed-in staff.';
+  }
+
   if (
     status === 404 ||
     /collection context|collection.*not found|wasn't found/i.test(message) ||

@@ -48,9 +48,15 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to) => {
+let sessionChecked = false;
+
+router.beforeEach(async (to) => {
   const auth = useAuthStore();
   if (to.meta.public) return true;
+  if (!sessionChecked) {
+    sessionChecked = true;
+    await auth.refresh();
+  }
   if (!auth.isLoggedIn) return { name: 'login', query: { redirect: to.fullPath } };
   return true;
 });

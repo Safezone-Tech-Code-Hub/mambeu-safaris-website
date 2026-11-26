@@ -11,7 +11,9 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = pb.authStore.token;
   });
 
-  const isLoggedIn = computed(() => Boolean(token.value && user.value));
+  // isValid also checks the token's expiry. An expired or rejected token makes PocketBase treat
+  // requests as a visitor: saves fail with "not found" and lists come back empty.
+  const isLoggedIn = computed(() => Boolean(token.value && user.value && pb.authStore.isValid));
   const isAdmin = computed(() => user.value?.role === 'admin');
 
   async function login(email, password) {
@@ -21,11 +23,23 @@ export const useAuthStore = defineStore('auth', () => {
     return auth.record;
   }
 
+  /** Confirm the saved session with PocketBase (renews the token); sign out if it was rejected. */
+  async function refresh() {
+    if (!pb.authStore.token) return false;
+    try {
+      await pb.collection(COLLECTIONS.staff).authRefresh();
+      return true;
+    } catch {
+      logout();
+      return false;
+    }
+  }
+
   function logout() {
     pb.authStore.clear();
     user.value = null;
     token.value = null;
   }
 
-  return { user, token, isLoggedIn, isAdmin, login, logout };
+  return { user, token, isLoggedIn, isAdmin, login, logout, refresh };
 });
